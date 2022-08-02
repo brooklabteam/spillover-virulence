@@ -20,7 +20,7 @@ library(dplyr)
 library(RColorBrewer)
 
 homewd =  "/Users/carabrook/Developer/spillover-virulence/"
-subwd = "figure-s4-s5"
+subwd = "figure-3"
 setwd(paste0(homewd, subwd))
 
 ```
