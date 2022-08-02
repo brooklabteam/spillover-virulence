@@ -869,33 +869,20 @@ The resulting plot should look like this - this is a component of Fig 3 (main te
 <img src="brief/Fig13.png" alt = "Example Fig. 13" width="500">
 
 
-We can also look at only those orders for which we have estimates from the literature for easier comparison:
-
-<img src="brief/Fig13_sub.png" alt = "Example Fig. 13" width="500">
-
 We see that are predictions are fairly accurate in terms of relative rank - we over-predict the virulence of Primates and under-predict the virulence of Carnivores. 
 
 However, when we plot against a different dataset with rabies excluded from the Guth et al. 2022 dataset, we find that our predictions align even better, here across the whole dataset:
 
 <img src="brief/Fig14.png" alt = "Example Fig. 14" width="500">
 
-And here just the orders with comparison:
-
-<img src="brief/Fig14_sub.png" alt = "Example Fig. 14" width="500">
 
 And we can plot these predictions from complete tolerance assumptions, here with rabies included across the whole dataset:
 
 <img src="brief/Fig15.png" alt = "Example Fig. 15" width="500">
 
-And the subset of comparative orders:
-
-<img src="brief/Fig15_sub.png" alt = "Example Fig. 15" width="500">
 
 And here with rabies excluded as well:
 
 <img src="brief/Fig16.png" alt = "Example Fig. 16" width="500">
 
-And the subset of comparative orders:
-
-<img src="brief/Fig16_sub.png" alt = "Example Fig. 16" width="500">
 
