@@ -871,17 +871,17 @@ The resulting plot should look like this - this is a component of Fig 3 (main te
 
 We see that are predictions are fairly accurate in terms of relative rank - we over-predict the virulence of Primates and under-predict the virulence of Carnivores. 
 
-However, when we plot against a different dataset with rabies excluded from the Guth et al. 2022 dataset, we find that our predictions align even better, here across the whole dataset:
+However, when we plot against a different dataset with rabies excluded from the Guth et al. 2022 dataset, we find that our predictions align even better, here across the whole dataset (note that this is Fig. S5 of the Supplementary Information Appendix):
 
 <img src="brief/Fig14.png" alt = "Example Fig. 14" width="500">
 
 
-And we can plot these predictions from complete tolerance assumptions, here with rabies included across the whole dataset:
+And we can plot these predictions from complete tolerance assumptions, here with rabies included across the whole dataset (Fig. S4 of the Supplementary Information Appendix):
 
 <img src="brief/Fig15.png" alt = "Example Fig. 15" width="500">
 
 
-And here with rabies excluded as well:
+And here with rabies excluded as well (Fig. S6 of the Supplementary Information Appendix):
 
 <img src="brief/Fig16.png" alt = "Example Fig. 16" width="500">
 
