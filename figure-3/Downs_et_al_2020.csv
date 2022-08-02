@@ -1,0 +1,261 @@
+Unique.ID,Order,OrderNum,Family,Genus,Species,phylo,Common.Name,AdultBodyMass,TotalWBC,Lymphocytes,Segmented.neutrophils,ln10Mass,ln10WBC,ln10lympho,ln10neutro
+320,Chiroptera,14,Phyllostomidae,Artibeus,jamaicensis,Artibeus_jamaicensis,Jamaican Fruit Bat,43.63,4.79,1.99,2.35,1.639785213,0.680335513,0.298853076,0.371067862
+311,Diprotodontia,11,Petauridae,Petaurus,breviceps,Petaurus_breviceps,Sugar Glider,120.76,6.4,4.4,1.02,2.081923104,0.806179974,0.643452676,0.008600172
+86,Primates,2,Cebidae,Callithrix,pygmaea,Callithrix_pygmaea,Pygmy Marmoset,123.94,5.63,3.06,1.88,2.093211492,0.750508395,0.485721426,0.274157849
+327,Chiroptera,14,Pteropodidae,Rousettus,aegyptiacus,Rousettus_aegyptiacus,Egyptian Fruit Bat,134,8.71,4.68,3.44,2.127104798,0.940018155,0.670245853,0.536558443
+133,Primates,2,Galagidae,Galago,moholi,Galago_moholi,Moholi Bushbaby,191.96,5.51,3.68,1.55,2.283210741,0.741151599,0.565847819,0.190331698
+130,Primates,2,Cheirogaleidae,Cheirogaleus,medius,Cheirogaleus_medius,Fattailed Dwarf Lemur,196.76,7.56,4.35,1.88,2.293936814,0.878521796,0.638489257,0.274157849
+291,Rodentia,6,Octodontidae,Octodon,degus,Octodon_degus,Degu,203.27,5.22,2.68,2.33,2.308073287,0.717670503,0.428134794,0.367355921
+321,Chiroptera,14,Pteropodidae,Eidolon,helvum,Eidolon_helvum,African Strawcoloured Fruit Bat,254.61,6.05,3.51,1.86,2.405875457,0.781755375,0.545307116,0.269512944
+325,Chiroptera,14,Pteropodidae,Pteropus,rodricensis,Pteropus_rodricensis,Rodrigues Flying Fox,256.17,7.14,2.03,4.24,2.408528268,0.853698212,0.307496038,0.627365857
+38,Carnivora,1,Herpestidae,Helogale,parvula,Helogale_parvula,Dwarf Mongoose,281.83,10.46,3.92,6.12,2.449987221,1.019531685,0.593286067,0.786751422
+84,Primates,2,Cebidae,Callithrix,jacchus,Callithrix_jacchus,Common Marmoset,290.21,7.33,3.66,3.38,2.462712373,0.865103975,0.563481085,0.5289167
+131,Primates,2,Cheirogaleidae,Mirza,coquereli,Mirza_coquereli,Giant Mouse Lemur,326.5,10.02,4.76,3.96,2.513883186,1.000867722,0.677606953,0.597695186
+82,Primates,2,Cebidae,Callithrix,argentata,Callithrix_argentata,Silvery Marmoset,382.92,8.28,4.29,3.43,2.58310805,0.918030337,0.632457292,0.53529412
+293,Rodentia,6,Sciuridae,Callosciurus,prevostii,Callosciurus_prevostii,Prevost's Squirrel,400,4.11,1.39,2.36,2.602059991,0.613841822,0.1430148,0.372912003
+310,Diprotodontia,11,Petauridae,Dactylopsila,trivirgata,Dactylopsila_trivirgata,Striped Possum,413.41,10.39,4.85,4.71,2.616380978,1.016615548,0.685741739,0.673020907
+98,Primates,2,Cebidae,Saguinus,oedipus,Saguinus_oedipus,Cottontop Tamarin,462.04,10.29,3.19,6.21,2.664679575,1.012415375,0.503790683,0.7930916
+281,Rodentia,6,Chinchillidae,Chinchilla,lanigera,Chinchilla_lanigera,Longtailed Chinchilla,480.28,6.04,3.31,2.12,2.681494502,0.781036939,0.519827994,0.326335861
+96,Primates,2,Cebidae,Saguinus,midas,Saguinus_midas,Redhanded Tamarin,540.56,13.82,5.01,7.46,2.732843906,1.140508043,0.699837726,0.872738827
+81,Primates,2,Cebidae,Callimico,goeldii,Callimico_goeldii,Goeldi's Monkey,558,6.17,2.73,2.91,2.746634199,0.790285164,0.436162647,0.463892989
+92,Primates,2,Cebidae,Leontopithecus,rosalia,Leontopithecus_rosalia,Golden Lion Tamarin,592.52,7.63,1.94,5.02,2.772703014,0.882524538,0.28780173,0.700703717
+40,Carnivora,1,Herpestidae,Suricata,suricatta,Suricata_suricatta,Slendertailed Meerkat,729.99,5.19,1.81,3,2.863316911,0.715167358,0.257678575,0.477121255
+100,Primates,2,Cebidae,Saimiri,sciureus,Saimiri_sciureus,Common Squirrel Monkey,749.47,7.89,3.03,3.9,2.874754253,0.897077003,0.481442629,0.591064607
+294,Rodentia,6,Sciuridae,Cynomys,ludovicianus,Cynomys_ludovicianus,Blacktailed Prairie Dog,797.05,4.99,1.3,3.35,2.901485566,0.698100546,0.113943352,0.525044807
+134,Primates,2,Galagidae,Otolemur,garnettii,Otolemur_garnettii,Northern Greater Galago,811.17,9.12,3.1,4.62,2.909111881,0.959994838,0.491361694,0.664641976
+322,Chiroptera,14,Pteropodidae,Pteropus,giganteus,Pteropus_giganteus,Indian Flying Fox,824.85,7,1.7,4.38,2.916374979,0.84509804,0.230448921,0.641474111
+76,Primates,2,Aotidae,Aotus,lemurinus,Aotus_lemurinus,Greybellied Douroucouli,865.96,10.34,4.8,4.11,2.937497832,1.014520539,0.681241237,0.613841822
+61,Carnivora,1,Procyonidae,Bassariscus,sumichrasti,Bassariscus_sumichrasti,Central American Cacomistle,906,4.11,1.61,1.53,2.957128198,0.613841822,0.206825876,0.184691431
+52,Carnivora,1,Mustelidae,Mustela,nigripes,Mustela_nigripes,Blackfooted Ferret,907.1,4.31,1.62,2.38,2.957655167,0.63447727,0.209515015,0.376576957
+152,Primates,2,Lemuridae,Hapalemur,griseus_b,Hapalemur_griseus_b,Grey Bamboo Lemur,916,7.13,3.3,3.4,2.961895474,0.85308953,0.51851394,0.531478917
+156,Primates,2,Lorisidae,Nycticebus,coucang,Nycticebus_coucang,Slow Loris,924.55,10,5.65,3.45,2.965930403,1,0.752048448,0.537819095
+53,Carnivora,1,Mustelidae,Mustela,putorius,Mustela_putorius,European Polecat,975.55,5.86,2.68,2.45,2.989249533,0.767897616,0.428134794,0.389166084
+60,Carnivora,1,Procyonidae,Bassariscus,astutus,Bassariscus_astutus,Ringtailed Cacomistle,1010.37,5.56,1.88,2.47,3.004480443,0.745074792,0.274157849,0.392696953
+158,Primates,2,Lorisidae,Perodicticus,potto,Perodicticus_potto,Potto,1081.81,7.56,3.19,3.92,3.034150992,0.878521796,0.503790683,0.593286067
+290,Rodentia,6,Nesomyidae,Hypogeomys,antimena,Hypogeomys_antimena,Malagasy Giant Rat,1175.93,7.99,3.74,3.55,3.07038147,0.902546779,0.572871602,0.550228353
+121,Primates,2,Cercopithecidae,Miopithecus,talapoin,Miopithecus_talapoin,Angolan Talapoin,1248.86,9.27,2.97,5.69,3.096513756,0.967079734,0.472756449,0.755112266
+39,Carnivora,1,Herpestidae,Mungos,mungo,Mungos_mungo,Banded Mongoose,1260,6.68,3.55,2.84,3.100370545,0.824776462,0.550228353,0.45331834
+14,Carnivora,1,Canidae,Vulpes,zerda,Vulpes_zerda,Fennec Fox,1317.13,5.3,1.95,2.74,3.119628642,0.72427587,0.290034611,0.437750563
+21,Carnivora,1,Felidae,Felis,nigripes,Felis_nigripes,Blackfooted Cat,1362.77,8.4,2.89,4.43,3.134422564,0.924279286,0.460897843,0.646403726
+317,Monotremata,13,Ornithorhynchidae,Ornithorhynchus,anatinus,Ornithorhynchus_anatinus,Duckbilled Platypus,1484.25,30.63,18.24,9.38,3.171507058,1.486146997,1.261024834,0.972202838
+300,Lagomorpha,10,Leporidae,Oryctolagus,cuniculus,Oryctolagus_cuniculus,European Rabbit,1590.57,5.92,3.16,2.34,3.201552787,0.772321707,0.499687083,0.369215857
+159,Primates,2,Pitheciidae,Pithecia,pithecia,Pithecia_pithecia,Whitefaced Saki,1667.19,8.96,2.89,5.25,3.221985097,0.95230801,0.460897843,0.720159303
+144,Primates,2,Lemuridae,Eulemur,coronatus,Eulemur_coronatus,Crowned Lemur,1699.85,5.83,2.49,3.02,3.2304106,0.765668555,0.396199347,0.480006943
+147,Primates,2,Lemuridae,Eulemur,mongoz,Eulemur_mongoz,Mongoose Lemur,1771.13,6.32,2.78,2.8,3.248250439,0.800717078,0.444044796,0.447158031
+10,Carnivora,1,Canidae,Urocyon,littoralis,Urocyon_littoralis,Channel Islands Fox,1923,8.07,1.88,5.21,3.283979284,0.906873535,0.274157849,0.716837723
+148,Primates,2,Lemuridae,Eulemur,rubriventer,Eulemur_rubriventer,Red-bellied Lemur,2015.4,8.6,3.73,3.57,3.304361254,0.934498451,0.571708832,0.552668216
+12,Carnivora,1,Canidae,Vulpes,velox,Vulpes_velox,Swift Fox,2088,4.53,1.19,2.7,3.319730494,0.656098202,0.075546961,0.431363764
+145,Primates,2,Lemuridae,Eulemur,fulvus,Eulemur_fulvus,Brown Lemur,2376.99,7.87,4.12,3.02,3.376027355,0.895974732,0.614897216,0.480006943
+44,Carnivora,1,Mephitidae,Mephitis,mephitis,Mephitis_mephitis,Striped Skunk,2399.99,6,2.42,3.07,3.380209432,0.77815125,0.383815366,0.487138375
+64,Carnivora,1,Procyonidae,Potos,flavus,Potos_flavus,Kinkajou,2441.81,8.74,3.13,3.84,3.387711868,0.941511433,0.495544338,0.584331224
+298,Didelphimorphia,8,Didelphidae,Didelphis,virginiana,Didelphis_virginiana,Virginia Opossum,2442.08,11,5.4,3.93,3.387759887,1.041392685,0.73239376,0.59439255
+146,Primates,2,Lemuridae,Eulemur,macaco,Eulemur_macaco,Black Lemur,2470.43,8.34,3.13,4.48,3.392772553,0.921166051,0.495544338,0.651278014
+292,Rodentia,6,Pedetidae,Pedetes,capensis,Pedetes_capensis,Springhaas,2549.25,8.64,3.32,4.43,3.406412428,0.936513742,0.521138084,0.646403726
+153,Primates,2,Lemuridae,Lemur,catta,Lemur_catta,Ringtailed Lemur,2626.48,7.95,3.3,3.89,3.419374098,0.900367129,0.51851394,0.589949601
+132,Primates,2,Daubentoniidae,Daubentonia,madagascariensis,Daubentonia_madagascariensis,Ayeaye,2731.37,12.16,6.75,4.5,3.436380535,1.084933575,0.829303773,0.653212514
+88,Primates,2,Cebidae,Sapajus,apella,Sapajus_apella,Brown Capuchin,2758.38,7.47,2.45,4.42,3.440654095,0.873320602,0.389166084,0.645422269
+275,Afrotheria,5,Procaviidae,Procavia,capensis,Procavia_capensis,Rock Hyrax,2952.48,12.66,4.26,6.39,3.470186964,1.102433706,0.629409599,0.805500858
+89,Primates,2,Cebidae,Cebus,capucinus,Cebus_capucinus,Whitethroated Capuchin,3005.99,7.13,3.22,3.1,3.477987531,0.85308953,0.507855872,0.491361694
+282,Rodentia,6,Dasyproctidae,Dasyprocta,leporina,Dasyprocta_leporina,Redrumped Agouti,3009.99,5.13,1.72,3.01,3.478565053,0.710117365,0.235528447,0.478566496
+24,Carnivora,1,Felidae,Leopardus,wiedii,Leopardus_wiedii,Margay,3270.81,8.6,1.86,5.16,3.514655317,0.934498451,0.269512944,0.712649702
+46,Carnivora,1,Mustelidae,Aonyx,cinerea,Aonyx_cinerea,Oriental Small-clawed Otter,3527.59,6.39,1.4,4.25,3.547478103,0.805500858,0.146128036,0.62838893
+104,Primates,2,Cercopithecidae,Cercopithecus,ascanius,Cercopithecus_ascanius,Guenon,3540.24,6.06,2.79,2.63,3.549032705,0.782472624,0.445604203,0.419955748
+11,Carnivora,1,Canidae,Vulpes,lagopus,Vulpes_lagopus,Arctic Fox,3584.37,6.03,1.91,3.14,3.554412834,0.780317312,0.281033367,0.496929648
+51,Carnivora,1,Mustelidae,Martes,pennanti,Martes_pennanti,Fisher,3750,5.42,1.97,2.67,3.574031268,0.733999287,0.294466226,0.426511261
+63,Carnivora,1,Procyonidae,Nasua,nasua,Nasua_nasua,Brownnosed Coati,3775.5,9.31,2.54,5.44,3.576974475,0.968949681,0.404833717,0.7355989
+9,Carnivora,1,Canidae,Urocyon,cinereoargenteus,Urocyon_cinereoargenteus,Grey Fox,3833.71,7.13,1.64,4.47,3.583619258,0.85308953,0.214843848,0.650307523
+155,Primates,2,Lemuridae,Varecia,variegata,Varecia_variegata,Blackandwhite Ruffed Lemur,3849.99,8.43,3.5,4.18,3.585459601,0.925827575,0.544068044,0.621176282
+296,Xenarthra,7,Dasypodidae,Dasypus,novemcinctus,Dasypus_novemcinctus,Ninebanded Armadillo,3949.01,7.07,2.77,3.14,3.596488233,0.849419414,0.442479769,0.496929648
+7,Carnivora,1,Canidae,Otocyon,megalotis,Otocyon_megalotis,Bateared Fox,4098.12,6.26,1.71,3.96,3.612584671,0.796574333,0.23299611,0.597695186
+284,Rodentia,6,Erethizontidae,Coendou,prehensilis,Coendou_prehensilis,Prehensiletailed Porcupine,4116.2,11.78,7.06,3.36,3.614496468,1.07114529,0.848804701,0.526339277
+47,Carnivora,1,Mustelidae,Eira,barbara,Eira_barbara,Tayra,4134.99,6.21,1.2,4.6,3.616474464,0.7930916,0.079181246,0.662757832
+305,Diprotodontia,11,Macropodidae,Macropus,parma,Macropus_parma,Parma Wallaby,4156.62,4.63,2.9,1.43,3.618740323,0.665580991,0.462397998,0.155336037
+105,Primates,2,Cercopithecidae,Cercopithecus,diana,Cercopithecus_diana,Diana Monkey,4358.91,6.74,2.11,4.06,3.639377902,0.828659897,0.324282455,0.608526034
+318,Monotremata,13,Tachyglossidae,Tachyglossus,aculeatus,Tachyglossus_aculeatus,Shortbeaked Echidna,4499.97,15.09,5.68,8.58,3.653209618,1.17868924,0.754348336,0.933487288
+22,Carnivora,1,Felidae,Felis,silvestris,Felis_silvestris,Wild Cat,4573.08,6.56,2.16,3.77,3.660208799,0.816903839,0.334453751,0.57634135
+62,Carnivora,1,Procyonidae,Nasua,narica,Nasua_narica,Whitenosed Coati,4578.43,8.81,2.48,5.42,3.660716579,0.944975908,0.394451681,0.733999287
+201,Cetartiodactyla,3,Bovidae,Madoqua,guentheri,Madoqua_guentheri,Gunther's Dik-dik,4623.7,2.99,1.05,1.78,3.664989648,0.475671188,0.021189299,0.250420002
+316,Pilosa,12,Myrmecophagidae,Tamandua,tetradactyla,Tamandua_tetradactyla,Southern Tamandua,4800,8.55,3.41,3.96,3.681241237,0.931966115,0.532754379,0.597695186
+13,Carnivora,1,Canidae,Vulpes,vulpes,Vulpes_vulpes,Red Fox,4820.36,5.29,1.59,2.87,3.683079474,0.723455672,0.201397124,0.457881897
+202,Cetartiodactyla,3,Bovidae,Madoqua,kirkii,Madoqua_kirkii,Kirk's Dik-dik,4833.4,3.75,1.51,1.93,3.684252738,0.574031268,0.178976947,0.285557309
+217,Cetartiodactyla,3,Bovidae,Philantomba,monticola,Philantomba_monticola,Blue Duiker,4896.05,5.01,2.45,2.22,3.689845844,0.699837726,0.389166084,0.346352974
+1,Carnivora,1,Ailuridae,Ailurus,fulgens,Ailurus_fulgens,Red Panda,5170.08,6.67,2.71,3.45,3.713497263,0.824125834,0.432969291,0.537819095
+258,Cetartiodactyla,3,Tragulidae,Tragulus,napu,Tragulus_napu,Greater Malayan Chevrotain,5273.67,11.04,5.23,4.61,3.72211295,1.042969073,0.718501689,0.663700925
+108,Primates,2,Cercopithecidae,Cercopithecus,neglectus,Cercopithecus_neglectus,De Brazza's Monkey,5324.52,6.78,2.87,3.25,3.726280463,0.831229694,0.457881897,0.511883361
+77,Primates,2,Atelidae,Alouatta,caraya,Alouatta_caraya,Black Howler,5576.96,13.6,4.73,7.85,3.74639753,1.133538908,0.674861141,0.894869657
+139,Primates,2,Hylobatidae,Hylobates,lar,Hylobates_lar,Lar Gibbon,5578.61,7.75,2.47,4.6,3.746526001,0.889301703,0.392696953,0.662757832
+314,Pilosa,12,Megalonychidae,Choloepus,hoffmanni,Choloepus_hoffmanni,Hoffmann's Twotoed Sloth,5893.5,12.5,7.47,3.78,3.770373288,1.096910013,0.873320602,0.5774918
+140,Primates,2,Hylobatidae,Hylobates,muelleri,Hylobates_muelleri,Grey Gibbon,5909.81,7.29,2.58,3.62,3.771573519,0.862727528,0.411619706,0.558708571
+118,Primates,2,Cercopithecidae,Macaca,silenus,Macaca_silenus,Liontailed Macaque,5995.25,6.7,1.79,4.42,3.777807298,0.826074803,0.252853031,0.645422269
+80,Primates,2,Atelidae,Lagothrix,lagotricha,Lagothrix_lagotricha,Brown Woolly Monkey,6263.69,11.06,3.25,6.76,3.796830256,1.043755127,0.511883361,0.829946696
+8,Carnivora,1,Canidae,Speothos,venaticus,Speothos_venaticus,Bush Dog,6324.54,12.79,2.07,9.43,3.801028944,1.106870544,0.315970345,0.974511693
+65,Carnivora,1,Procyonidae,Procyon,lotor,Procyon_lotor,Raccoon,6373.72,8.94,3.71,3.88,3.804392981,0.951337519,0.56937391,0.588831726
+28,Carnivora,1,Felidae,Lynx,rufus,Lynx_rufus,Bobcat,6374.47,6.38,1.94,3.7,3.804444082,0.804820679,0.28780173,0.568201724
+313,Pilosa,12,Megalonychidae,Choloepus,didactylus,Choloepus_didactylus,Linne's Twotoed Sloth,6646.5,14.82,8.29,5.24,3.822593009,1.170848204,0.918554531,0.719331287
+36,Carnivora,1,Felidae,Puma,yagouaroundi,Puma_yagouaroundi,Jaguarundi,6875,7.58,1.95,4.61,3.837272703,0.879669206,0.290034611,0.663700925
+129,Primates,2,Cercopithecidae,Trachypithecus,obscurus,Trachypithecus_obscurus,Dusky Leaf Monkey,7247.88,8.09,3,4.58,3.860210994,0.907948522,0.477121255,0.660865478
+103,Primates,2,Cercopithecidae,Cercocebus,torquatus,Cercocebus_torquatus,Redcapped Mangabey,7293.07,7.06,2.92,3.47,3.862910382,0.848804701,0.465382851,0.540329475
+117,Primates,2,Cercopithecidae,Macaca,nigra,Macaca_nigra,Sulawesi Crested Macaque,7359.39,10.5,2.59,6.94,3.866841818,1.021189299,0.413299764,0.84135947
+285,Rodentia,6,Erethizontidae,Erethizon,dorsatum,Erethizon_dorsatum,North American Porcupine,7419.46,8.21,3.78,3.68,3.870372298,0.914343157,0.5774918,0.565847819
+79,Primates,2,Atelidae,Ateles,geoffroyi,Ateles_geoffroyi,Blackhanded Spider Monkey,7582.4,12.21,2.96,8.26,3.879806691,1.086715664,0.471291711,0.916980047
+114,Primates,2,Cercopithecidae,Erythrocebus,patas,Erythrocebus_patas,Patas Monkey,7966.3,6.37,2.25,3.59,3.901256657,0.804139432,0.352182518,0.555094449
+279,Rodentia,6,Caviidae,Dolichotis,patagonum,Dolichotis_patagonum,Patagonian Mara,8000,5.66,1.63,3.61,3.903089987,0.752816431,0.212187604,0.557507202
+50,Carnivora,1,Mustelidae,Lontra,canadensis,Lontra_canadensis,North American River Otter,8087.42,6.54,1.43,4.47,3.907809998,0.815577748,0.155336037,0.650307523
+43,Carnivora,1,Hyaenidae,Proteles,cristatus,Proteles_cristatus,Aardwolf,8139.39,8.21,2.08,5.3,3.910591858,0.914343157,0.318063335,0.72427587
+4,Carnivora,1,Canidae,Canis,mesomelas,Canis_mesomelas,Blackbacked Jackal,8247.3,8.58,1.76,5.82,3.916311793,0.933487288,0.245512668,0.764922985
+301,Diprotodontia,11,Macropodidae,Dendrolagus,matschiei,Dendrolagus_matschiei,Matschie's Tree Kangaroo,8293.4,4.35,1.94,1.92,3.918732612,0.638489257,0.28780173,0.283301229
+309,Diprotodontia,11,Macropodidae,Petrogale,xanthopus,Petrogale_xanthopus,Yellowfooted Rock Wallaby,8499.99,6.69,3.77,2.38,3.929418415,0.825426118,0.57634135,0.376576957
+216,Cetartiodactyla,3,Bovidae,Philantomba,maxwellii,Philantomba_maxwellii,Maxwell's Duiker,8557.69,4.38,2.25,1.77,3.93235655,0.641474111,0.352182518,0.247973266
+34,Carnivora,1,Felidae,Prionailurus,viverrinus,Prionailurus_viverrinus,Fishing Cat,8826.46,8,1.98,5.13,3.945786557,0.903089987,0.29666519,0.710117365
+78,Primates,2,Atelidae,Ateles,fusciceps,Ateles_fusciceps,Blackheaded Spider Monkey,9067.94,13.3,2.45,8.95,3.957508638,1.123851641,0.389166084,0.951823035
+15,Carnivora,1,Eupleridae,Cryptoprocta,ferox,Cryptoprocta_ferox,Fossa,9500,7.31,1.29,5.22,3.977723605,0.863917377,0.11058971,0.717670503
+26,Carnivora,1,Felidae,Lynx,canadensis,Lynx_canadensis,Canadian Lynx,9682.82,9.62,2.53,6.38,3.986001859,0.983175072,0.403120521,0.804820679
+113,Primates,2,Cercopithecidae,Colobus,guereza,Colobus_guereza,Eastern Blackandwhite Colobus,9925.88,6.41,2.37,3.47,3.99676902,0.80685803,0.374748346,0.540329475
+116,Primates,2,Cercopithecidae,Macaca,fuscata,Macaca_fuscata,Japanese Macaque,10114.76,11.19,3.45,7.14,4.004955582,1.048830087,0.537819095,0.853698212
+142,Primates,2,Hylobatidae,Symphalangus,syndactylus,Symphalangus_syndactylus,Siamang,10839,11.36,2.59,7.99,4.034989216,1.055378331,0.413299764,0.902546779
+23,Carnivora,1,Felidae,Leopardus,pardalis,Leopardus_pardalis,Ocelot,11880,10.57,2.15,6.39,4.074816441,1.024074987,0.33243846,0.805500858
+17,Carnivora,1,Felidae,Caracal,caracal,Caracal_caracal,Caracal Lynx,11964.38,7.65,2.22,4.65,4.077890198,0.883661435,0.346352974,0.667452953
+2,Carnivora,1,Canidae,Canis,latrans,Canis_latrans,Coyote,11989.1,8.72,1.6,5.74,4.078786583,0.940516485,0.204119983,0.758911892
+25,Carnivora,1,Felidae,Leptailurus,serval,Leptailurus_serval,Serval,11999.96,9.57,3.57,5.21,4.079179798,0.980911938,0.552668216,0.716837723
+182,Cetartiodactyla,3,Bovidae,Cephalophus,rufilatus,Cephalophus_rufilatus,Red-flanked Duiker,12114.57,4.17,2.58,1.26,4.083308004,0.620136055,0.411619706,0.100370545
+124,Primates,2,Cercopithecidae,Semnopithecus,entellus,Semnopithecus_entellus,Northern Plains Grey Langur,12679.29,9.49,2.81,6.18,4.103094935,0.977266212,0.44870632,0.790988475
+49,Carnivora,1,Mustelidae,Gulo,gulo,Gulo_gulo,Wolverine,12792.49,5.1,1.45,3.17,4.106955086,0.707570176,0.161368002,0.501059262
+74,Carnivora,1,Viverridae,Arctictis,binturong,Arctictis_binturong,Binturong,12999.99,10.96,2.99,7.04,4.113943018,1.039810554,0.475671188,0.847572659
+207,Cetartiodactyla,3,Bovidae,Oreotragus,oreotragus,Oreotragus_oreotragus,Klipspringer,13486.55,5.79,2.81,2.48,4.129900867,0.762678564,0.44870632,0.394451681
+122,Primates,2,Cercopithecidae,Papio,hamadryas,Papio_hamadryas,Hamadryas Baboon,14007.08,10.41,2.32,7.41,4.146347609,1.01745073,0.365487985,0.869818208
+119,Primates,2,Cercopithecidae,Mandrillus,leucophaeus,Mandrillus_leucophaeus,Drill,14253.3,7.6,2.81,3.85,4.153915426,0.880813592,0.44870632,0.58546073
+288,Rodentia,6,Hystricidae,Hystrix,indica,Hystrix_indica,Indian Crested Porcupine,14298.6,6.67,2.24,3.67,4.155293517,0.824125834,0.350248018,0.564666064
+287,Rodentia,6,Hystricidae,Hystrix,africaeaustralis,Hystrix_africaeaustralis,African Crested Porcupine,14936.02,7.85,2.42,4.56,4.174234886,0.894869657,0.383815366,0.658964843
+29,Carnivora,1,Felidae,Neofelis,nebulosa,Neofelis_nebulosa,Clouded Leopard,14945.05,13.21,3.16,8.81,4.174497372,1.120902818,0.499687083,0.944975908
+189,Cetartiodactyla,3,Bovidae,Gazella,dorcas,Gazella_dorcas,Dorcas Gazelle,15635.95,4.51,1.57,2.58,4.194124273,0.654176542,0.195899652,0.411619706
+125,Primates,2,Cercopithecidae,Theropithecus,gelada,Theropithecus_gelada,Gelada Baboon,15964.11,8.49,2.6,5.03,4.203144712,0.92890769,0.414973348,0.701567985
+120,Primates,2,Cercopithecidae,Mandrillus,sphinx,Mandrillus_sphinx,Mandrill,16685.06,9.52,3.13,5.56,4.222327773,0.978636948,0.495544338,0.745074792
+277,Rodentia,6,Castoridae,Castor,canadensis,Castor_canadensis,American Beaver,18124.41,11.77,3.43,7.32,4.258263878,1.070776463,0.53529412,0.864511081
+181,Cetartiodactyla,3,Bovidae,Cephalophus,niger,Cephalophus_niger,Black Duiker,19094.32,3.19,1.79,1.24,4.280904197,0.503790683,0.252853031,0.093421685
+27,Carnivora,1,Felidae,Lynx,lynx,Lynx_lynx,Northern Lynx,19300,7.35,1.89,4.8,4.285557309,0.866287339,0.276461804,0.681241237
+45,Carnivora,1,Mustelidae,Aonyx,capensis,Aonyx_capensis,African Clawless Otter,19322.22,6.75,1.23,4,4.286057023,0.829303773,0.089905111,0.602059991
+180,Cetartiodactyla,3,Bovidae,Cephalophus,dorsalis,Cephalophus_dorsalis,Bay Duiker,20000,7.03,3.58,2.62,4.301029996,0.846955325,0.553883027,0.418301291
+257,Cetartiodactyla,3,Tayassuidae,Pecari,tajacu,Pecari_tajacu,Collared Peccary,21133.69,7.58,2.58,4.39,4.324975333,0.879669206,0.411619706,0.64246452
+6,Carnivora,1,Canidae,Lycaon,pictus,Lycaon_pictus,African Hunting Dog,21999.99,10.76,1.95,7.42,4.342422483,1.031812271,0.290034611,0.870403905
+187,Cetartiodactyla,3,Bovidae,Eudorcas,thomsonii,Eudorcas_thomsonii,Thomson's Gazelle,22907.43,3.3,1.13,2,4.359976368,0.51851394,0.053078443,0.301029996
+5,Carnivora,1,Canidae,Chrysocyon,brachyurus,Chrysocyon_brachyurus,Maned Wolf,23325,15.37,3.85,9.88,4.367821652,1.186673867,0.58546073,0.994756945
+190,Cetartiodactyla,3,Bovidae,Gazella,leptoceros,Gazella_leptoceros,Sand Gazelle,24645.75,3.9,1.44,2.08,4.391742039,0.591064607,0.158362492,0.318063335
+306,Diprotodontia,11,Macropodidae,Macropus,robustus,Macropus_robustus,Hill Wallaroo,25978.92,5.51,2.23,2.95,4.414621093,0.741151599,0.348304863,0.469822016
+54,Carnivora,1,Mustelidae,Pteronura,brasiliensis,Pteronura_brasiliensis,Giant Otter,26000,11.51,1.83,8.13,4.414973348,1.061075324,0.26245109,0.910090546
+192,Cetartiodactyla,3,Bovidae,Gazella,subgutturosa,Gazella_subgutturosa,Goitred Gazelle,26981.37,4.5,1.61,2.54,4.431063998,0.653212514,0.206825876,0.404833717
+48,Carnivora,1,Mustelidae,Enhydra,lutris,Enhydra_lutris,Sea Otter,27410.93,7.3,2.24,4.16,4.437923771,0.86332286,0.350248018,0.619093331
+315,Pilosa,12,Myrmecophagidae,Myrmecophaga,tridactyla,Myrmecophaga_tridactyla,Giant Anteater,29531.83,8.42,1.74,5.52,4.47029036,0.925312091,0.240549248,0.741939078
+3,Carnivora,1,Canidae,Canis,lupus,Canis_lupus,Grey Wolf,31756.51,9.84,1.87,6.68,4.501832768,0.992995098,0.271841607,0.824776462
+37,Carnivora,1,Felidae,Panthera,uncia,Panthera_uncia,Snow Leopard,32500,11.17,1.4,8.95,4.511883361,1.048053173,0.146128036,0.951823035
+218,Cetartiodactyla,3,Bovidae,Rupicapra,rupicapra,Rupicapra_rupicapra,Alpine Chamois,33266.35,7.23,3.04,3.76,4.522005152,0.859138297,0.482873584,0.575187845
+304,Diprotodontia,11,Macropodidae,Macropus,giganteus,Macropus_giganteus,Eastern Grey Kangaroo,33409.89,6.37,2.52,3.34,4.523875046,0.804139432,0.401400541,0.523746467
+164,Cetartiodactyla,3,Bovidae,Antidorcas,marsupialis,Antidorcas_marsupialis,Springbok,33571.24,4.84,1.06,3.19,4.525967383,0.684845362,0.025305865,0.503790683
+42,Carnivora,1,Hyaenidae,Hyaena,hyaena,Hyaena_hyaena,Striped Hyena,35070.51,10.52,2.19,7.5,4.544942081,1.02201574,0.340444115,0.875061263
+136,Primates,2,Hominidae,Pan,paniscus,Pan_paniscus,Bonobo,35119.95,11.61,2.51,7.95,4.545553889,1.06483222,0.399673721,0.900367129
+165,Cetartiodactyla,3,Bovidae,Antilope,cervicapra,Antilope_cervicapra,Blackbuck,36301.1,3.7,1.16,2.3,4.559919785,0.568201724,0.064457989,0.361727836
+235,Cetartiodactyla,3,Cervidae,Axis,porcinus,Axis_porcinus,Hog Deer,37448.29,4.13,1.46,2.39,4.573431991,0.615950052,0.164352856,0.378397901
+200,Cetartiodactyla,3,Bovidae,Litocranius,walleri,Litocranius_walleri,Gerenuk,38804.37,4.37,1.34,2.73,4.588880637,0.640481437,0.127104798,0.436162647
+308,Diprotodontia,11,Macropodidae,Macropus,rufus,Macropus_rufus,Red Kangaroo,38968.39,4.39,1.53,2.63,4.590712463,0.64246452,0.184691431,0.419955748
+212,Cetartiodactyla,3,Bovidae,Ovis,aries,Ovis_aries,Sheep/mouflon,39097.89,5.74,2.87,2.3,4.59215332,0.758911892,0.457881897,0.361727836
+213,Cetartiodactyla,3,Bovidae,Ovis,aries,Ovis_aries,Sheep,39097.89,5.52,2.9,2.08,4.59215332,0.741939078,0.462397998,0.318063335
+225,Cetartiodactyla,3,Bovidae,Tragelaphus,scriptus,Tragelaphus_scriptus,Bushbuck,43250.39,5.75,2.94,2.47,4.635990028,0.759667845,0.46834733,0.392696953
+137,Primates,2,Hominidae,Pan,troglodytes,Pan_troglodytes,Chimpanzee,45000,10.43,2.9,6.77,4.653212514,1.018284308,0.462397998,0.830588669
+175,Cetartiodactyla,3,Bovidae,Capra,hircus,Capra_hircus,Goat,47386.47,9.49,4.5,4.21,4.675654358,0.977266212,0.653212514,0.624282096
+160,Cetartiodactyla,3,Antilocapridae,Antilocapra,americana,Antilocapra_americana,Pronghorn,47450.01,5.35,1.08,3.76,4.676236308,0.728353782,0.033423755,0.575187845
+280,Rodentia,6,Caviidae,Hydrochaeris,hydrochaeris,Hydrochaeris_hydrochaeris,Capybara,48144.91,7.14,2.14,4.02,4.682550379,0.853698212,0.330413773,0.604226053
+16,Carnivora,1,Felidae,Acinonyx,jubatus,Acinonyx_jubatus,Cheetah,50577,10.19,1.97,6.91,4.703953065,1.008174184,0.294466226,0.839478047
+32,Carnivora,1,Felidae,Panthera,pardus,Panthera_pardus,Leopard,52399.99,12.06,1.63,9.14,4.719331204,1.081347308,0.212187604,0.960946196
+162,Cetartiodactyla,3,Bovidae,Aepyceros,melampus,Aepyceros_melampus,Impala,52591.69,3.51,1.24,2.02,4.720917127,0.545307116,0.093421685,0.305351369
+237,Cetartiodactyla,3,Cervidae,Cervus,nippon,Cervus_nippon,Sika Deer,52999.99,4.25,1.34,2.48,4.724275788,0.62838893,0.127104798,0.394451681
+138,Primates,2,Hominidae,Pongo,pygmaeus,Pongo_pygmaeus,Orangutan,53408.29,9.7,3.61,5.26,4.727608673,0.986771734,0.557507202,0.720985744
+35,Carnivora,1,Felidae,Puma,concolor,Puma_concolor,Puma,53954.05,6.82,1.84,4.49,4.73202405,0.833784375,0.264817823,0.652246341
+174,Cetartiodactyla,3,Bovidae,Capra,falconeri,Capra_falconeri,Markhor,54303.37,8.16,2.51,5.25,4.734826782,0.911690159,0.399673721,0.720159303
+205,Cetartiodactyla,3,Bovidae,Nanger,granti,Nanger_granti,Grant's Gazelle,55464.46,4.46,1.44,2.68,4.744014789,0.649334859,0.158362492,0.428134794
+56,Carnivora,1,Otariidae,Callorhinus,ursinus,Callorhinus_ursinus,Northern Fur Seal,55464.82,6.02,1.27,3.6,4.744017608,0.779596491,0.103803721,0.556302501
+319,Afrotheria,14,Orycteropodidae,Orycteropus,afer,Orycteropus_afer,Aardvark,56175.2,7.7,1.96,4.3,4.749544627,0.886490725,0.292256071,0.633468456
+67,Carnivora,1,Ursidae,Helarctos,malayanus,Helarctos_malayanus,Malayan Sun Bear,57075.78,10.52,1.92,7.45,4.756451855,1.02201574,0.283301229,0.872156273
+238,Cetartiodactyla,3,Cervidae,Dama,dama,Dama_dama,Fallow Deera,57224.61,3.54,1.22,1.81,4.757582842,0.549003262,0.086359831,0.257678575
+183,Cetartiodactyla,3,Bovidae,Cephalophus,silvicultor,Cephalophus_silvicultor,Yellow-backed Duiker,62006.6,6.02,2.87,2.68,4.792437918,0.779596491,0.457881897,0.428134794
+41,Carnivora,1,Hyaenidae,Crocuta,crocuta,Crocuta_crocuta,Spotted Hyena,63369.98,11.98,2.45,8.62,4.80188357,1.078456818,0.389166084,0.935507266
+194,Cetartiodactyla,3,Bovidae,Hemitragus,jemlahicus,Hemitragus_jemlahicus,Himalayan Tahr,68616.43,5.78,1.99,3.13,4.836428119,0.761927838,0.298853076,0.495544338
+176,Cetartiodactyla,3,Bovidae,Capra,ibex,Capra_ibex,Alpine Ibex,69546.83,6.67,2.55,3.38,4.842277339,0.824125834,0.40654018,0.5289167
+255,Cetartiodactyla,3,Suidae,Potamochoerus,porcus,Potamochoerus_porcus,Red River Hog,70000.31,8.08,2.98,4.23,4.845099963,0.907411361,0.474216264,0.626340367
+215,Cetartiodactyla,3,Bovidae,Ovis,dalli,Ovis_dalli,White Sheep,70194.13,6.13,1.49,4.21,4.846300796,0.787460475,0.173186268,0.624282096
+204,Cetartiodactyla,3,Bovidae,Nanger,dama,Nanger_dama,Addra Gazelle,71424.81,4.23,1.34,2.53,4.853849094,0.626340367,0.127104798,0.403120521
+206,Cetartiodactyla,3,Bovidae,Oreamnos,americanus,Oreamnos_americanus,Rocky Mountain Goat,72105.4,7.86,2.78,4.27,4.85796779,0.895422546,0.444044796,0.630427875
+193,Cetartiodactyla,3,Bovidae,Hemitragus,hylocrius,Hemitragus_hylocrius,Nilgiri Tahr,74186.41,6.68,1.43,4.82,4.870324355,0.824776462,0.155336037,0.683047038
+214,Cetartiodactyla,3,Bovidae,Ovis,canadensis,Ovis_canadensis,Bighorn Sheep,74644.87,7.44,1.89,4.87,4.872999966,0.871572936,0.276461804,0.687528961
+226,Cetartiodactyla,3,Bovidae,Tragelaphus,spekii,Tragelaphus_spekii,Sitatunga,75554.25,6.77,2.46,3.6,4.878258899,0.830588669,0.390935107,0.556302501
+210,Cetartiodactyla,3,Bovidae,Oryx,leucoryx,Oryx_leucoryx,Arabian Oryx,75788.24,6.39,1.5,4.55,4.879601822,0.805500858,0.176091259,0.658011397
+243,Cetartiodactyla,3,Cervidae,Odocoileus,virginianus,Odocoileus_virginianus,Whitetailed Deer,75901.25,3.47,1.06,1.94,4.880248928,0.540329475,0.025305865,0.28780173
+230,Cetartiodactyla,3,Camelidae,Lama,glama,Lama_glama,Llama,78322.67,12.78,2.46,8.69,4.893887484,1.106530854,0.390935107,0.939019776
+254,Cetartiodactyla,3,Suidae,Phacochoerus,africanus,Phacochoerus_africanus,Warthog,82499.99,8.11,2.73,4.6,4.916453896,0.909020854,0.436162647,0.662757832
+31,Carnivora,1,Felidae,Panthera,onca,Panthera_onca,Jaguar,83943.09,10.62,1.78,8.07,4.923984952,1.026124517,0.250420002,0.906873535
+256,Cetartiodactyla,3,Suidae,Sus,scrofa,Sus_scrofa,Domestic Pig,84471.54,9.42,4.82,3.67,4.926710412,0.974050903,0.683047038,0.564666064
+242,Cetartiodactyla,3,Cervidae,Odocoileus,hemionus,Odocoileus_hemionus,Mule Deer,84560.57,5.06,1.23,3.41,4.927167902,0.704150517,0.089905111,0.532754379
+199,Cetartiodactyla,3,Bovidae,Kobus,megaceros,Kobus_megaceros,Nile Lechwe,85805.93,7.04,2.5,4.09,4.933517303,0.847572659,0.397940009,0.611723308
+59,Carnivora,1,Phocidae,Phoca,vitulina,Phoca_vitulina,Harbor Seal,87316.66,8.87,1.97,5.79,4.941097115,0.94792362,0.294466226,0.762678564
+222,Cetartiodactyla,3,Bovidae,Tragelaphus,angasii,Tragelaphus_angasii,Nyala,87616.76,5.21,1.46,3.33,4.942587189,0.716837723,0.164352856,0.522444234
+198,Cetartiodactyla,3,Bovidae,Kobus,leche,Kobus_leche,Southern Lechwe,88645.04,4.55,1.76,2.34,4.94765444,0.658011397,0.245512668,0.369215857
+163,Cetartiodactyla,3,Bovidae,Ammotragus,lervia,Ammotragus_lervia,Barbary Sheep,94202.22,7.24,2.28,4.42,4.974061138,0.859738566,0.357934847,0.645422269
+224,Cetartiodactyla,3,Bovidae,Tragelaphus,imberbis,Tragelaphus_imberbis,Lesser Kudu,94320.39,4.4,0.83,3.15,4.974605588,0.643452676,-0.080921908,0.498310554
+247,Cetartiodactyla,3,Cervidae,Rucervus,eldii,Rucervus_eldii,Brow-antlered Deer,95471.61,3.66,0.95,2.06,4.979874246,0.563481085,-0.022276395,0.31386722
+161,Cetartiodactyla,3,Bovidae,Addax,nasomaculatus,Addax_nasomaculatus,Addax,96077.36,6.13,1.36,4.14,4.982621061,0.787460475,0.133538908,0.617000341
+73,Carnivora,1,Ursidae,Ursus,thibetanus,Ursus_thibetanus,Asiatic Black Bear,99714.19,6.9,1.4,4.81,4.998756966,0.838849091,0.146128036,0.682145076
+68,Carnivora,1,Ursidae,Melursus,ursinus,Melursus_ursinus,Sloth Bear,99999.99,11.46,1.64,8.39,4.999999957,1.059184618,0.214843848,0.923761961
+245,Cetartiodactyla,3,Cervidae,Rangifer,tarandus,Rangifer_tarandus,Reindeer,109088.5,5.31,1.63,3.03,5.03777897,0.725094521,0.212187604,0.481442629
+248,Cetartiodactyla,3,Delphinidae,Lagenorhynchus,obliquidens,Lagenorhynchus_obliquidens,Pacific Whitesided Dolphin,109694.46,3.91,0.75,1.99,5.040184695,0.592176757,-0.124938737,0.298853076
+70,Carnivora,1,Ursidae,Ursus,americanus,Ursus_americanus,North American Black Bear,110500,8.2,1.7,5.32,5.043362278,0.913813852,0.230448921,0.725911632
+135,Primates,2,Hominidae,Gorilla,gorilla,Gorilla_gorilla,Western Gorilla,112588.99,7.86,2.07,5.03,5.051495923,0.895422546,0.315970345,0.701567985
+66,Carnivora,1,Ursidae,Ailuropoda,melanoleuca,Ailuropoda_melanoleuca,Giant Panda,117999.99,7.87,1.69,4.54,5.071881971,0.895974732,0.227886705,0.657055853
+69,Carnivora,1,Ursidae,Tremarctos,ornatus,Tremarctos_ornatus,Spectacled Bear,123176.97,6.34,1.27,4.36,5.090529517,0.802089258,0.103803721,0.639486489
+57,Carnivora,1,Otariidae,Zalophus,californianus,Zalophus_californianus,California Sealion,137194.86,5.53,1.33,3.64,5.137337841,0.742725131,0.123851641,0.561101384
+30,Carnivora,1,Felidae,Panthera,leo,Panthera_leo,Lion,158623.93,11.8,1.75,9.03,5.200368706,1.071882007,0.243038049,0.95568775
+33,Carnivora,1,Felidae,Panthera,tigris,Panthera_tigris,Tiger,161914.66,10.67,1.65,8.01,5.209286172,1.028164419,0.217483944,0.903632516
+240,Cetartiodactyla,3,Cervidae,Elaphurus,davidianus,Elaphurus_davidianus,Pere David's Deer,165989.17,5.45,1.56,3.18,5.220079753,0.736396502,0.193124598,0.50242712
+271,Perissodactyla,4,Tapiridae,Tapirus,terrestris,Tapirus_terrestris,South American Tapir,169496.64,9.14,2.8,5.43,5.229161093,0.960946196,0.447158031,0.73479983
+171,Cetartiodactyla,3,Bovidae,Boselaphus,tragocamelus,Boselaphus_tragocamelus,Nilgai,182253.04,4.08,1.49,2.28,5.260674781,0.610660163,0.173186268,0.357934847
+209,Cetartiodactyla,3,Bovidae,Oryx,gazella,Oryx_gazella,Gemsbok,188404.45,5.94,1.61,3.95,5.275091156,0.773786445,0.206825876,0.596597096
+71,Carnivora,1,Ursidae,Ursus,arctos,Ursus_arctos,Brown Bear,196287.5,8.04,1.55,5.33,5.292892644,0.905256049,0.190331698,0.726727209
+58,Carnivora,1,Phocidae,Halichoerus,grypus,Halichoerus_grypus,Grey Seal,197570.01,10.54,2.19,7.12,5.295721022,1.022840611,0.340444115,0.852479994
+184,Cetartiodactyla,3,Bovidae,Connochaetes,taurinus,Connochaetes_taurinus,Brindled Wildebeest,198619.68,5.41,1.66,3.26,5.298022278,0.733197265,0.220108088,0.5132176
+208,Cetartiodactyla,3,Bovidae,Oryx,dammah,Oryx_dammah,Scimitar-horned Oryx,199798.95,5.42,1.38,3.71,5.300593202,0.733999287,0.139879086,0.56937391
+197,Cetartiodactyla,3,Bovidae,Kobus,ellipsiprymnus,Kobus_ellipsiprymnus,Common Waterbuck,204393.48,5.21,1.57,3.2,5.310467038,0.716837723,0.195899652,0.505149978
+227,Cetartiodactyla,3,Bovidae,Tragelaphus,strepsiceros,Tragelaphus_strepsiceros,Greater Kudu,206056.41,4.77,1.07,3.27,5.313986129,0.678518379,0.029383778,0.514547753
+252,Cetartiodactyla,3,Giraffidae,Okapia,johnstoni,Okapia_johnstoni,Okapi,230001.14,7.42,2.12,4.79,5.361729989,0.870403905,0.326335861,0.680335513
+196,Cetartiodactyla,3,Bovidae,Hippotragus,niger,Hippotragus_niger,Sable Antelope,236405.9,5.15,1.24,3.67,5.373658311,0.711807229,0.093421685,0.564666064
+236,Cetartiodactyla,3,Cervidae,Cervus,elaphus,Cervus_elaphus,Red Deer,240867.13,4.54,1.34,2.65,5.381777538,0.657055853,0.127104798,0.423245874
+172,Cetartiodactyla,3,Bovidae,Bubalus,depressicornis,Bubalus_depressicornis,Anoa,256989.27,5.29,2.39,2.65,5.409914991,0.723455672,0.378397901,0.423245874
+195,Cetartiodactyla,3,Bovidae,Hippotragus,equinus,Hippotragus_equinus,Roan Antelope,264173.96,5.74,1.42,3.91,5.421890006,0.758911892,0.152288344,0.592176757
+223,Cetartiodactyla,3,Bovidae,Tragelaphus,eurycerus,Tragelaphus_eurycerus,Bongo,270998.37,5.73,1.45,3.86,5.432966679,0.758154622,0.161368002,0.586587305
+260,Perissodactyla,4,Equidae,Equus,burchellii,Equus_burchellii,Common Zebra,279160.65,8.4,2.64,5.29,5.445854201,0.924279286,0.421603927,0.723455672
+250,Cetartiodactyla,3,Delphinidae,Tursiops,truncatus,Tursiops_truncatus,Bottlenose Dolphin,281040.55,6.33,1.13,4.22,5.448768987,0.80140371,0.053078443,0.625312451
+263,Perissodactyla,4,Equidae,Equus,zebra,Equus_zebra,Mountain Zebra,282462.13,9.73,3.64,5.49,5.45096023,0.98811284,0.561101384,0.739572344
+173,Cetartiodactyla,3,Bovidae,Budorcas,taxicolor,Budorcas_taxicolor,Takin,294515.33,7.33,2.23,4.56,5.469107905,0.865103975,0.348304863,0.658964843
+269,Perissodactyla,4,Tapiridae,Tapirus,indicus,Tapirus_indicus,Malayan Tapir,311209.19,8.12,2.15,5.26,5.493052413,0.909556029,0.33243846,0.720985744
+211,Cetartiodactyla,3,Bovidae,Ovibos,moschatus,Ovibos_moschatus,Muskox,312500,6.61,2.3,3.72,5.494850022,0.820201459,0.361727836,0.57054294
+72,Carnivora,1,Ursidae,Ursus,maritimus,Ursus_maritimus,Polar Bear,371703.81,9.23,1.51,6.28,5.570197013,0.965201701,0.178976947,0.797959644
+261,Perissodactyla,4,Equidae,Equus,caballus,Equus_caballus,Domestic Horse,403598.53,7.05,2.61,3.9,5.605949576,0.848189117,0.416640507,0.591064607
+262,Perissodactyla,4,Equidae,Equus,grevyi,Equus_grevyi,Grevy's Zebra,408000.35,8.52,2.51,5.52,5.610660536,0.930439595,0.399673721,0.741939078
+232,Cetartiodactyla,3,Cervidae,Alces,alces,Alces_alces,Eurasian Elk,461900.76,6.02,1.72,3.81,5.664548677,0.779596491,0.235528447,0.580924976
+276,Afrotheria,5,Trichechidae,Trichechus,manatus,Trichechus_manatus,Caribbean Manatee,467324.83,7.27,2.59,3.98,5.669618857,0.861534411,0.413299764,0.599883072
+229,Cetartiodactyla,3,Camelidae,Camelus,dromedarius,Camelus_dromedarius,Dromedary,492714.47,13.03,3.66,8.12,5.692595317,1.114944416,0.563481085,0.909556029
+169,Cetartiodactyla,3,Bovidae,Bos,grunniens,Bos_grunniens,Yak,5.00E+05,7.16,2.81,3.05,5.698970004,0.854913022,0.44870632,0.484299839
+233,Cetartiodactyla,3,Cervidae,Alces,americanus,Alces_americanus,Moose,541460.44,6.78,1.76,4.3,5.733566732,0.831229694,0.245512668,0.633468456
+228,Cetartiodactyla,3,Camelidae,Camelus,bactrianus,Camelus_bactrianus,Bactrian Camel,554515.91,13.95,3.15,9.31,5.743914011,1.144574208,0.498310554,0.968949681
+221,Cetartiodactyla,3,Bovidae,Tragelaphus,oryx,Tragelaphus_oryx,Common Eland,562592.69,5.36,1.3,3.55,5.750194085,0.72916479,0.113943352,0.550228353
+219,Cetartiodactyla,3,Bovidae,Syncerus,caffer,Syncerus_caffer,African Buffalo,592665.98,5.62,2.08,3.03,5.772809999,0.749736316,0.318063335,0.481442629
+166,Cetartiodactyla,3,Bovidae,Bison,bison,Bison_bison,American Bison,624577.07,6.64,2.59,3.33,5.795586036,0.822168079,0.413299764,0.522444234
+168,Cetartiodactyla,3,Bovidae,Bos,javanicus,Bos_javanicus,Banteng,635974.34,6.74,2.6,3.71,5.803439593,0.828659897,0.414973348,0.56937391
+220,Cetartiodactyla,3,Bovidae,Taurotragus,derbianus,Taurotragus_derbianus,Giant Eland,646024.25,8.05,1.54,5.71,5.810248821,0.90579588,0.187520721,0.756636108
+167,Cetartiodactyla,3,Bovidae,Bos,frontalis,Bos_frontalis,Gayal/gaur,800143.05,8.66,3.43,4.17,5.903167637,0.937517892,0.53529412,0.620136055
+251,Cetartiodactyla,3,Giraffidae,Giraffa,camelopardalis,Giraffa_camelopardalis,Giraffe,964654.73,10.99,2.11,7.93,5.984371898,1.040997692,0.324282455,0.899273187
+266,Perissodactyla,4,Rhinocerotidae,Diceros,bicornis,Diceros_bicornis,Black Rhinoceros,995940.54,7.75,2.11,4.86,5.998233411,0.889301703,0.324282455,0.686636269
+55,Carnivora,1,Odobenidae,Odobenus,rosmarus,Odobenus_rosmarus,Walrus,1042996.25,6.89,1.44,4.84,6.018282747,0.838219222,0.158362492,0.684845362
+265,Perissodactyla,4,Rhinocerotidae,Dicerorhinus,sumatrensis,Dicerorhinus_sumatrensis,Sumatran Rhinoceros,1046156.04,7.77,2.37,4.6,6.019596467,0.890421019,0.374748346,0.662757832
+253,Cetartiodactyla,3,Monodontidae,Delphinapterus,leucas,Delphinapterus_leucas,Beluga Whale,1381640.73,6.65,1.43,4.48,6.140395128,0.822821645,0.155336037,0.651278014
+267,Perissodactyla,4,Rhinocerotidae,Rhinoceros,unicornis,Rhinoceros_unicornis,One-horned Rhinoceros,1843655.8,6.96,1.71,4.62,6.265679844,0.84260924,0.23299611,0.664641976
+264,Perissodactyla,4,Rhinocerotidae,Ceratotherium,simum,Ceratotherium_simum,White Rhinoceros,2285939.43,8.82,2.3,5.16,6.359064719,0.945468585,0.361727836,0.712649702
+272,Afrotheria,5,Elephantidae,Elephas,maximus,Elephas_maximus,Asiatic Elephant,3269794.34,12.29,3.53,3.6,6.514520438,1.089551883,0.547774705,0.556302501
+273,Afrotheria,5,Elephantidae,Loxodonta,africana,Loxodonta_africana,African Elephant,3824539.93,9.83,4.14,3.34,6.5825792,0.992553518,0.617000341,0.523746467
+249,Cetartiodactyla,3,Delphinidae,Orcinus,orca,Orcinus_orca,Killer Whale,5628758.66,7.49,1.49,5.31,6.750412628,0.874481818,0.173186268,0.725094521
