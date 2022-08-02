@@ -119,7 +119,7 @@ p1
 ```
 Your plot should look like this:
 
-<img src="/brief/Fig1.png" alt = "Example Fig. 1" width="600">
+<img src="brief/Fig1.png" alt = "Example Fig. 1" width="600">
 
 
 Now, run a GAM to determine the partial effect of host order (phylogeny) on maximum longevity, and use this to predict mortality rates by order:
@@ -154,7 +154,7 @@ p2 <- cowplot::plot_grid(p3a, p3b, ncol=1, nrow = 2, labels=c("A", "B"), label_x
 
 Your plot should look like this:
 
-<img src="/brief/Fig2.png" alt = "Example Fig. 2" width="400">
+<img src="brief/Fig2.png" alt = "Example Fig. 2" width="400">
 
 
 We see clear evidence of significant effects of host order on the relationship between body mass and longevity. 
@@ -226,7 +226,7 @@ p3
 
 Your plot should look like this:
 
-<img src="/brief/Fig3.png" alt = "Example Fig. 3" width="500">
+<img src="brief/Fig3.png" alt = "Example Fig. 3" width="500">
 
 
 ## Estimating host tolerance of immunopathology
@@ -308,7 +308,7 @@ p4
 
 Your plot should look like this:
 
-<img src="/brief/Fig4.png" alt = "Example Fig. 4" width="500">
+<img src="brief/Fig4.png" alt = "Example Fig. 4" width="500">
 
 
 Since these relationships are derived from the same model, we identify the same positive associations with tolerance of immunopathology as we do with longevity above.
@@ -384,7 +384,7 @@ p5
 
 Producing a plot like this:
 
-<img src="/brief/Fig5.png" alt = "Example Fig. 5" width="500">
+<img src="brief/Fig5.png" alt = "Example Fig. 5" width="500">
 
 Then, we additionally explored scaling with mass-specific basal metabolis rate (BMR):
 
@@ -401,7 +401,7 @@ p6
 
 Producing a plot like this:
 
-<img src="/brief/Fig6.png" alt = "Example Fig. 6" width="500">
+<img src="brief/Fig6.png" alt = "Example Fig. 6" width="500">
 
 Next, we explored statistical correlates of neutrophil concentration, investigating models incorporating body mass and order only, as compared with those also examining BMR. We found stronger support for a model of mass-specific BMR than for body size alone, and thus, used this as a predictor of constitutive immunity:
 
@@ -448,7 +448,7 @@ p7 <- cowplot::plot_grid(p7a, p7b, p7c, ncol=1, nrow = 3, labels=c("A", "B", "C"
 
 This resulting in the following plot:
 
-<img src="/brief/Fig7.png" alt = "Example Fig. 7" width="400">
+<img src="brief/Fig7.png" alt = "Example Fig. 7" width="400">
 
 
 We see significant positive associations with neutrophil concentrations (indicative of robust constitutive immunity for body size and BMR predictions) for the following orders:
@@ -503,7 +503,7 @@ p8
 
 Your plot should look like this:
   
-<img src="/brief/Fig8.png" alt = "Example Fig. 8" width="400">
+<img src="brief/Fig8.png" alt = "Example Fig. 8" width="400">
 
 
 ## Estimating spillover host tolerance from phylogenetic distance
@@ -553,7 +553,7 @@ p9 <- cowplot::plot_grid(p9a, p9b, ncol=1, nrow = 2, labels=c("A", "B"), rel_hei
 
 The resulting plot should look like this:
 
-<img src="/brief/Fig9.png" alt = "Example Fig. 9" width="500">
+<img src="brief/Fig9.png" alt = "Example Fig. 9" width="500">
 
 This scales spillover viral tolerance based on relative phylogenetic distance between each mammalian reservoir order and humans. Humans demonstrate highest tolerance to viruses spilling over from Primates (which share the same evolutionary divergence time as humans) and the lowest tolerance to viruses spilling over from the most phylogenetically distant marsupial orders (e.g. Monotremata, Dasyuormorphia, Didelphimorphia, Diprotodontia, Microbiotheria, Notoryctemorphia, Peramelemorphia).
 
@@ -624,7 +624,7 @@ p10 <- cowplot::plot_grid(p10a, p10b, ncol=1, nrow = 2, labels=c("A", "B"), rel_
 
 The resulting plot should look like this:
 
-<img src="/brief/Fig10.png" alt = "Example Fig. 10" width="500">
+<img src="brief/Fig10.png" alt = "Example Fig. 10" width="500">
 
 
 ## Estimating spillover virulence ($\alpha*_S$) in human hosts
@@ -702,7 +702,7 @@ p11 <- cowplot::plot_grid(p11a, p11b, ncol=1, nrow = 2, labels=c("A", "B"), rel_
 
 The resulting plot should look like this:
 
-<img src="/brief/Fig11.png" alt = "Example Fig. 11" width="500">
+<img src="brief/Fig11.png" alt = "Example Fig. 11" width="500">
 
 ## Comparison with the literature
 
@@ -731,7 +731,7 @@ p12
 
 The resulting plot should look like this:
 
-<img src="/brief/Fig12.png" alt = "Example Fig. 12" width="500">
+<img src="brief/Fig12.png" alt = "Example Fig. 12" width="500">
 
 Next, scale these literature-derived estimates of spillover virulence to a relative magnitude and compare against predictions from the within-host model:
 
@@ -866,36 +866,36 @@ p13 <- p13a + geom_text(x=16, y=0, label="      From nested model       From zoo
 
 The resulting plot should look like this - this is a component of Fig 3 (main text), here plotted under the assumption of constant tolerance:
 
-<img src="/brief/Fig13.png" alt = "Example Fig. 13" width="500">
+<img src="brief/Fig13.png" alt = "Example Fig. 13" width="500">
 
 
 We can also look at only those orders for which we have estimates from the literature for easier comparison:
 
-<img src="/brief/Fig13_sub.png" alt = "Example Fig. 13" width="500">
+<img src="brief/Fig13_sub.png" alt = "Example Fig. 13" width="500">
 
 We see that are predictions are fairly accurate in terms of relative rank - we over-predict the virulence of Primates and under-predict the virulence of Carnivores. 
 
 However, when we plot against a different dataset with rabies excluded from the Guth et al. 2022 dataset, we find that our predictions align even better, here across the whole dataset:
 
-<img src="/brief/Fig14.png" alt = "Example Fig. 14" width="500">
+<img src="brief/Fig14.png" alt = "Example Fig. 14" width="500">
 
 And here just the orders with comparison:
 
-<img src="/brief/Fig14_sub.png" alt = "Example Fig. 14" width="500">
+<img src="brief/Fig14_sub.png" alt = "Example Fig. 14" width="500">
 
 And we can plot these predictions from complete tolerance assumptions, here with rabies included across the whole dataset:
 
-<img src="/brief/Fig15.png" alt = "Example Fig. 15" width="500">
+<img src="brief/Fig15.png" alt = "Example Fig. 15" width="500">
 
 And the subset of comparative orders:
 
-<img src="/brief/Fig15_sub.png" alt = "Example Fig. 15" width="500">
+<img src="brief/Fig15_sub.png" alt = "Example Fig. 15" width="500">
 
 And here with rabies excluded as well:
 
-<img src="/brief/Fig16.png" alt = "Example Fig. 16" width="500">
+<img src="brief/Fig16.png" alt = "Example Fig. 16" width="500">
 
 And the subset of comparative orders:
 
-<img src="/brief/Fig16_sub.png" alt = "Example Fig. 16" width="500">
+<img src="brief/Fig16_sub.png" alt = "Example Fig. 16" width="500">
 
