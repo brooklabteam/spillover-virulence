@@ -1097,7 +1097,7 @@ p15a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
-        plot.margin = unit(c(.2,1.5,1,.2), "cm")) + 
+        plot.margin = unit(c(.2,0,1,1.3), "cm")) + 
   ylab(bquote("relative spillover virulence,"~alpha[S]~"(constant tolerance)")) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
@@ -1107,6 +1107,7 @@ p15a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
 
 p15 <- p15a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
+
 
 
 #and save
@@ -1138,7 +1139,7 @@ p16a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
-        plot.margin = unit(c(.2,1.5,1,.2), "cm")) + 
+        plot.margin = unit(c(.2,1.5,1,1.3), "cm")) + 
   ylab(bquote("relative spillover virulence,"~alpha[S]~"(complete tolerance)")) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
@@ -1159,7 +1160,7 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig16.png"),
 
 # and pair them together to get Fig S6 of the SI
 
-FigS5 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22, label_x = .12, label_y = .99)
+FigS5 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22)#, label_x = .12, label_y = .99)
 
 
 ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
