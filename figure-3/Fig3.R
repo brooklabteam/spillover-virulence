@@ -577,7 +577,6 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig8.png"),
        dpi=300)
 
 
-
 ######################################################
 ######################################################
 ## 4. Now, estimate Tvs
@@ -630,6 +629,7 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig9.png"),
        height=60, 
        scale=3, 
        dpi=300)
+
 
 
 ######################################################
@@ -790,9 +790,6 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig11.png"),
        scale=3, 
        dpi=300)
 
-# And save the predict.dat for Fig S3
-
-write.csv(predict.dat, file = paste0(homewd, subwd, "/predict_pars.csv"), row.names = F)
 
 ######################################################
 ######################################################
