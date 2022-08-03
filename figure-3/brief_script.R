@@ -911,7 +911,7 @@ unique(pic.df$order)
 pic.df = subset(pic.df, order=="Monotremata" | order=="Hyracoidea" | order == "Didelphimorphia" | order=="Proboscidea" | order=="Pilosa" | order== "Cingulata" | order == "Tubulidentata" | order=="Carnivora" | order=="Perissodactyla"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia" | order=="Eulipotyphla")
 
 
-# Plot Fig. 4
+# This is a part of Fig. 3 in the main text
 p13a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
   geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(order, alpha, fill=order, size=N, shape=source)) + 
@@ -920,7 +920,7 @@ p13a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
   scale_fill_manual(values=colz, guide="none") +
   scale_shape_manual(values=shapez, guide="none") +
   #facet_grid(source~., scales = "free_y") +
-  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=18), 
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=16), 
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
@@ -952,7 +952,7 @@ plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.complet
 
 
 # Plot 
-p15a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(yintercept=0), size=.2) +
+p14a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(yintercept=0), size=.2) +
   geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(order, alpha, fill=order, size=N, shape=source)) + 
   theme_bw() +
@@ -960,7 +960,7 @@ p15a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(
   scale_fill_manual(values=colz, guide="none") +
   scale_shape_manual(values=shapez, guide="none") +
   #facet_grid(source~., scales = "free_y") +
-  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=18), 
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=16), 
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
@@ -972,11 +972,21 @@ p15a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(
 
 
 
-p15 <- p15a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+p14 <- p14a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
-ggsave(file = paste0(homewd, subwd, "/brief/Fig15.png"),
-       plot = p15,
+ggsave(file = paste0(homewd, subwd, "/brief/Fig14.png"),
+       plot = p14,
+       units="mm",  
+       width=50, 
+       height=60, 
+       scale=3, 
+       dpi=300)
+
+#this is also Figure S4 of the SI
+
+ggsave(file = paste0(homewd, "/supp-figs/FigS4.png"),
+       plot = p14,
        units="mm",  
        width=50, 
        height=60, 
@@ -1069,9 +1079,10 @@ pic.df = subset(pic.df, order=="Monotremata" | order=="Hyracoidea" | order == "D
 
 shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
 
+plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constant, desc(alpha))$order))
 
 # Plot Fig
-p14a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
+p15a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
   geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(order, alpha, fill=order, size=N, shape=source)) + 
   theme_bw() +
@@ -1079,7 +1090,7 @@ p14a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
   scale_fill_manual(values=colz, guide="none") +
   scale_shape_manual(values=shapez, guide="none") +
   #facet_grid(source~., scales = "free_y") +
-  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=18), 
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=16), 
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
@@ -1091,18 +1102,19 @@ p14a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
 
 
 
-p14 <- p14a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+p15 <- p15a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 
 #and save
-ggsave(file = paste0(homewd, subwd, "/brief/Fig14.png"),
-       plot = p14,
+ggsave(file = paste0(homewd, subwd, "/brief/Fig15.png"),
+       plot = p15,
        units="mm",  
        width=50, 
        height=60, 
        scale=3, 
        dpi=300)
+
 
 # Then, plot complete tolerance assumptions:
 
@@ -1119,7 +1131,7 @@ p16a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(
   scale_fill_manual(values=colz, guide="none") +
   scale_shape_manual(values=shapez, guide="none") +
   #facet_grid(source~., scales = "free_y") +
-  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=18), 
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=16), 
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
@@ -1142,11 +1154,15 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig16.png"),
        scale=3, 
        dpi=300)
 
+# and pair them together to get Fig S6 of the SI
+
+FigS5 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22, label_x = .12, label_y = .99)
 
 
-
-
-
-
-
-
+ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
+       plot = FigS5,
+       units="mm",  
+       width=100, 
+       height=60, 
+       scale=3, 
+       dpi=300)
