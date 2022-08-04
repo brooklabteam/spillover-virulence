@@ -116,28 +116,19 @@ pan.dat.sum$predict_lifespan <- 10^(predict.gam(m1, newdata = pan.dat.sum, exclu
 pan.dat.sum$mass_g <- 10^(pan.dat.sum$log10mass_g)
 pan.dat.sum = pan.dat.sum[pan.dat.sum$mass_g==min(pan.dat.sum$mass_g, na.rm=T) | pan.dat.sum$mass_g==max(pan.dat.sum$mass_g, na.rm=T),]
 
-pAleg <- ggplot(data=pan.dat) + 
-  geom_point(aes(x=mass_g, y=max_lifespan_yrs,   fill=order), size =3, pch=21) +  
-  scale_fill_manual(values=colz) +
-  geom_line(data = pan.dat.sum, aes(x=mass_g, y=predict_lifespan), size=1) +
-  theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) + 
-  theme(panel.grid = element_blank(),
-        plot.margin = unit(c(.1,.1,.1,.1), "lines")) +
-  xlab("mass (g)") + ylab("max lifespan (yrs)")
-pAleg
-
-# Grab leg
-pleg <- cowplot::get_legend(pAleg)
-
 pA <- ggplot(data=pan.dat) + 
-  geom_point(aes(x=mass_g, y=max_lifespan_yrs,  fill=order), size =3, pch=21, show.legend = F) +  
+  geom_point(aes(x=mass_g, y=max_lifespan_yrs,  fill=order), size =3, pch=21)+#, show.legend = F) +  
   scale_fill_manual(values=colz) +
   geom_line(data = pan.dat.sum, aes(x=mass_g, y=predict_lifespan), size=1) +
   theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) + 
   theme(panel.grid = element_blank(),
-        axis.title = element_text(size=16),
-        axis.text = element_text(size = 12),
-        plot.margin = unit(c(.1,.1,.1,.1), "lines")) +
+        axis.title = element_text(size=18),
+        legend.position = c(.77,.18),
+        legend.title = element_blank(),
+        legend.key.size = unit(.3, "lines"),
+        legend.background = element_rect(color="black"),
+        axis.text = element_text(size = 14),
+        plot.margin = unit(c(.5,.65,.1,.15), "lines")) +
   xlab("mass (g)") + ylab("max lifespan (yrs)")
 pA
 
@@ -209,20 +200,246 @@ pB <- ggplot(wbc.dat) +
   geom_point(aes(x=BMR_W_g, y=neutro_conc, fill=order), size =3, pch=21, show.legend = F) +  
   theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) +
   geom_line(data = wbc.pred, aes(x=BMR_W_g , y=predict_neut), size=1) +
-  scale_fill_manual(values=colz2) +
+  scale_fill_manual(values=colz) +
   theme(panel.grid = element_blank(),
-        axis.title = element_text(size=16),
-        axis.text = element_text(size = 12),
-        plot.margin = unit(c(.1,.1,.1,.1), "lines")) +
+        axis.title = element_text(size=18),
+        axis.text = element_text(size = 14),
+        plot.margin = unit(c(.5,2,.1,1.6), "lines")) +
   xlab("mass-specific BMR (W/g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
 pB
 
 
+######################################################
+######################################################
+## Panel C (phylogeny)
+
+# Load the timetree from the phylo-tree subfolder
+tree <- ape::read.tree(file = paste0(homewd,"phylo-tree/Timetree_ReservoirRepresentatives.nwk"))
+
+# Rename for the icons we want to use
+tree$tip.label
+tree$tip.label[tree$tip.label=="Homo_sapiens"] <-  "Gorilla_gorilla"
+tree$tip.label[tree$tip.label=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
+tree$tip.label[tree$tip.label=="Antilocapra_americana"] <-  "Sus_scrofa"
+tree$tip.label[tree$tip.label=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
+tree$tip.label[tree$tip.label=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
+tree$tip.label[tree$tip.label=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+
+# Call the phylopics
+d <- ggimage::phylopic_uid(tree$tip.label)
+
+
+tree.dat <- cbind.data.frame(species=tree$tip.label)
+
+# Load the order meta-data and phylogenetic distance and combine with tree
+order.dat <- read.csv(file=paste0(homewd, "/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
+head(order.dat)
+order.dat$species
+order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
+order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Gorilla_gorilla"
+order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
+order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
+order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
+order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
+order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+
+tree.dat$order <- tree.dat$phylo_dist <- NA
+
+for(i in 1:length(order.dat$order)){
+  tree.dat$order[tree.dat$species==order.dat$species[i]] <- order.dat$order[i]
+  tree.dat$phylo_dist[tree.dat$species==order.dat$species[i]] <- order.dat$phylo_dist[i]
+}
+tree.dat$color= NA
+for(i in 1:length(colz)){
+  tree.dat$color[tree.dat$order==names(colz)[i]] <- colz[i]
+}
+
+
+d$phylo_dist = tree.dat$phylo_dist
+d$name <- tree.dat$order
+d$order <- tree.dat$order
+d$order <- as.factor(d$order)
+d$phylo_dist <- as.numeric(as.character(d$phylo_dist))
+d$color <- tree.dat$color
+tree$tip.label <- tree.dat$order
+
+d$phylo_lab = round(d$phylo_dist, 0)
+names(d)[names(d)=="name"] <- "tip_label"
+
+tree$tip.label[is.na(tree$tip.label)] <- "Paucituberculata"
+d$color[is.na(d$tip_label)] <- colz[names(colz)=="Paucituberculata"]
+d$order <- as.character(d$order)
+d$order <- as.factor(d$order)
+d$order[is.na(d$tip_label)] <- "Paucituberculata"
+d$tip_label[is.na(d$tip_label)] <- "Paucituberculata"
+
+pC1 <- ggtree(tree, size=1)   %<+% d + 
+  aes(color=phylo_dist) +
+  scale_x_reverse() +
+  scale_color_viridis_c(name="phylogenetic distance\nfrom primates (Myr)", direction=-1, 
+                        guide = guide_legend(direction = "vertical",title.position = "top")) +
+  geom_tiplab(aes(label=label), color="black",offset = -55, size=4) + 
+  # scale_color_gradient(low="black", high="red",  name=bquote(eta)) +
+  new_scale_color()+  theme_bw() +
+  geom_tiplab(aes(image=uid, color=order),  geom="phylopic",offset = -10) +
+  scale_color_manual(values=colz, guide="none") + 
+  theme(legend.position = c(.85,.8), 
+        legend.direction = "vertical", legend.title = element_text(size=12),
+        legend.text = element_text(size=12), legend.key.size = unit(c(.8), "cm"),
+        plot.margin = unit(c(.3,.3,9.3,3), "lines"),
+        panel.grid = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) #+
+#geom_text(aes(x=branch, label=phylo_lab), size=5, color="black", vjust=-0.4) 
+
+# 
+# 
+# # Now flip branches into the correct order
+node1 <- MRCA(tree, which(tree$tip.label=="Primates"), which(tree$tip.label=="Lagomorpha"))
+node2 <- MRCA(tree, which(tree$tip.label=="Carnivora"), which(tree$tip.label=="Eulipotyphla"))
+
+pC <- flip(pC1, node1, node2) 
+# pB3 <- flip(pB2, 7, 8) 
+# pB4 <- flip(pB3, 2, 12) 
+# pB5 <- flip(pB4, 6, 13) 
+
 
 
 ######################################################
 ######################################################
-## Panel C
+## Panel D - compare alpha with literature
+
+
+predict.dat <- read.csv(file=paste0(homewd, subwd, "/predict_pars.csv"), header = T, stringsAsFactors = F)
+head(predict.dat)
+
+#
+
+load(paste0(homewd,"source/gam.dat.Guth.et.al.2021.Rdata"))
+
+#rank by descending alpha, then confidence
+gam.dat <- arrange(gam.dat, desc(alpha), desc(Nobs))
+
+
+# Merge our nested model predictions with those from Guth et al. 2022
+
+# Make columns match
+head(gam.dat)
+names(gam.dat)[1] <- "order"
+names(gam.dat)[3] <- "N"
+names(predict.dat)[names(predict.dat)=="N_cumulative"] <- "N"
+head(predict.dat)
+
+# And rescale alpha in both vectors
+
+# Constant
+predict.dat$alpha_star_human_constant[!is.na(predict.dat$alpha_star_human_constant)] <- scales::rescale(x =predict.dat$alpha_star_human_constant[!is.na(predict.dat$alpha_star_human_constant)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_constant_lci[!is.na(predict.dat$alpha_star_human_constant_lci)] <- scales::rescale(x =predict.dat$alpha_star_human_constant_lci[!is.na(predict.dat$alpha_star_human_constant_lci)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_constant_uci[!is.na(predict.dat$alpha_star_human_constant_uci)] <- scales::rescale(x =predict.dat$alpha_star_human_constant_uci[!is.na(predict.dat$alpha_star_human_constant_uci)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
+
+
+# Complete
+predict.dat$alpha_star_human_complete[!is.na(predict.dat$alpha_star_human_complete)] <- scales::rescale(x =predict.dat$alpha_star_human_complete[!is.na(predict.dat$alpha_star_human_complete)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_complete_lci[!is.na(predict.dat$alpha_star_human_complete_lci)] <- scales::rescale(x =predict.dat$alpha_star_human_complete_lci[!is.na(predict.dat$alpha_star_human_complete_lci)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_complete_uci[!is.na(predict.dat$alpha_star_human_complete_uci)] <- scales::rescale(x =predict.dat$alpha_star_human_complete_uci[!is.na(predict.dat$alpha_star_human_complete_uci)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
+
+
+# And do the same for gam.dat
+gam.dat$alpha <- scales::rescale(x =gam.dat$alpha, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
+gam.dat$alpha_lci <- scales::rescale(x =gam.dat$alpha_lci, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
+gam.dat$alpha_uci <- scales::rescale(x =gam.dat$alpha_uci, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
+
+
+# And merge the data
+gam.plot.dat <-  dplyr::select(gam.dat, order, N, alpha, alpha_lci, alpha_uci)
+share.dat.constant <- dplyr::select(predict.dat,order, N, alpha_star_human_constant, alpha_star_human_constant_lci, alpha_star_human_constant_uci)
+share.dat.complete <- dplyr::select(predict.dat,order, N, alpha_star_human_complete, alpha_star_human_complete_lci, alpha_star_human_complete_uci)
+names(share.dat.complete) <- names(share.dat.constant) <- names(gam.plot.dat)
+
+share.dat.constant <- arrange(share.dat.constant, desc(alpha))
+share.dat.complete <- arrange(share.dat.complete, desc(alpha))
+
+
+gam.plot.dat[,3:5] <- -1*gam.plot.dat[,3:5] 
+share.dat.complete$tolerance = "complete"
+share.dat.constant$tolerance = "constant"
+gam.plot.dat$tolerance = "natural"
+share.dat.complete$source <- share.dat.constant$source <-  "predicted from\nnested model"
+gam.plot.dat$source <- "predicted from zoonoses"
+plot.dat <- rbind(gam.plot.dat, share.dat.complete, share.dat.constant)
+plot.dat$source <- factor(plot.dat$source, levels=c("predicted from zoonoses", "predicted from\nnested model"))
+
+# Reorder, ranked by the constant data
+plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constant, desc(alpha))$order))
+
+head(plot.dat)
+
+# And take only the complete data
+plot.dat <- plot.dat[complete.cases(plot.dat),]
+
+shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
+
+# And add images by order
+
+order.dat <- read.csv(file=paste0(homewd,"/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
+head(order.dat)
+
+# Rename
+order.dat$species
+order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
+order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Gorilla_gorilla"
+order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
+order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
+order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
+order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
+order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+
+# Load images - will take a moment
+pic.df <- ggimage::phylopic_uid(order.dat$species) 
+
+pic.df$order <- order.dat$order
+
+unique(plot.dat$order)
+unique(pic.df$order)
+
+pic.df = subset(pic.df, order=="Monotremata" | order=="Hyracoidea" | order == "Didelphimorphia" | order=="Proboscidea" | order=="Pilosa" | order== "Cingulata" | order == "Tubulidentata" | order=="Carnivora" | order=="Perissodactyla"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia" | order=="Eulipotyphla")
+
+# This is a part of Fig. 3 in the main text
+pDa <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
+  geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  geom_point(aes(order, alpha, fill=order, size=N, shape=source)) + 
+  theme_bw() +
+  scale_color_manual(values=colz, guide="none") +
+  scale_fill_manual(values=colz, guide="none") +
+  scale_shape_manual(values=shapez, guide="none") +
+  #facet_grid(source~., scales = "free_y") +
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=18), 
+        legend.direction = "horizontal", legend.position = c(.74,.95),
+        axis.text.y = element_text(size=14), 
+        axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
+        plot.margin = unit(c(.3,1,.6,1), "cm")) + 
+  ylab(bquote("relative spillover virulence,"~alpha[S])) + 
+  scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
+  coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.06)
+
+pD <- pDa + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+  coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 
 
+### And combine
+
+Fig3top <- cowplot::plot_grid(pA, pB, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22, rel_widths = c(1,1.1))
+Fig3bottom <- cowplot::plot_grid(pC, pD, ncol = 2, nrow = 1, labels = c("C", "D"), label_size = 22, rel_widths = c(1,1.1))
+
+Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol = 1, nrow = 2, rel_heights = c(1,1.21))
+
+ggsave(file = paste0(homewd,"/main-figs/Fig3.png"),
+       plot = Fig3,
+       units="mm",  
+       width=120, 
+       height=120, 
+       scale=3, 
+       dpi=300)
