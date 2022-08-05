@@ -44,7 +44,7 @@ dot.eigen.out.complete.tol <- function(r_v, r_vm, zeta, v, mu, rho, g, g0, m, k,
 
 # This script makes the PIP plot for a given combination of r_v and r_vm vectors
 
-r_v= seq(5.305,5.8,length=100)
+r_v= seq(3.18,3.5,length=100)
 r_vm = rev(r_v)
 
 # Functions to make PIPs
@@ -188,7 +188,7 @@ make.four.PIP(r_v= r_v,
                 v=1,
                 m=1/(21),
                 g=.9,
-                g0=.5,
+                g0=.3,
                 c=.5,
                 mu = 1/(20*365),
                 w=1,
@@ -196,12 +196,9 @@ make.four.PIP(r_v= r_v,
                 Tw.lo.cons=10,
                 Tv.lo.com=.5,
                 Tw.lo.com=.5,
-                Tv.hi.cons=150,
-                Tw.hi.cons=150,
+                Tv.hi.cons=100,
+                Tw.hi.cons=100,
                 Tv.hi.com=.97,
                 Tw.hi.com=.97,
                 filename = paste0(homewd,"/supp-figs/FigS1.png"))
-
-
-
 

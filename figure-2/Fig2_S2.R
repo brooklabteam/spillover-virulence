@@ -179,7 +179,7 @@ par.plots <- function(dat.var, tol.shape, sub, plot.prev){
 }
 heat.plots <- function(dat.tol, tol.shape){
   
-  
+  #dat.tol = subset(dat.tol, Tv<=2 & Tw<=2)
   r.dat = subset(dat.tol, outcome=="rstar" & tolerance_shape==tol.shape)
   a.dat = subset(dat.tol, outcome=="alphastar" & tolerance_shape==tol.shape)
   p.dat = subset(dat.tol, outcome=="prevalence" & tolerance_shape==tol.shape)
@@ -325,7 +325,7 @@ heat.plots.complete <- function(dat.tol, tol.shape){
           axis.text.y = element_text(size=14, color="black"),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = unit(c(1.4,.4,0,1), "cm"))
+          plot.margin = unit(c(1.4,.9,0,1), "cm"))
   #  print(pA)
   
   
@@ -339,12 +339,12 @@ heat.plots.complete <- function(dat.tol, tol.shape){
           axis.text.y = element_text(size=14, color="black"),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = unit(c(0,.2,0,1), "cm"))
+          plot.margin = unit(c(0,.7,0,1), "cm"))
   
   
   
   pC <- ggplot(a.dat) + geom_tile(aes(x=Tw, y=Tv, fill=value)) + 
-    scale_fill_gradient(low="yellow", high="red", name=bquote(alpha^'*')) +
+    scale_fill_gradient(low="yellow", high="red",  name=bquote(alpha^'*')) +
     theme_bw() + 
     xlab(bquote('T'[w]~'tolerance of immunopathology'))+
     ylab(bquote('T'[v]~'tolerance of viral pathology'))+
@@ -353,7 +353,7 @@ heat.plots.complete <- function(dat.tol, tol.shape){
           axis.text.y = element_text(size=14, color="black"),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = unit(c(0,.5,0,1), "cm"))
+          plot.margin = unit(c(0,.4,0,1), "cm"))
   # print(pB)
   
   

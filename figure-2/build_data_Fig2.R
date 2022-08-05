@@ -541,8 +541,8 @@ par.dat <- list(b= .2,# births, per capita per day
                 g=.9, # growth of lymphocytes in response to virus, per day
                 g0=.3, # rate of constitutive lymphocyte growth, per day
                 zeta=.2, # max transmission rate
-                v=2, # intrinsic virus virulence
-                w=2, # natural damage from immunopathology
+                v=1, # intrinsic virus virulence
+                w=1, # natural damage from immunopathology
                 Tv=.005,# tolerance of virus virulence; these get overwritten so values don't matter
                 Tw=.005,# tolerance of immunopathology; these get overwritten so values don't matter
                 mu = 1/(20*365))# host background death rate, in days
@@ -593,7 +593,10 @@ make.map <- function(par.dat, Tw.vect, Tv.vect,  tol.shape,  outcome){
       for(i in 1:length(Tv.vect)){ # this is the row (loops through the mutant)
         par.dat["Tw"] <- Tw.vect[j]
         par.dat["Tv"] <- Tv.vect[i]
+        #print(i)
+        #print(j)
         M[i,j] = (get.rstar.general(par.dat = par.dat, tol.type = tol.shape))
+        #print(M[i,j])
         # this fills in a column of the matrix
       }}
     
@@ -654,13 +657,13 @@ make.all.maps <- function(par.dat, tol.type){
   
   if(tol.type=="constant-tolerance"){
     # just has to be above 1
-    Tw.vect = seq(1,4,length.out = 100)
+    Tw.vect = seq(1,2,length.out = 100)
     Tv.vect= Tw.vect
     
   }else if(tol.type=="complete-tolerance"){
     # has to be less than v and w - theses must be set equal
     # tolerance.vect = seq(.0001,.001, length.out = 100)
-    Tw.vect = seq(0,1,length.out = 100)
+    Tw.vect = seq(0,.999,length.out = 100)
     Tv.vect= Tw.vect
   }
   
@@ -707,7 +710,7 @@ make.all.maps <- function(par.dat, tol.type){
   return(map.combined)
   
 }
-
+   
 # Constant
 map.constant <- make.all.maps(par.dat, tol.type = "constant-tolerance")
 # Complete
