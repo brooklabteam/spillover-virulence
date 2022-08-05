@@ -642,8 +642,8 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig9.png"),
 # The values for g0, Tw, Tv, and mu will get overwritten, so it does not 
 # really matter what you put here.
 
-vir.par <- list(b= .2, q = .0002, c=.5,  m=1/(21),  g=.9, g0 = .5, zeta=.2,
-                v=1, w=1, gamma=.001, Tv=.005, Tw=.005,mu = 1/(20*365))
+vir.par <- list(b= .2, q = .0002, c=.5,  m=1/(21),  g=.9, g0 = .3, zeta=.2,
+                v=1, w=1,  Tv=.005, Tw=.005,mu = 1/(20*365))
 
 
 # Constant tolerance rstar predictions using order-specific g0, Tw, and mu
