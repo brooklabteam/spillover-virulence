@@ -14,102 +14,208 @@ homewd =  "/Users/carabrook/Developer/spillover-virulence/"
 subwd = "figure-3"
 setwd(paste0(homewd, subwd))
 
-
 ######################################################
 ######################################################
+## 1. estimate mu
 
-## load data
+pan.dat <- read.csv(file="PanTHERIA.csv", header = T, stringsAsFactors = F)
+head(pan.dat)
 
-predict.dat <- read.csv(paste0(homewd, subwd, "/predict_pars.csv"), header = T, stringsAsFactors = F)
-
-head(predict.dat)
-
-## Now plot mu, Tw (constant/complete), g0, and Tv_human (Tvs) (constant/complete)
-## across all the mammalian orders. Do not include order axis on the first three
-## so that the plots can be combined
+# And select only those columns of interest 
+pan.dat <- dplyr::select(pan.dat, 1:5, X5.1_AdultBodyMass_g, X17.1_MaxLongevity_m, X10.1_PopulationGrpSize, X21.1_PopulationDensity_n.km2, X22.1_HomeRange_km2, X18.1_BasalMetRate_mLO2hr)#, X5.2_BasalMetRateMass_g)
+head(pan.dat)
 
 
-colz = scales::hue_pal()(length(unique(predict.dat$order))-1)
-colz=c(colz, "red")
+# Rename
+names(pan.dat) <- c("order", "family", "genus", "species", "binomial", "mass_g", "max_lifespan_months", "pop_group_size", "pop_density_N_km2", "homerange_km2", "BMR_mLO2hr")#, "BMR_mg")
+pan.dat$max_lifespan_yrs <- pan.dat$max_lifespan_months/12
 
-names(colz) <- c(unique(predict.dat$order)[unique(predict.dat$order)!="Chiroptera"], "Chiroptera")
-
-y.int = 0.08894968 #from the brief_script.R file
-
-## First, mu
-p1 <- ggplot(data=predict.dat) + 
-      geom_point(aes(x=order, y=mu, fill=order, size=N_mu), pch=21) + 
-      theme_bw()  + 
-      theme(axis.text.x = element_blank(), axis.title.x = element_blank(),
-            axis.ticks.x = element_blank(),
-            plot.margin = unit(c(.5,2.7,0,.5), "lines"), 
-            legend.position = c(.8,.91), legend.direction = "horizontal", 
-            legend.title = element_blank(),
-            panel.grid = element_blank()) +
-      scale_fill_manual(values=colz, guide="none") +
-      scale_color_manual(values=colz) +
-      geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
-      geom_hline(aes(yintercept=y.int), linetype=2) +
-      ylab(bquote("predicted annual mortality,"~mu~"("~yrs^-1~")")) 
-
-p1 #will combine and edit below for Fig S3
-
-## Now, Tw (on one plot)
+# Add dash for binomial nomemclature
+pan.dat$binomial <- sub(" ", "_", pan.dat$binomial)
 
 
-# Constant tolerance (Tw)
-p2 <- ggplot(data=predict.dat) + 
-  geom_point(aes(x=order, y=Tw_constant, fill=order, size=N_Tw), pch=21) + 
-  theme_bw() +
-  theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        plot.margin = unit(c(.1,.5,0,.7), "lines"), 
-        legend.position = c(.82,.91),
-        panel.grid = element_blank(),
-        legend.direction = "horizontal", legend.title = element_blank()) +
-  scale_fill_manual(values=colz, guide="none") +
-  scale_color_manual(values=colz) +
-  geom_errorbar(aes(x=order, ymin=Tw_constant_lci, ymax=Tw_constant_uci, color=order), width=0, show.legend = F) +
-  geom_hline(aes(yintercept=1.5), linetype=2) + ylab(bquote("constant immunopathology tolerance,"~T[w])) +
-  scale_y_continuous(sec.axis = sec_axis(~ . -1, name = (bquote("complete immunopathology tolerance,,"~T[w]))))
+# Correct errors
+pan.dat$max_lifespan_yrs[pan.dat$binomial=="Galeopterus_variegates"] <- 17.5 #from animaldiversity.org
 
-p2
+# Remove humans from dataset
+pan.dat = subset(pan.dat, binomial!="Homo_sapiens")
 
-# Slim your colors down to only those in this dataset
-#colz2 = colz[unique(predict.dat$order[!is.na(predict.dat$g0)])]
+# Rename some incorrect orders with contemporary taxonomy
+pan.dat$order[pan.dat$order=="Artiodactyla"] <- "Cetartiodactyla"
+pan.dat$order[pan.dat$order=="Cetacea"] <- "Cetartiodactyla"
+pan.dat$order[pan.dat$order=="Soricomorpha"] <- "Eulipotyphla"
+pan.dat$order[pan.dat$order=="Erinaceomorpha"] <- "Eulipotyphla"
 
-# g0
-p3 <- ggplot(data=predict.dat) + 
-  geom_point(aes(x=order, y=g0, fill=order, size=N_g0), pch=21) + 
-  theme_bw() +
-  theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        plot.margin = unit(c(.1,2.8,0,.4), "lines"),
-        panel.grid = element_blank(),
-        legend.position = c(.75,.92),
+
+# Convert BMR to W/G
+pan.dat$BMR_mLO2hr <- (pan.dat$BMR_mLO2hr/60/60*20.1)/pan.dat$mass_g
+names(pan.dat)[names(pan.dat)=="BMR_mLO2hr"] <- "BMR_W_g"
+
+# Correct errors
+pan.dat$BMR_W_g[pan.dat$binomial=="Acrobates_pygmaeus"] <- 0.084/pan.dat$mass_g[pan.dat$binomial=="Acrobates_pygmaeus"]  # from AnAge database
+
+#add healy data
+healy.dat <- read.csv(file = "Healy.csv", header = T, stringsAsFactors = F)
+head(healy.dat)
+healy.dat = subset(healy.dat, class=="Mammalia")
+healy.dat <- dplyr::select(healy.dat, species, maximum_lifespan_yr, mass_g, BMR)
+
+names(healy.dat) <- c("binomial", "healy_max_lifespan_yrs", "healy_mass_g",  "healy_BMR_W_g")
+
+setdiff(healy.dat$binomial, pan.dat$binomial)
+#setdiff(pan.dat$binomial, healy.dat$binomial)
+
+#and merge the two
+all.dat <- merge(pan.dat, healy.dat, all = T, by = c("binomial"))
+head(all.dat)
+
+#and average among mass and lifespan
+pan.dat <- ddply(all.dat, .(order, family, genus, species, binomial), summarise, mass_g = mean(c(mass_g, healy_mass_g), na.rm=T), max_lifespan_yrs=mean(c(max_lifespan_yrs, healy_max_lifespan_yrs), na.rm=T), BMR_W_g=mean(c(BMR_W_g, healy_BMR_W_g), na.rm=T),pop_group_size = unique(pop_group_size),  pop_density_N_km2= unique(pop_density_N_km2), homerange_km2 = unique(homerange_km2))
+
+head(pan.dat)
+
+# And try the raw BMR
+pan.dat$BMR_W <- pan.dat$BMR_W_g*pan.dat$mass_g
+
+# Remove any data for which you lack mass:
+pan.dat = subset(pan.dat, !is.na(mass_g))
+
+# How many have lifespan too?
+length(pan.dat$max_lifespan_yrs[!is.na(pan.dat$max_lifespan_yrs)]) #1055
+
+# And how many have BMR?
+length(pan.dat$BMR_W_g[!is.na(pan.dat$BMR_W_g)]) #629
+
+
+# Now, run a GAM to determine the partial effect of host order
+# (phylogeny) on maximum longevity, and predict lifespan 
+# rates by order:
+
+library(mgcv)
+pan.dat$log10mass_g <- log10(pan.dat$mass_g)
+pan.dat$order <- as.factor(pan.dat$order)
+pan.dat$log10_max_lifespan_yrs <- log10(pan.dat$max_lifespan_yrs)
+
+m1 <- gam(log10_max_lifespan_yrs~s(log10mass_g, bs = "tp") +
+            s(order, bs="re"),
+          data = pan.dat)
+
+summary(m1) #deviance explained = 75.8%
+
+
+# And, plot the partial effects of order:
+# Source partial effects script from Mollentze and Streicker 2020:
+# This script includes two plotting functions, added by me!
+
+source(paste0(homewd,"source/mollentze-streicker-2020-functions.R"))
+
+
+order.dat <- get_partial_effects(m1, var="order")
+plot.dat <- order.dat[[1]]
+plot.dat$variable <- "max_lifespan"
+
+
+# We know that constitutive immunity (baseline neutrophil count)
+# scales positively with (a) body mass, # (b) negatively with BMR
+# and mass-specific BMR, and positively with (c) higher host
+# exposure/ promiscuity/ gregariousness
+
+# We scale by (a) after Cynthia Downs' 2020 AmNat paper 
+
+# First, load the data
+wbc.dat <- read.csv(file = "Downs_et_al_2020.csv", header=TRUE, stringsAsFactors = FALSE)
+head(wbc.dat)
+
+# Drop unnecessary columns
+wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, Common.Name, 
+                         AdultBodyMass, TotalWBC, Lymphocytes, Segmented.neutrophils,
+                         ln10Mass, ln10WBC, ln10lympho, ln10neutro) 
+
+head(wbc.dat) 
+
+wbc.dat$binomial <- paste0(wbc.dat$Genus, "_", wbc.dat$Species)
+
+wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, binomial, AdultBodyMass, Segmented.neutrophils, ln10Mass, ln10WBC, ln10lympho, ln10neutro)
+
+# Reclassify the Afrotherians and the Xenartha
+wbc.dat$Order <- as.character(wbc.dat$Order)
+wbc.dat$binomial[wbc.dat$Order=="Afrotheria"]
+wbc.dat$binomial[wbc.dat$Order=="Xenarthra"]
+wbc.dat$Order[wbc.dat$binomial=="Elephas_maximus"] <- "Proboscidea"
+wbc.dat$Order[wbc.dat$binomial=="Loxodonta_africana"]<- "Proboscidea"
+wbc.dat$Order[wbc.dat$binomial=="Orycteropus_afer"]<- "Tubulidentata"
+wbc.dat$Order[wbc.dat$binomial=="Procavia_capensis"] <- "Hyracoidea"
+wbc.dat$Order[wbc.dat$binomial=="Trichechus_manatus"] <- "Sirenia"
+wbc.dat$Order[wbc.dat$binomial=="Dasypus_novemcinctus"] <- "Cingulata"
+
+#Rename
+names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
+names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
+names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
+
+
+#and link to other pan.dat features: BMR and exposure and pop size
+pan.bmr <- dplyr::select(pan.dat, binomial, BMR_W, BMR_W_g, pop_group_size, pop_density_N_km2, homerange_km2)
+
+wbc.dat <- merge(wbc.dat, pan.bmr, by="binomial", all.x = T)
+
+
+# plot with predictions
+# faux gam first
+wbc.dat$ln10BMR_W_g <- log10(wbc.dat$mass_g)/wbc.dat$BMR_W
+wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
+
+wbc.dat$order <- as.factor(wbc.dat$order)
+
+# Now, model effects of order as a GAM, using just mass and BMR
+wbc.dat$order <- as.factor(wbc.dat$order)
+
+# Or try including BMR
+m3 <- gam(ln10neutro~s(ln10Mass, bs="tp") +
+            s(BMR_W, bs="tp") +
+            s(order, bs="re"),
+          data=wbc.dat)
+summary(m3) #69.3%; n=97. much stronger model fit
+
+order.dat <- get_partial_effects(m3, var="order")
+plot.dat2 <- order.dat[[1]]
+head(plot.dat2)
+plot.dat2$variable <- "neutrophil_conc"
+
+plot.dat <- dplyr::select(plot.dat, y, se, ylower, yupper, IsSignificant, order, variable)
+plot.dat2 <- dplyr::select(plot.dat2, y, se, ylower, yupper, IsSignificant, order, variable)
+
+plot.dat$tag <- "A"
+plot.dat2$tag <- "B"
+
+plot.dat <- rbind(plot.dat, plot.dat2)
+
+plot.dat$variable[plot.dat$variable=="max_lifespan"] <- "maximum lifespan"
+plot.dat$variable[plot.dat$variable=="neutrophil_conc"] <- "neutrophil concentration"
+
+fillz = c("No"="gray70", "Yes" = "skyblue3")
+
+FigS3 <- ggplot(data=plot.dat, aes(order, y)) + 
+  geom_crossbar(aes(ymin=ylower, ymax=yupper, fill=IsSignificant), 
+                alpha=.4) +
+  facet_grid(variable~., scales = "free_y", switch = "y") +
+  #geom_point(aes(x=var, y=y, color=var), size=5) +
+  #geom_jitter(data=df2, aes(x=var, y=Residual), width=.1, alpha=.2, size=.3)+
+  scale_fill_manual(values = fillz, name = "Significant") +
+  geom_hline(aes(yintercept=0), linetype=2) + theme_bw() +
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(),
+        axis.text.x = element_text(size=12, angle = 90),
+        plot.margin = unit(c(.1,.1,.5,.1), "cm"),
+        strip.placement = "outside",
+        legend.title = element_text(size=10),
         legend.direction = "horizontal",
-        legend.title = element_blank()) +
-  geom_errorbar(aes(x=order, ymin=g0_lci, ymax=g0_uci, color=order), width=0, show.legend = F) +
-  scale_color_manual(values=colz) +
-  scale_fill_manual(values=colz, guide="none") +
-  geom_hline(aes(yintercept=0.5), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0]))
+        legend.text = element_text(size=8),
+        strip.text = element_text(size = 14),
+        legend.position = c(.84,.96),
+        strip.background = element_blank()) +
+  ylab(paste0("partial effect of order on response variable:")) + 
+  geom_label(aes(x=1.5,y=.49, label=tag), label.size = 0, size=10)
 
-
-#  Tvs
-p4 <- ggplot(data=predict.dat) + theme_bw() +
-        geom_point(aes(x=order, y=Tv_human_constant, fill=order), pch=21, show.legend = F, size=3) + 
-        scale_fill_manual(values=colz) + ylab(bquote("constant viral spillover tolerance,"~T[vS])) +
-        theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-        plot.margin = unit(c(0,.4,.5,.5), "lines"),
-        panel.grid = element_blank()) +
-        geom_hline(aes(yintercept=1.5), linetype=2) +
-        scale_y_continuous(sec.axis = sec_axis(~ . -1, name = (bquote("complete viral spillover tolerance,"~T[vS]))))
-
-
-
-# And put together
-
-FigS3 <- cowplot::plot_grid(p1,p2,p3,p4, nrow=4, ncol=1, rel_heights = c(1.05,1,1,1.3), labels = c("A", "B", "C", "D"), label_size = 22, label_x = -.01)
 
 
 #and save
@@ -117,8 +223,6 @@ ggsave(file = paste0(homewd, "supp-figs/FigS3.png"),
        plot = FigS3,
        units="mm",  
        width=60, 
-       height=140, 
+       height=70, 
        scale=3, 
        dpi=300)
-
-

@@ -582,4 +582,3 @@ plot.join.complete(dat.var = subset(out.curves, variable=="mu" | variable=="g0" 
           plot.prev=TRUE,
           filename=paste0(homewd,"supp-figs/FigS2.png"))
 
-

@@ -986,9 +986,9 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig14.png"),
        scale=3, 
        dpi=300)
 
-#this is also Figure S4 of the SI
+#this is also Figure S5 of the SI
 
-ggsave(file = paste0(homewd, "/supp-figs/FigS4.png"),
+ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
        plot = p14,
        units="mm",  
        width=50, 
@@ -1160,11 +1160,11 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig16.png"),
 
 # and pair them together to get Fig S6 of the SI
 
-FigS5 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22)#, label_x = .12, label_y = .99)
+FigS6 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22)#, label_x = .12, label_y = .99)
 
 
-ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
-       plot = FigS5,
+ggsave(file = paste0(homewd, "/supp-figs/FigS6.png"),
+       plot = FigS6,
        units="mm",  
        width=100, 
        height=60, 
