@@ -190,15 +190,16 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig1w_line.png"),
 
 # Now, to parameterize mu, the annual mortality rate by order for
 # our within-host model, we can simply predict lifespan from our fitted
-# GAM, excluding the effects of body mass, then take the inverse:
+# GAM, excluding the effects of body mass, then take the inverse (but be sure to
+# express in timesteps of days to make comparable to the viral dynamics):
 
 predict.dat <- cbind.data.frame(order = order.dat[[1]]$order, log10mass_g=1)
 # You can insert any value you like for "log10mass_g" since we won't 
 # be using it anyhow
 
-predict.dat$mu <- 1/(10^predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response"))
-predict.dat$mu_lci <- 1/(10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") -1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))
-predict.dat$mu_uci <- 1/(10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") +1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))
+predict.dat$mu <- 1/((10^predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response"))*365)
+predict.dat$mu_lci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") -1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
+predict.dat$mu_uci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") +1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
 
 predict.dat$mu_lci[predict.dat$mu_lci<0] <- 0
 predict.dat$mu_uci[predict.dat$mu_uci>1] <- 1
@@ -213,9 +214,9 @@ predict.dat <- dplyr::select(predict.dat, -(log10mass_g))
 # and plot your predictions by order for mass
 
 # first, get your null
-y.int = 1/(10^(predict.gam(m1, 
+y.int = 1/((10^(predict.gam(m1, 
                     newdata = cbind.data.frame(order="Primates", log10mass_g = unique(order.dat[[1]]$log10mass_g)), 
-                    exclude = "s(order)", type = "response")))
+                    exclude = "s(order)", type = "response")))*365)
 
 # Now plot predictions against null:
 
@@ -230,7 +231,7 @@ p3 <- ggplot(data=predict.dat) +
       scale_color_manual(values=colz) +
       geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
       geom_hline(aes(yintercept=y.int), linetype=2) +
-      ylab(bquote("predicted annual mortality rate by order,"~mu~"("~yrs^-1~")")) 
+      ylab(bquote("predicted annual mortality rate by order,"~mu~"("~days^-1~")")) 
 
 p3
 
