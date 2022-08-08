@@ -34,7 +34,7 @@ colz=c(colz, "red")
 
 names(colz) <- c(unique(predict.dat$order)[unique(predict.dat$order)!="Chiroptera"], "Chiroptera")
 
-y.int = 0.08894968 #from the brief_script.R file
+y.int = 0.08894968/365 #from the brief_script.R file
 
 ## First, mu
 p1 <- ggplot(data=predict.dat) + 
@@ -63,7 +63,7 @@ p2 <- ggplot(data=predict.dat) +
   theme_bw() +
   theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
         axis.ticks.x = element_blank(),
-        plot.margin = unit(c(.1,.5,0,.7), "lines"), 
+        plot.margin = unit(c(.1,.5,0,2), "lines"), 
         legend.position = c(.82,.91),
         panel.grid = element_blank(),
         legend.direction = "horizontal", legend.title = element_blank()) +
@@ -84,7 +84,7 @@ p3 <- ggplot(data=predict.dat) +
   theme_bw() +
   theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
         axis.ticks.x = element_blank(),
-        plot.margin = unit(c(.1,2.8,0,.4), "lines"),
+        plot.margin = unit(c(.1,2.8,0,1.6), "lines"),
         panel.grid = element_blank(),
         legend.position = c(.75,.92),
         legend.direction = "horizontal",
@@ -100,7 +100,7 @@ p4 <- ggplot(data=predict.dat) + theme_bw() +
         geom_point(aes(x=order, y=Tv_human_constant, fill=order), pch=21, show.legend = F, size=3) + 
         scale_fill_manual(values=colz) + ylab(bquote("constant viral spillover tolerance,"~T[vS])) +
         theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-        plot.margin = unit(c(0,.4,.5,.5), "lines"),
+        plot.margin = unit(c(0,.4,.5,1.6), "lines"),
         panel.grid = element_blank()) +
         geom_hline(aes(yintercept=1.5), linetype=2) +
         scale_y_continuous(sec.axis = sec_axis(~ . -1, name = (bquote("complete viral spillover tolerance,"~T[vS]))))
