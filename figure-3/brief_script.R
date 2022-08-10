@@ -80,6 +80,9 @@ pan.dat$BMR_W <- pan.dat$BMR_W_g*pan.dat$mass_g
 # Remove any data for which you lack mass:
 pan.dat = subset(pan.dat, !is.na(mass_g))
 
+# Remove any data for which you lack lifespan:
+pan.dat = subset(pan.dat, !is.na(max_lifespan_yrs))
+
 # How many have lifespan too?
 length(pan.dat$max_lifespan_yrs[!is.na(pan.dat$max_lifespan_yrs)]) #1055
 
