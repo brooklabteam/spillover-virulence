@@ -43,7 +43,7 @@ p1 <- ggplot(data=predict.dat) +
       theme(axis.text.x = element_blank(), axis.title.x = element_blank(),
             axis.ticks.x = element_blank(),
             plot.margin = unit(c(.5,2.7,0,.5), "lines"), 
-            legend.position = c(.8,.91), legend.direction = "horizontal", 
+            legend.position = c(.75,.91), legend.direction = "horizontal", 
             legend.title = element_blank(),
             panel.grid = element_blank()) +
       scale_fill_manual(values=colz, guide="none") +
@@ -64,7 +64,7 @@ p2 <- ggplot(data=predict.dat) +
   theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
         axis.ticks.x = element_blank(),
         plot.margin = unit(c(.1,.5,0,2), "lines"), 
-        legend.position = c(.82,.91),
+        legend.position = c(.78,.91),
         panel.grid = element_blank(),
         legend.direction = "horizontal", legend.title = element_blank()) +
   scale_fill_manual(values=colz, guide="none") +
