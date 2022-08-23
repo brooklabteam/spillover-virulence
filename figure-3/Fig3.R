@@ -224,6 +224,8 @@ tree$tip.label[tree$tip.label=="Antilocapra_americana"] <-  "Sus_scrofa"
 tree$tip.label[tree$tip.label=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 tree$tip.label[tree$tip.label=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 tree$tip.label[tree$tip.label=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+tree$tip.label[tree$tip.label=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
+tree$tip.label[tree$tip.label=="Tupaia_glis"] <- "Dermoptera"
 
 # Call the phylopics
 d <- ggimage::phylopic_uid(tree$tip.label)
@@ -242,6 +244,8 @@ order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
+order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
 
 tree.dat$order <- tree.dat$phylo_dist <- NA
 
@@ -278,10 +282,10 @@ pC1 <- ggtree(tree, size=1)   %<+% d +
   scale_x_reverse() +
   scale_color_viridis_c(name="phylogenetic distance\nfrom primates (Myr)", direction=-1, 
                         guide = guide_legend(direction = "vertical",title.position = "top")) +
-  geom_tiplab(aes(label=label), color="black",offset = -55, size=4) + 
+  geom_tiplab(aes(label=label), color="black",offset = -65, size=4) + 
   # scale_color_gradient(low="black", high="red",  name=bquote(eta)) +
   new_scale_color()+  theme_bw() +
-  geom_tiplab(aes(image=uid, color=order),  geom="phylopic",offset = -10) +
+  geom_tiplab(aes(image=uid, color=order),  geom="phylopic",offset = -10, size=.04) +
   scale_color_manual(values=colz, guide="none") + 
   theme(legend.position = c(.85,.8), 
         legend.direction = "vertical", legend.title = element_text(size=12),
@@ -394,6 +398,8 @@ order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
+order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
 
 # Load images - will take a moment
 pic.df <- ggimage::phylopic_uid(order.dat$species) 
