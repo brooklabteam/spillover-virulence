@@ -15,7 +15,7 @@ load("out.curves.final.2022.Rdata")
 load("tol.heatmap.final.2022.Rdata")
 
 # plotting functions
-par.plots <- function(dat.var, tol.shape, sub){
+par.plots <- function(dat.var, tol.shape, sub, plot.prev){
   
   # and add labels for strip labels
   dat.var$label= NA
@@ -48,8 +48,8 @@ par.plots <- function(dat.var, tol.shape, sub){
   # just rstar for now
   r.dat = subset(dat.var, outcome=="rstar" & tolerance_shape==tol.shape)
   a.dat = subset(dat.var, outcome=="alphastar" & tolerance_shape==tol.shape)
-  #p.dat = subset(dat.var, outcome=="prevalence" & tolerance_shape==tol.shape)
-  #inf.dat = subset(dat.var, outcome=="absInfMort" & tolerance_shape==tol.shape)
+  p.dat = subset(dat.var, outcome=="prevalence" & tolerance_shape==tol.shape)
+  inf.dat = subset(dat.var, outcome=="absInfMort" & tolerance_shape==tol.shape)
   beta.dat = subset(dat.var, outcome=="betastar" & tolerance_shape==tol.shape)
   
   
@@ -118,7 +118,51 @@ par.plots <- function(dat.var, tol.shape, sub){
   
   
   
-  out.all<- cowplot:: plot_grid(pA,pB,pC, nrow=3,ncol=1, rel_heights = c(1,.9,.9))
+  
+  # and prevalence
+  
+  if (plot.prev == TRUE){
+    
+    pD <- ggplot(data=p.dat) +
+      geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
+      facet_grid(~label, scales="free", labeller = label_parsed) +
+      ylab("Prevalence") + theme_bw() +
+      theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
+            axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text.y = element_text(size=14),
+            axis.text.x = element_blank(),axis.ticks.x = element_blank(), plot.margin = unit(c(0,.1,0,.7), "cm")) + coord_cartesian(ylim = c(.9,1)) +
+      scale_color_manual(values=colz)
+    # print(pD)
+    
+  }
+  
+  
+  # and absolute mortality
+  if(sub==FALSE){
+  pE <- ggplot(data=inf.dat) +
+    geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
+    facet_grid(~label, scales="free", labeller = label_parsed) +
+    ylab("Absolute infected\nmortality") + theme_bw() +
+    theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
+          axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text = element_text(size=14),
+          plot.margin = unit(c(0,.1,1,.3), "cm")) + # , legend.position = "bottom", legend.title = element_blank(),legend.text = element_text(size=12)) + 
+          coord_cartesian(ylim = c(0,1000)) + 
+      scale_x_continuous(breaks = breaks_pretty(3), labels = comma) +
+     scale_color_manual(values=colz) # guides(colour = guide_legend(nrow = 2)) +
+  # print(pD)
+  }else if (sub==TRUE){
+    
+    pE <- ggplot(data=inf.dat) +
+      geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
+      facet_grid(~label, scales="free", labeller = label_parsed) +
+      ylab("Absolute infected\nmortality") + theme_bw() + #scale_y_log10() +
+      theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
+            axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text = element_text(size=14),
+            plot.margin = unit(c(0,.1,1,.7), "cm"))+# , legend.position = "bottom", legend.title = element_blank(), legend.text = element_text(size=12)) + 
+      coord_cartesian(ylim = c(0,(50))) + scale_x_continuous(breaks = breaks_pretty(3), labels = comma) + scale_color_manual(values=colz) # +guides(color=guide_legend(nrow=2)) 
+    # print(pE)
+    
+  }
+  out.all<- cowplot:: plot_grid(pA,pB,pC,pD, pE, nrow=5,ncol=1, rel_heights = c(1,.8,.8,.8,1))
   # print(out.all)
   
   # return, and plot side by side with the heatmap
@@ -138,8 +182,8 @@ heat.plots <- function(dat.tol, tol.shape){
   #dat.tol = subset(dat.tol, Tv<=2 & Tw<=2)
   r.dat = subset(dat.tol, outcome=="rstar" & tolerance_shape==tol.shape)
   a.dat = subset(dat.tol, outcome=="alphastar" & tolerance_shape==tol.shape)
-  #p.dat = subset(dat.tol, outcome=="prevalence" & tolerance_shape==tol.shape)
-  #inf.dat = subset(dat.tol, outcome=="absInfMort" & tolerance_shape==tol.shape)
+  p.dat = subset(dat.tol, outcome=="prevalence" & tolerance_shape==tol.shape)
+  inf.dat = subset(dat.tol, outcome=="absInfMort" & tolerance_shape==tol.shape)
   beta.dat = subset(dat.tol, outcome=="betastar" & tolerance_shape==tol.shape)
   
   
@@ -184,10 +228,36 @@ heat.plots <- function(dat.tol, tol.shape){
   # # print(pB)
   # 
   # 
+   pD <- ggplot(p.dat) + geom_tile(aes(x=Tw, y=Tv, fill=value)) + 
+     scale_fill_gradient(low="yellow", high="red", name = "prevalence") +
+     theme_bw() + 
+     # xlab(bquote('T'[w]~'tolerance of immunopathology'))+
+     # ylab(bquote('T'[v]~'tolerance of viral pathology'))+
+     theme(panel.grid = element_blank(),
+           axis.title = element_blank(),
+           axis.text.y = element_text(size=14, color="black"),
+           axis.text.x = element_blank(),
+           axis.ticks.x = element_blank(),
+           plot.margin = unit(c(0,.1,0,1), "cm"))
+  #   
+  # # plot.margin = unit(c(.5,.5,0,.8), "cm"))
+  # # print(pC)
+  
+  pE <- ggplot(inf.dat) + geom_tile(aes(x=Tw, y=Tv, fill=value)) + 
+    scale_fill_gradient(low="yellow", high="red", guide="colourbar", 
+                        name="absolute\ninfected\nmortality") + theme_bw() +
+    xlab(bquote('T'[w]~', tolerance of immunopathology'))+
+    theme(panel.grid = element_blank(),
+          axis.title.y = element_blank(),
+          axis.title.x = element_text(size=18, color="navy"), 
+          axis.text.y = element_text(size=14, color="black"),
+          axis.text.x = element_text(size=14, color="black"),
+          plot.margin = unit(c(0,.4,.2,1), "cm"))
+  
+  # print(pD)
   
   
-  
-  p.heat <- cowplot::plot_grid(pA,pB,pC, ncol = 1, nrow = 3, rel_heights = c(1,.9,.9))
+  p.heat <- cowplot::plot_grid(pA,pB,pC,pD,pE, ncol = 1, nrow = 5, rel_heights = c(1,.8,.8,.8,1))
   
   
   p.heat2 <- p.heat + 
@@ -199,10 +269,11 @@ heat.plots <- function(dat.tol, tol.shape){
   
   return(p.heat2)
 }
-plot.join <- function(dat.var, dat.tol, filename, tol.shape, sub){
+plot.join <- function(dat.var, dat.tol, filename, tol.shape, sub, plot.prev){
   
   plot1 <- par.plots(dat.var = dat.var,
                      tol.shape = tol.shape,
+                     plot.prev = plot.prev,
                      sub = sub)
   
   # and plot 2
@@ -216,7 +287,7 @@ plot.join <- function(dat.var, dat.tol, filename, tol.shape, sub){
          plot = both.plot,
          units="mm",  
          width=170, 
-         height=90, 
+         height=130, 
          scale=3, 
          dpi=200)
           
@@ -227,6 +298,7 @@ plot.join(dat.var = subset(out.curves, variable=="mu" | variable=="g0" | variabl
                        tol.shape= "constant-tolerance",
                        dat.tol=tol.heatmap,
                        sub=TRUE,
+                       plot.prev=T,
                        filename=paste0(homewd,"main-figs/Fig2.png"))
 
 
@@ -236,8 +308,8 @@ heat.plots.complete <- function(dat.tol, tol.shape){
   
   r.dat = subset(dat.tol, outcome=="rstar" & tolerance_shape==tol.shape)
   a.dat = subset(dat.tol, outcome=="alphastar" & tolerance_shape==tol.shape)
-  #p.dat = subset(dat.tol, outcome=="prevalence" & tolerance_shape==tol.shape)
-  #inf.dat = subset(dat.tol, outcome=="absInfMort" & tolerance_shape==tol.shape)
+  p.dat = subset(dat.tol, outcome=="prevalence" & tolerance_shape==tol.shape)
+  inf.dat = subset(dat.tol, outcome=="absInfMort" & tolerance_shape==tol.shape)
   beta.dat = subset(dat.tol, outcome=="betastar" & tolerance_shape==tol.shape)
   
 
@@ -285,8 +357,36 @@ heat.plots.complete <- function(dat.tol, tol.shape){
   # print(pB)
   
   
+  pD <- ggplot(p.dat) + geom_tile(aes(x=Tw, y=Tv, fill=value)) + 
+    scale_fill_gradient(low="yellow", high="red", name = "prevalence") +
+    theme_bw() + 
+    xlab(bquote('T'[w]~'tolerance of immunopathology'))+
+    ylab(bquote('T'[v]~'tolerance of viral pathology'))+
+    theme(panel.grid = element_blank(),
+          axis.title = element_blank(),
+          axis.text.y = element_text(size=14, color="black"),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          plot.margin = unit(c(0,.2,0,1), "cm"))
   
-  p.heat <- cowplot::plot_grid(pA,pB,pC, ncol = 1, nrow = 3, rel_heights = c(1,.9,.9))
+  # plot.margin = unit(c(.5,.5,0,.8), "cm"))
+  # print(pC)
+  
+  pE <- ggplot(inf.dat) + geom_tile(aes(x=Tw, y=Tv, fill=value)) + 
+    scale_fill_gradient(low="yellow", high="red", guide="colourbar", 
+                        name="absolute\ninfected\nmortality") + theme_bw() +
+    xlab(bquote('T'[w]~', tolerance of immunopathology'))+
+    theme(panel.grid = element_blank(),
+          axis.title.y = element_blank(),
+          axis.title.x = element_text(size=18, color="navy"), 
+          axis.text.y = element_text(size=14, color="black"),
+          axis.text.x = element_text(size=14, color="black"),
+          plot.margin = unit(c(0,.5,.2,1), "cm"))
+  
+  # print(pD)
+  
+  
+  p.heat <- cowplot::plot_grid(pA,pB,pC,pD, pE, ncol = 1, nrow = 5, rel_heights = c(1,.8,.8,.8, 1))
   
   
   p.heat2 <- p.heat + 
@@ -331,8 +431,8 @@ par.plots.complete <- function(dat.var, tol.shape, sub, plot.prev){
   # just rstar for now
   r.dat = subset(dat.var, outcome=="rstar" & tolerance_shape==tol.shape)
   a.dat = subset(dat.var, outcome=="alphastar" & tolerance_shape==tol.shape)
-  #p.dat = subset(dat.var, outcome=="prevalence" & tolerance_shape==tol.shape)
-  #inf.dat = subset(dat.var, outcome=="absInfMort" & tolerance_shape==tol.shape)
+  p.dat = subset(dat.var, outcome=="prevalence" & tolerance_shape==tol.shape)
+  inf.dat = subset(dat.var, outcome=="absInfMort" & tolerance_shape==tol.shape)
   beta.dat = subset(dat.var, outcome=="betastar" & tolerance_shape==tol.shape)
   
   
@@ -393,7 +493,52 @@ par.plots.complete <- function(dat.var, tol.shape, sub, plot.prev){
   # print(pC)
   
   
-  out.all<- cowplot:: plot_grid(pA,pB,pC, nrow=3,ncol=1, rel_heights = c(1,.9,.9))
+  
+  
+  # and prevalence
+  
+  if (plot.prev == TRUE){
+    
+    pD <- ggplot(data=p.dat) +
+      geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
+      facet_grid(~label, scales="free", labeller = label_parsed) +
+      ylab("Prevalence") + theme_bw() +
+      theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
+            axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text.y = element_text(size=14),
+            axis.text.x = element_blank(),axis.ticks.x = element_blank(), plot.margin = unit(c(0,.1,0,.7), "cm")) + coord_cartesian(ylim = c(.9,1)) +
+      scale_color_manual(values=colz)
+    # print(pD)
+    
+  }
+  
+  
+  # and absolute mortality
+  if(sub==FALSE){
+    pE <- ggplot(data=inf.dat) +
+      geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
+      facet_grid(~label, scales="free", labeller = label_parsed) +
+      ylab("Absolute infected\nmortality") + theme_bw() +
+      theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
+            axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text = element_text(size=14),
+            plot.margin = unit(c(0,.1,1,.3), "cm")) + # , legend.position = "bottom", legend.title = element_blank(),legend.text = element_text(size=12)) + 
+      coord_cartesian(ylim = c(0,1000)) + 
+      scale_x_continuous(breaks = breaks_pretty(3), labels = comma) +
+      scale_color_manual(values=colz) # guides(colour = guide_legend(nrow = 2)) +
+    # print(pD)
+  }else if (sub==TRUE){
+    
+    pE <- ggplot(data=inf.dat) +
+      geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
+      facet_grid(~label, scales="free", labeller = label_parsed) +
+      ylab("Absolute infected\nmortality") + theme_bw() + #scale_y_log10() +
+      theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
+            axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text = element_text(size=14),
+            plot.margin = unit(c(0,.1,1,.7), "cm"))+# , legend.position = "bottom", legend.title = element_blank(), legend.text = element_text(size=12)) + 
+      coord_cartesian(ylim = c(0,(50))) + scale_x_continuous(breaks = breaks_pretty(3), labels = comma) + scale_color_manual(values=colz) # +guides(color=guide_legend(nrow=2)) 
+    # print(pE)
+    
+  }
+  out.all<- cowplot:: plot_grid(pA,pB,pC,pD, pE, nrow=5,ncol=1, rel_heights = c(1,.8,.8,.8,1))
   # print(out.all)
   
   # return, and plot side by side with the heatmap
@@ -408,9 +553,10 @@ par.plots.complete <- function(dat.var, tol.shape, sub, plot.prev){
   #         dpi=200)
   #  
 }
-plot.join.complete <- function(dat.var, dat.tol, filename, tol.shape, sub){
+plot.join.complete <- function(dat.var, dat.tol, filename, tol.shape, sub, plot.prev){
   plot1 <- par.plots.complete(dat.var = dat.var,
                      tol.shape = tol.shape,
+                     plot.prev = plot.prev,
                      sub = sub)
   
   # and plot 2
@@ -424,7 +570,7 @@ plot.join.complete <- function(dat.var, dat.tol, filename, tol.shape, sub){
          plot = both.plot,
          units="mm",  
          width=170, 
-         height=90, 
+         height=130, 
          scale=3, 
          dpi=200)
 }
@@ -433,5 +579,6 @@ plot.join.complete(dat.var = subset(out.curves, variable=="mu" | variable=="g0" 
           tol.shape= "complete-tolerance",
           dat.tol=tol.heatmap,
           sub=TRUE,
+          plot.prev=TRUE,
           filename=paste0(homewd,"supp-figs/FigS2.png"))
 

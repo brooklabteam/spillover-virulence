@@ -684,7 +684,7 @@ p10a <- ggplot(data=subset(predict.dat, !is.na(g0))) +
         legend.title = element_blank(), legend.direction = "horizontal",
         legend.position = c(.75,.9),
         plot.margin = unit(c(.1,.1,0,.8), "lines")) +
-  ylab(bquote("optimal virus growth rate in reservoir,"~r~"* (constant)"))
+  ylab(bquote(atop("optimal virus growth rate", "in reservoir,"~r~"* (constant tolerance)")))
 
 
 p10b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
@@ -695,15 +695,25 @@ p10b <- ggplot(data=subset(predict.dat, !is.na(g0))) +
   theme(axis.text.x = element_text(angle = 90),
         axis.title.x = element_blank(),
         panel.grid = element_blank(),
-        plot.margin = unit(c(.1,.1,.1,.5), "lines")) +
-  ylab(bquote("optimal virus growth rate in reservoir,"~r~"* (complete)"))
+        plot.margin = unit(c(.1,.1,.1,.8), "lines")) +
+  ylab(bquote(atop("optimal virus growth rate", "in reservoir,"~r~"* (complete tolerance)")))
 
 
-p10 <- cowplot::plot_grid(p10a, p10b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
+p10 <- cowplot::plot_grid(p10a, p10b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01, align = "v")
 
 #and save
 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig10.png"),
+       plot = p10,
+       units="mm",  
+       width=50, 
+       height=70, 
+       scale=3, 
+       dpi=300)
+
+# This is also Fig. S5 of the main text:
+
+ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
        plot = p10,
        units="mm",  
        width=50, 
@@ -990,9 +1000,9 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig14.png"),
        scale=3, 
        dpi=300)
 
-#this is also Figure S5 of the SI
+#this is also Figure S6 of the SI
 
-ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
+ggsave(file = paste0(homewd, "/supp-figs/FigS6.png"),
        plot = p14,
        units="mm",  
        width=50, 
@@ -1162,13 +1172,13 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig16.png"),
        scale=3, 
        dpi=300)
 
-# and pair them together to get Fig S6 of the SI
+# and pair them together to get Fig S7 of the SI
 
-FigS6 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22)#, label_x = .12, label_y = .99)
+FigS7 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22)#, label_x = .12, label_y = .99)
 
 
-ggsave(file = paste0(homewd, "/supp-figs/FigS6.png"),
-       plot = FigS6,
+ggsave(file = paste0(homewd, "/supp-figs/FigS7.png"),
+       plot = FigS7,
        units="mm",  
        width=100, 
        height=60, 
