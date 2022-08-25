@@ -139,57 +139,45 @@ pA
 
 
 # First, load the data
-wbc.dat <- read.csv(file = "Downs_et_al_2020.csv", header=TRUE, stringsAsFactors = FALSE)
+wbc.dat <- read.csv(file = "species_360_neut.csv", header=TRUE, stringsAsFactors = FALSE)
 head(wbc.dat)
 
-# Drop unnecessary columns
-wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, Common.Name, 
-                         AdultBodyMass, TotalWBC, Lymphocytes, Segmented.neutrophils,
-                         ln10Mass, ln10WBC, ln10lympho, ln10neutro) 
+names(wbc.dat)[names(wbc.dat)=="phylo"] <- "binomial"
 
-head(wbc.dat) 
-
-wbc.dat$binomial <- paste0(wbc.dat$Genus, "_", wbc.dat$Species)
-
-wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, binomial, AdultBodyMass, Segmented.neutrophils, ln10Mass, ln10WBC, ln10lympho, ln10neutro)
-
-# Reclassify the Afrotherians and the Xenartha
-wbc.dat$Order <- as.character(wbc.dat$Order)
-wbc.dat$binomial[wbc.dat$Order=="Afrotheria"]
-wbc.dat$binomial[wbc.dat$Order=="Xenarthra"]
-wbc.dat$Order[wbc.dat$binomial=="Elephas_maximus"] <- "Proboscidea"
-wbc.dat$Order[wbc.dat$binomial=="Loxodonta_africana"]<- "Proboscidea"
-wbc.dat$Order[wbc.dat$binomial=="Orycteropus_afer"]<- "Tubulidentata"
-wbc.dat$Order[wbc.dat$binomial=="Procavia_capensis"] <- "Hyracoidea"
-wbc.dat$Order[wbc.dat$binomial=="Trichechus_manatus"] <- "Sirenia"
-wbc.dat$Order[wbc.dat$binomial=="Dasypus_novemcinctus"] <- "Cingulata"
+unique(wbc.dat$Order)
 
 #Rename
 names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
-names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
+#names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
 names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
 
-
-#and link to other pan.dat features: BMR and exposure and pop size
-pan.bmr <- dplyr::select(pan.dat, binomial, BMR_W, BMR_W_g, pop_group_size, pop_density_N_km2, homerange_km2)
+#and merge with features from pan.dat
+pan.bmr <- dplyr::select(pan.dat, binomial, mass_g, log10mass_g, max_lifespan_yrs, log10_max_lifespan_yrs, BMR_W, BMR_W_g)#, pop_group_size, pop_density_N_km2, homerange_km2)
 
 wbc.dat <- merge(wbc.dat, pan.bmr, by="binomial", all.x = T)
 
-# Slim your colors down to only those in this dataset
-colz2 = colz[unique(wbc.dat$order)]
+head(wbc.dat)
+wbc.dat$ln10neutro <- log10(wbc.dat$neutro_conc)
+length(wbc.dat$mass_g[is.na(wbc.dat$mass_g)]) #102 with no mass
+length(wbc.dat$mass_g[is.na(wbc.dat$max_lifespan_yrs)]) #102 with no lifespan
+length(wbc.dat$mass_g[is.na(wbc.dat$BMR_W)]) #323 with no BMR
 
+
+# Slim your colors down to only those in this dataset
+colz2 = sort(colz[unique(wbc.dat$order)])
+
+wbc.dat$order <- as.factor(wbc.dat$order)
 
 # plot with predictions
 # faux gam first
 wbc.dat$ln10BMR_W_g <- log10(wbc.dat$mass_g)/wbc.dat$BMR_W
 wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 
-wbc.dat$order <- as.factor(wbc.dat$order)
 
 m2a <- gam(ln10neutro~s(ln10BMR_W_g, bs="tp") +
              s(order, bs="re"),
            data=wbc.dat)
-summary(m2a) #54.2%; n =97
+summary(m2a) #51.8%; n =144
 
 wbc.pred = cbind.data.frame(ln10BMR_W_g=seq(min(wbc.dat$ln10BMR_W_g, na.rm=T),  max(wbc.dat$ln10BMR_W_g, na.rm=T), length=2),  order = "Chiroptera")
 wbc.pred$predict_neut <- 10^(predict.gam(m2a, newdata = wbc.pred, exclude = "s(order)"))
@@ -218,6 +206,7 @@ tree <- ape::read.tree(file = paste0(homewd,"phylo-tree/Timetree_ReservoirRepres
 
 # Rename for the icons we want to use
 tree$tip.label
+tree$tip.label <- sub(pattern = " ", replacement = "_", x=tree$tip.label)
 tree$tip.label[tree$tip.label=="Homo_sapiens"] <-  "Gorilla_gorilla"
 tree$tip.label[tree$tip.label=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
 tree$tip.label[tree$tip.label=="Antilocapra_americana"] <-  "Sus_scrofa"
@@ -226,6 +215,7 @@ tree$tip.label[tree$tip.label=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 tree$tip.label[tree$tip.label=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
 tree$tip.label[tree$tip.label=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
 tree$tip.label[tree$tip.label=="Tupaia_glis"] <- "Dermoptera"
+
 
 # Call the phylopics
 d <- ggimage::phylopic_uid(tree$tip.label)
@@ -290,7 +280,7 @@ pC1 <- ggtree(tree, size=1)   %<+% d +
   theme(legend.position = c(.85,.8), 
         legend.direction = "vertical", legend.title = element_text(size=12),
         legend.text = element_text(size=12), legend.key.size = unit(c(.8), "cm"),
-        plot.margin = unit(c(.3,.3,9.3,3), "lines"),
+        plot.margin = unit(c(.3,.3,9.8,3), "lines"),
         panel.grid = element_blank(),
         axis.title = element_blank(),
         axis.ticks = element_blank(),
@@ -409,7 +399,12 @@ pic.df$order <- order.dat$order
 unique(plot.dat$order)
 unique(pic.df$order)
 
-pic.df = subset(pic.df, order=="Monotremata" | order=="Hyracoidea" | order == "Didelphimorphia" | order=="Proboscidea" | order=="Pilosa" | order== "Cingulata" | order == "Tubulidentata" | order=="Carnivora" | order=="Perissodactyla"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia" | order=="Eulipotyphla")
+# And select those orders from which we can make a prediction:
+
+pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="Cetartiodactyla" | order=="Chiroptera" |order== "Cingulata" | 
+                  order == "Dasyuromorphia" | order == "Didelphimorphia" | order=="Diprotodontia"  | order=="Eulipotyphla" | order=="Hyracoidea" |
+                  order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
+                  order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
 
 # This is a part of Fig. 3 in the main text
 pDa <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
@@ -424,13 +419,13 @@ pDa <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(y
         legend.direction = "horizontal", legend.position = c(.74,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
-        plot.margin = unit(c(.3,1,.6,1), "cm")) + 
+        plot.margin = unit(c(.3,1,.8,1), "cm")) + 
   ylab(bquote("relative spillover virulence,"~alpha[S])) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
-  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.06)
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
 
-pD <- pDa + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+pD <- pDa + geom_text(x=20, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 
@@ -440,7 +435,7 @@ pD <- pDa + geom_text(x=16, y=0, label="      From nested model       From zoono
 Fig3top <- cowplot::plot_grid(pA, pB, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22, rel_widths = c(1,1.1))
 Fig3bottom <- cowplot::plot_grid(pC, pD, ncol = 2, nrow = 1, labels = c("C", "D"), label_size = 22, rel_widths = c(1,1.1))
 
-Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol = 1, nrow = 2, rel_heights = c(1,1.21))
+Fig3 <- cowplot::plot_grid(Fig3top, Fig3bottom, ncol = 1, nrow = 2, rel_heights = c(1,1.25))
 
 ggsave(file = paste0(homewd,"/main-figs/Fig3.png"),
        plot = Fig3,

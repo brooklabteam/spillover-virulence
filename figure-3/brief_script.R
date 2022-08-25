@@ -92,10 +92,10 @@ length(pan.dat$BMR_W_g[!is.na(pan.dat$BMR_W_g)]) #629
 # Eventually will have wbc data too, so load it here to
 # make your color bar
 
-colz = scales::hue_pal()(length(unique(pan.dat$order))-1)
+colz = scales::hue_pal()(length(sort(unique(pan.dat$order)))-1)
 colz=c(colz, "red")
 
-names(colz) <- c(unique(pan.dat$order)[unique(pan.dat$order)!="Chiroptera"], "Chiroptera")
+names(colz) <- c(sort(unique(pan.dat$order))[sort(unique(pan.dat$order))!="Chiroptera"], "Chiroptera")
 
 
 p1 <- ggplot(data=pan.dat) + 
@@ -369,51 +369,31 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig4.png"),
 wbc.dat <- read.csv(file = "species_360_neut.csv", header=TRUE, stringsAsFactors = FALSE)
 head(wbc.dat)
 
-# Drop unnecessary columns
-wbc.dat <- dplyr::select(wbc.dat, -(Notes), -(X))
-                         #Order, Family, Genus, Species, Common.Name, 
-                    #  AdultBodyMass, TotalWBC, Lymphocytes, Segmented.neutrophils,
-                    #  ln10Mass, ln10WBC, ln10lympho, ln10neutro) 
-
-head(wbc.dat) 
-
 names(wbc.dat)[names(wbc.dat)=="phylo"] <- "binomial"
-#wbc.dat$binomial <- paste0(wbc.dat$Genus, "_", wbc.dat$Species)
+
 unique(wbc.dat$Order)
-#wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, binomial, AdultBodyMass, Segmented.neutrophils, ln10Mass, ln10WBC, ln10lympho, ln10neutro)
-
-#and merge with features from pan.dat
-
-# Reclassify the Afrotherians and the Xenartha
-# wbc.dat$Order <- as.character(wbc.dat$Order)
-# wbc.dat$binomial[wbc.dat$Order=="Afrotheria"]
-# wbc.dat$binomial[wbc.dat$Order=="Xenarthra"]
-# wbc.dat$Order[wbc.dat$binomial=="Elephas_maximus"] <- "Proboscidea"
-# wbc.dat$Order[wbc.dat$binomial=="Loxodonta_africana"]<- "Proboscidea"
-# wbc.dat$Order[wbc.dat$binomial=="Orycteropus_afer"]<- "Tubulidentata"
-# wbc.dat$Order[wbc.dat$binomial=="Procavia_capensis"] <- "Hyracoidea"
-# wbc.dat$Order[wbc.dat$binomial=="Trichechus_manatus"] <- "Sirenia"
-# wbc.dat$Order[wbc.dat$binomial=="Dasypus_novemcinctus"] <- "Cingulata"
-
-
-
 
 #Rename
 names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
 #names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
 names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
 
-
-#and link to other pan.dat features: BMR and exposure and pop size
+#and merge with features from pan.dat
 pan.bmr <- dplyr::select(pan.dat, binomial, mass_g, log10mass_g, max_lifespan_yrs, log10_max_lifespan_yrs, BMR_W, BMR_W_g)#, pop_group_size, pop_density_N_km2, homerange_km2)
 
 wbc.dat <- merge(wbc.dat, pan.bmr, by="binomial", all.x = T)
 
 head(wbc.dat)
+wbc.dat$ln10neutro <- log10(wbc.dat$neutro_conc)
 length(wbc.dat$mass_g[is.na(wbc.dat$mass_g)]) #102 with no mass
+length(wbc.dat$mass_g[is.na(wbc.dat$max_lifespan_yrs)]) #102 with no lifespan
+length(wbc.dat$mass_g[is.na(wbc.dat$BMR_W)]) #323 with no BMR
+
 
 # Slim your colors down to only those in this dataset
-colz2 = colz[unique(wbc.dat$order)]
+colz2 = sort(colz[unique(wbc.dat$order)])
+
+wbc.dat$order <- as.factor(wbc.dat$order)
 
 # Plot with mass
 p5 <- ggplot(wbc.dat) + 
@@ -458,7 +438,7 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig6.png"),
 
 # plot with predictions
 # faux gam first
-wbc.dat$ln10BMR_W_g <- log10(wbc.dat$mass_g)/wbc.dat$BMR_W
+#wbc.dat$ln10BMR_W_g <- log10(wbc.dat$mass_g)/wbc.dat$BMR_W
 wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 
 wbc.dat$order <- as.factor(wbc.dat$order)
@@ -466,7 +446,7 @@ wbc.dat$order <- as.factor(wbc.dat$order)
 m2a <- gam(ln10neutro~s(ln10BMR_W_g, bs="tp") +
             s(order, bs="re"),
           data=wbc.dat)
-summary(m2a) #54.2%; n =97
+summary(m2a) #51.8%; n =144
 
 wbc.pred = cbind.data.frame(ln10BMR_W_g=seq(min(wbc.dat$ln10BMR_W_g, na.rm=T),  max(wbc.dat$ln10BMR_W_g, na.rm=T), length=2),  order = "Chiroptera")
 wbc.pred$predict_neut <- 10^(predict.gam(m2a, newdata = wbc.pred, exclude = "s(order)"))
@@ -492,33 +472,30 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig6_w_line.png"),
 
 # Now, model effects of order as a GAM, using just mass
 wbc.dat$order <- as.factor(wbc.dat$order)
-m2 <- gam(ln10neutro~s(ln10Mass, bs="tp") +
+wbc.dat$ln10mass <- log10(wbc.dat$mass_g)
+m2 <- gam(ln10neutro~s(ln10mass, bs="tp") +
                         s(order, bs="re"),
                         data=wbc.dat)
-summary(m2) #47.1%; n =260
+summary(m2) #41.8%; n =365
 order.dat <- get_partial_effects(m2, var="order")
 plot.partial(order.dat, var="order", response_var = "log10 neutrophil conc.")
 
-# Significant negative associations with:
-# Cetartiodactyal, Diprotodontia, Proboscidea
 
-#Significant positive associations with:
-# Monotremata, Primates
 
 
 
 # Or try including BMR
-m3 <- gam(ln10neutro~s(ln10Mass, bs="tp") +
+m3 <- gam(ln10neutro~s(ln10mass, bs="tp") +
                       s(BMR_W, bs="tp") +
                       s(order, bs="re"),
                       data=wbc.dat)
-summary(m3) #69.3%; n=97. much stronger model fit
+summary(m3) #63.5%; n=144. much stronger model fit
 order.dat <- get_partial_effects(m3, var="order")
-mass.dat <- get_partial_effects_continuous(m3, var="ln10Mass")
+mass.dat <- get_partial_effects_continuous(m3, var="ln10mass")
 BMR.dat <- get_partial_effects_continuous(m3, var="BMR_W")
 
 p7a <- plot.partial(order.dat, var="order", response_var = "log10 neutrophils")
-p7b <- plot.partial.cont(mass.dat, var="ln10Mass", log = T, alt_var = "mass (g)", response_var = "log10 neutrophils")
+p7b <- plot.partial.cont(mass.dat, var="ln10mass", log = T, alt_var = "mass (g)", response_var = "log10 neutrophils")
 p7c <- plot.partial.cont(BMR.dat, var="BMR_W", log = F, alt_var = "BMR (W)", response_var = "log10 neutrophils")
 
 
@@ -534,6 +511,13 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig7.png"),
        height=100, 
        scale=3, 
        dpi=300)
+
+# Significant negative associations with:
+# Cetartiodactyal, Dasyuromorphia, Diprotodontia, Scandentia
+
+#Significant positive associations with:
+# Monotremata, Primates
+
 
 
 #and finally, calculate g0 as the order effects from this model
@@ -924,6 +908,10 @@ order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
+order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
+
+
 
 # Load images - will take a moment
 pic.df <- ggimage::phylopic_uid(order.dat$species) 
@@ -932,10 +920,15 @@ pic.df$order <- order.dat$order
 
 unique(plot.dat$order)
 unique(pic.df$order)
-#and only plot those for which there is a comparison available
-#plot.dat = subset(plot.dat, order=="Carnivora"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia" | order=="Primates"  | order=="Rodentia")
-#pic.df = subset(pic.df, order=="Carnivora"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia")
-pic.df = subset(pic.df, order=="Monotremata" | order=="Hyracoidea" | order == "Didelphimorphia" | order=="Proboscidea" | order=="Pilosa" | order== "Cingulata" | order == "Tubulidentata" | order=="Carnivora" | order=="Perissodactyla"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia" | order=="Eulipotyphla")
+
+setdiff(unique(pic.df$order), unique(plot.dat$order)) #these are those that don't overlap
+sort(intersect(unique(pic.df$order), unique(plot.dat$order))) #these are those that do overlap
+#and only plot those for which there are predictions 
+pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="Cetartiodactyla" | order=="Chiroptera" |order== "Cingulata" | 
+                order == "Dasyuromorphia" | order == "Didelphimorphia" | order=="Diprotodontia"  | order=="Eulipotyphla" | order=="Hyracoidea" |
+                order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
+                order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
+                  
 
 
 # This is a part of Fig. 3 in the main text
@@ -955,11 +948,11 @@ p13a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
   ylab(bquote("relative spillover virulence,"~alpha[S]~"(constant tolerance)")) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
-  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.06)
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
 
 
 
-p13 <- p13a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+p13 <- p13a + geom_text(x=21, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 
@@ -995,11 +988,11 @@ p14a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(
   ylab(bquote("relative spillover virulence,"~alpha[S]~"(complete tolerance)")) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
-  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.06)
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
 
 
 
-p14 <- p14a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+p14 <- p14a + geom_text(x=21, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig14.png"),
@@ -1089,6 +1082,8 @@ order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
+order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
 
 # Load images - will take a moment
 pic.df <- ggimage::phylopic_uid(order.dat$species) 
@@ -1100,7 +1095,10 @@ unique(pic.df$order)
 #and only plot those for which there is a comparison available
 #plot.dat = subset(plot.dat, order=="Carnivora"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia" | order=="Primates"  | order=="Rodentia")
 #pic.df = subset(pic.df, order=="Carnivora"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia")
-pic.df = subset(pic.df, order=="Monotremata" | order=="Hyracoidea" | order == "Didelphimorphia" | order=="Proboscidea" | order=="Pilosa" | order== "Cingulata" | order == "Tubulidentata" | order=="Carnivora" | order=="Perissodactyla"  | order=="Cetartiodactyla" | order=="Chiroptera" |  order=="Diprotodontia"  | order=="Primates"  | order=="Rodentia" | order=="Eulipotyphla")
+pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="Cetartiodactyla" | order=="Chiroptera" |order== "Cingulata" | 
+                  order == "Dasyuromorphia" | order == "Didelphimorphia" | order=="Diprotodontia"  | order=="Eulipotyphla" | order=="Hyracoidea" |
+                  order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
+                  order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
 
 
 
@@ -1121,15 +1119,15 @@ p15a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(
         legend.direction = "horizontal", legend.position = c(.7,.95),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
-        plot.margin = unit(c(.2,0,1,1.3), "cm")) + 
+        plot.margin = unit(c(.2,1.5,1,1), "cm")) + 
   ylab(bquote("relative spillover virulence,"~alpha[S]~"(constant tolerance)")) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
-  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.06)
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
 
 
 
-p15 <- p15a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+p15 <- p15a + geom_text(x=21, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 
@@ -1167,11 +1165,11 @@ p16a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(
   ylab(bquote("relative spillover virulence,"~alpha[S]~"(complete tolerance)")) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
-  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.06)
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
 
 
 
-p16 <- p16a + geom_text(x=16, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+p16 <- p16a + geom_text(x=21, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
   coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig16.png"),
