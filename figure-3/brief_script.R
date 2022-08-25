@@ -395,6 +395,9 @@ unique(wbc.dat$Order)
 # wbc.dat$Order[wbc.dat$binomial=="Trichechus_manatus"] <- "Sirenia"
 # wbc.dat$Order[wbc.dat$binomial=="Dasypus_novemcinctus"] <- "Cingulata"
 
+
+
+
 #Rename
 names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
 #names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
