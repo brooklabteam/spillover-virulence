@@ -32,7 +32,7 @@ head(predict.dat)
 colz = scales::hue_pal()(length(unique(predict.dat$order))-1)
 colz=c(colz, "red")
 
-names(colz) <- c(unique(predict.dat$order)[unique(predict.dat$order)!="Chiroptera"], "Chiroptera")
+names(colz) <- c(sort(unique(predict.dat$order)[unique(predict.dat$order)!="Chiroptera"]), "Chiroptera")
 
 y.int = 0.08894968/365 #from the brief_script.R file
 

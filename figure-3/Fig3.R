@@ -161,6 +161,7 @@ wbc.dat$ln10neutro <- log10(wbc.dat$neutro_conc)
 length(wbc.dat$mass_g[is.na(wbc.dat$mass_g)]) #102 with no mass
 length(wbc.dat$mass_g[is.na(wbc.dat$max_lifespan_yrs)]) #102 with no lifespan
 length(wbc.dat$mass_g[is.na(wbc.dat$BMR_W)]) #323 with no BMR
+length(wbc.dat$mass_g[!is.na(wbc.dat$BMR_W)]) #144 with BMR
 
 
 # Slim your colors down to only those in this dataset
