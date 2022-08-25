@@ -366,41 +366,48 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig4.png"),
 # We scale by (a) after Cynthia Downs' 2020 AmNat paper 
 
 # First, load the data
-wbc.dat <- read.csv(file = "Downs_et_al_2020.csv", header=TRUE, stringsAsFactors = FALSE)
+wbc.dat <- read.csv(file = "species_360_neut.csv", header=TRUE, stringsAsFactors = FALSE)
 head(wbc.dat)
 
 # Drop unnecessary columns
-wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, Common.Name, 
-                      AdultBodyMass, TotalWBC, Lymphocytes, Segmented.neutrophils,
-                      ln10Mass, ln10WBC, ln10lympho, ln10neutro) 
+wbc.dat <- dplyr::select(wbc.dat, -(Notes), -(X))
+                         #Order, Family, Genus, Species, Common.Name, 
+                    #  AdultBodyMass, TotalWBC, Lymphocytes, Segmented.neutrophils,
+                    #  ln10Mass, ln10WBC, ln10lympho, ln10neutro) 
 
 head(wbc.dat) 
 
-wbc.dat$binomial <- paste0(wbc.dat$Genus, "_", wbc.dat$Species)
+names(wbc.dat)[names(wbc.dat)=="phylo"] <- "binomial"
+#wbc.dat$binomial <- paste0(wbc.dat$Genus, "_", wbc.dat$Species)
+unique(wbc.dat$Order)
+#wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, binomial, AdultBodyMass, Segmented.neutrophils, ln10Mass, ln10WBC, ln10lympho, ln10neutro)
 
-wbc.dat <- dplyr::select(wbc.dat, Order, Family, Genus, Species, binomial, AdultBodyMass, Segmented.neutrophils, ln10Mass, ln10WBC, ln10lympho, ln10neutro)
+#and merge with features from pan.dat
 
 # Reclassify the Afrotherians and the Xenartha
-wbc.dat$Order <- as.character(wbc.dat$Order)
-wbc.dat$binomial[wbc.dat$Order=="Afrotheria"]
-wbc.dat$binomial[wbc.dat$Order=="Xenarthra"]
-wbc.dat$Order[wbc.dat$binomial=="Elephas_maximus"] <- "Proboscidea"
-wbc.dat$Order[wbc.dat$binomial=="Loxodonta_africana"]<- "Proboscidea"
-wbc.dat$Order[wbc.dat$binomial=="Orycteropus_afer"]<- "Tubulidentata"
-wbc.dat$Order[wbc.dat$binomial=="Procavia_capensis"] <- "Hyracoidea"
-wbc.dat$Order[wbc.dat$binomial=="Trichechus_manatus"] <- "Sirenia"
-wbc.dat$Order[wbc.dat$binomial=="Dasypus_novemcinctus"] <- "Cingulata"
+# wbc.dat$Order <- as.character(wbc.dat$Order)
+# wbc.dat$binomial[wbc.dat$Order=="Afrotheria"]
+# wbc.dat$binomial[wbc.dat$Order=="Xenarthra"]
+# wbc.dat$Order[wbc.dat$binomial=="Elephas_maximus"] <- "Proboscidea"
+# wbc.dat$Order[wbc.dat$binomial=="Loxodonta_africana"]<- "Proboscidea"
+# wbc.dat$Order[wbc.dat$binomial=="Orycteropus_afer"]<- "Tubulidentata"
+# wbc.dat$Order[wbc.dat$binomial=="Procavia_capensis"] <- "Hyracoidea"
+# wbc.dat$Order[wbc.dat$binomial=="Trichechus_manatus"] <- "Sirenia"
+# wbc.dat$Order[wbc.dat$binomial=="Dasypus_novemcinctus"] <- "Cingulata"
 
 #Rename
 names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
-names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
+#names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
 names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
 
 
 #and link to other pan.dat features: BMR and exposure and pop size
-pan.bmr <- dplyr::select(pan.dat, binomial, BMR_W, BMR_W_g, pop_group_size, pop_density_N_km2, homerange_km2)
+pan.bmr <- dplyr::select(pan.dat, binomial, mass_g, log10mass_g, max_lifespan_yrs, log10_max_lifespan_yrs, BMR_W, BMR_W_g)#, pop_group_size, pop_density_N_km2, homerange_km2)
 
 wbc.dat <- merge(wbc.dat, pan.bmr, by="binomial", all.x = T)
+
+head(wbc.dat)
+length(wbc.dat$mass_g[is.na(wbc.dat$mass_g)]) #102 with no mass
 
 # Slim your colors down to only those in this dataset
 colz2 = colz[unique(wbc.dat$order)]
