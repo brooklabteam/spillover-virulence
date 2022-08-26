@@ -448,3 +448,13 @@ ggsave(file = paste0(homewd,"/main-figs/Fig3.png"),
        height=120, 
        scale=3, 
        dpi=300)
+
+#and pdf for submission
+
+ggsave(file = paste0(homewd,"/main-figs/Fig3.pdf"),
+       plot = Fig3,
+       units="mm",  
+       width=120, 
+       height=120, 
+       scale=3, 
+       dpi=300)

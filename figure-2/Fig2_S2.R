@@ -229,6 +229,16 @@ plot.join(dat.var = subset(out.curves, variable=="mu" | variable=="g0" | variabl
                        sub=TRUE,
                        filename=paste0(homewd,"main-figs/Fig2.png"))
 
+#and pdf for submission
+# constant tolerance plot for the main text
+plot.join(dat.var = subset(out.curves, variable=="mu" | variable=="g0" | variable =="c"| variable=="g"| variable=="m"),
+          tol.shape= "constant-tolerance",
+          dat.tol=tol.heatmap,
+          sub=TRUE,
+          filename=paste0(homewd,"main-figs/Fig2.pdf"))
+
+
+
 
 # and the complete tolerance version for the supplement
 heat.plots.complete <- function(dat.tol, tol.shape){
