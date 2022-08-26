@@ -8,6 +8,9 @@ library(reshape2)
 library(plyr)
 library(dplyr)
 library(RColorBrewer)
+library(ggtree)
+library(ggnewscale)
+library(ggimage)
 
 homewd =  "/Users/carabrook/Developer/spillover-virulence/"
 subwd = "figure-3"
@@ -91,7 +94,7 @@ length(pan.dat$BMR_W_g[!is.na(pan.dat$BMR_W_g)]) #629
 colz = scales::hue_pal()(length(unique(pan.dat$order))-1)
 colz=c(colz, "red")
 
-names(colz) <- c(unique(pan.dat$order)[unique(pan.dat$order)!="Chiroptera"], "Chiroptera")
+names(colz) <- c(sort(unique(pan.dat$order)[unique(pan.dat$order)!="Chiroptera"]), "Chiroptera")
 
 # Now, run a GAM to determine the partial effect of host order
 # (phylogeny) on maximum longevity, and predict lifespan 
@@ -261,12 +264,12 @@ tree$tip.label <- tree.dat$order
 d$phylo_lab = round(d$phylo_dist, 0)
 names(d)[names(d)=="name"] <- "tip_label"
 
-tree$tip.label[is.na(tree$tip.label)] <- "Paucituberculata"
-d$color[is.na(d$tip_label)] <- colz[names(colz)=="Paucituberculata"]
+#tree$tip.label[is.na(tree$tip.label)] <- "Paucituberculata"
+#d$color[is.na(d$tip_label)] <- colz[names(colz)=="Paucituberculata"]
 d$order <- as.character(d$order)
+#d$order[is.na(d$tip_label)] <- "Paucituberculata"
 d$order <- as.factor(d$order)
-d$order[is.na(d$tip_label)] <- "Paucituberculata"
-d$tip_label[is.na(d$tip_label)] <- "Paucituberculata"
+#d$tip_label[is.na(d$tip_label)] <- "Paucituberculata"
 
 pC1 <- ggtree(tree, size=1)   %<+% d + 
   aes(color=phylo_dist) +
