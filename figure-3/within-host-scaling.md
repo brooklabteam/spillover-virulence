@@ -1,5 +1,5 @@
 ---
-title: "Within-Host Scaling "
+title: "Within-Host Scaling"
 output: github_document
 ---
 
