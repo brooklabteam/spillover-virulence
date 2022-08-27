@@ -1,3 +1,8 @@
+---
+title: "Within-Host Scaling "
+output: html_document
+---
+
 # Within-Host Scaling 
 
 After deriving our equations for reservoir-host optimal virus growth rate ( $r^ *$ ) and the equations for the spillover host virulence ( $\alpha_S$ ), we next sought to use publicly-available allometric data to establish predictions of spillover host virulence for viruses derived from reservoir hosts of diverse mammalian orders. 
