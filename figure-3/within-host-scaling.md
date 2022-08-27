@@ -2,11 +2,11 @@
 
 After deriving our equations for reservoir-host optimal virus growth rate ( $r^ *$ ) and the equations for the spillover host virulence ( $\alpha_S$ ), we next sought to use publicly-available allometric data to establish predictions of spillover host virulence for viruses derived from reservoir hosts of diverse mammalian orders. 
 
-Since allometric scaling relationships with body mass are well-described in the literature ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000), [DeLeo and Dobson 1996](https://www.nature.com/articles/379720a0)), we opted to scale three key within-host parameters to host body-mass and establish summary estimates by mammalian order. We chose the parameters of host natural mortality rate ($\mu$), tolerance of immunopathology ($T_w$), and the magnitude of the constitutive immune response ($g_0$) as parameters best-supported by publicly-available data. We additionally modeled tolerance of direct virus pathology for a human spillover host ($T_{vS}$), corresponding to phylogenetic distance between the reservoir host in question and humans. Because we opted to make predictions by mammalian order, we derived all parameter estimates using  [generalized additive models (GAMs)](https://researchportal.bath.ac.uk/en/publications/mgcv-mixed-gam-computation-vehicle-with-gcvaicreml-smoothness-est) fit to publicly-available life history data, incorporating a random effect of host order
+Since allometric scaling relationships with body mass are well-described in the literature ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000), [DeLeo and Dobson 1996](https://www.nature.com/articles/379720a0)), we opted to scale three key within-host parameters to host body-mass and establish summary estimates by mammalian order. We chose the parameters of host natural mortality rate ( $\mu$ ), tolerance of immunopathology ( $T_w$ ), and the magnitude of the constitutive immune response ( $g_0$ ) as parameters best-supported by publicly-available data. We additionally modeled tolerance of direct virus pathology for a human spillover host ( $T_{vS}$ ), corresponding to phylogenetic distance between the reservoir host in question and humans. Because we opted to make predictions by mammalian order, we derived all parameter estimates using  [generalized additive models (GAMs)](https://researchportal.bath.ac.uk/en/publications/mgcv-mixed-gam-computation-vehicle-with-gcvaicreml-smoothness-est) fit to publicly-available life history data, incorporating a random effect of host order
 
 ## Estimating host natural mortality rates
 
-Allometric relationships between host body mass and longevity are well-established in the literature, particularly for mammals ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)). As a result, we estimated order-specific natural mortality rates ($\mu$) from the effect of order on the regression of log10 of host body mass against log10 maximum lifespan in years.
+Allometric relationships between host body mass and longevity are well-established in the literature, particularly for mammals ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)). As a result, we estimated order-specific natural mortality rates ( $\mu$ ) from the effect of order on the regression of log10 of host body mass against log10 maximum lifespan in years.
 
 First, set your home directory to this subfolder within your main "spillover-virulence" directory, and load appropriate packages:
 
@@ -176,7 +176,7 @@ Significant negative associations, indicative of orders with shorter lifespans t
 6. Peramelemorphia
 
 
-Now, to parameterize $\mu$, the annual mortality rate by order for our within-host model, we can simply predict lifespan from our fitted GAM, excluding the effects of body mass, then take the inverse:
+Now, to parameterize $\mu$ , the annual mortality rate by order for our within-host model, we can simply predict lifespan from our fitted GAM, excluding the effects of body mass, then take the inverse:
 
 
 ```
@@ -315,7 +315,7 @@ Since these relationships are derived from the same model, we identify the same 
 
 ## Estimating magnitude of host constitutive immunity
 
-Next, we sought to parameterize $g_0$, the magnitude of constitutive host immunity. 
+Next, we sought to parameterize $g_0$ , the magnitude of constitutive host immunity. 
 
 Prior work in the empirical literature shows that baseline blood concentrations of neutrophils, a broad class of leukocyte involved in innate mammalian immunity, scales positively (and hypermetrically) with body size across mammals ([Downs et al. 2020](https://www.journals.uchicago.edu/doi/full/10.1086/706235)), and is also correlated with mating promiscuity in primates ([Nunn et al. 2000](https://www.science.org/doi/10.1126/science.290.5494.1168)) and mating promiscuity and sociality in carnivores ([Nunn et al. 2003](https://royalsocietypublishing.org/doi/abs/10.1098/rspb.2002.2249)). Additional empirical work demonstrates that bacterial killing ability (BKA, a measure of innate immune capacity of the complement) is negatively associated with mass-adjusted basal metabolic rates (BMR, and therefore positively associated with body mass) between species of tropical bird ([Tieleman et al. 2005](https://doi.org/10.1098/rspb.2005.3155
 )). Birds heterophils (the equivalent of mammalian neutrophils) are also known to correlate positively (and hypermetrically) with mass ([Ruhs et al. 2020](https://doi.org/10.1098/rspb.2020.0655)), and BMR has also been shown to be negatively correlated with heterophil concentrations and agglutination  and  lysis  scores (innate immune metrics similar to BKA) in European birds ([Pap et al. 2011](https://link.springer.com/article/10.1007/s00442-014-3108-2)).
