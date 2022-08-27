@@ -1,6 +1,6 @@
 # Within-Host Scaling 
 
-After deriving our equations for reservoir-host optimal virus growth rate ($r^ *$) and the equations for the spillover host virulence ($\alpha_S$), we next sought to use publicly-available allometric data to establish predictions of spillover host virulence for viruses derived from reservoir hosts of diverse mammalian orders. 
+After deriving our equations for reservoir-host optimal virus growth rate (\\(r^ *\\)) and the equations for the spillover host virulence ($\alpha_S$), we next sought to use publicly-available allometric data to establish predictions of spillover host virulence for viruses derived from reservoir hosts of diverse mammalian orders. 
 
 Since allometric scaling relationships with body mass are well-described in the literature ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000), [DeLeo and Dobson 1996](https://www.nature.com/articles/379720a0)), we opted to scale three key within-host parameters to host body-mass and establish summary estimates by mammalian order. We chose the parameters of host natural mortality rate ($\mu$), tolerance of immunopathology ($T_w$), and the magnitude of the constitutive immune response ($g_0$) as parameters best-supported by publicly-available data. We additionally modeled tolerance of direct virus pathology for a human spillover host ($T_{vS}$), corresponding to phylogenetic distance between the reservoir host in question and humans. Because we opted to make predictions by mammalian order, we derived all parameter estimates using  [generalized additive models (GAMs)](https://researchportal.bath.ac.uk/en/publications/mgcv-mixed-gam-computation-vehicle-with-gcvaicreml-smoothness-est) fit to publicly-available life history data, incorporating a random effect of host order
 
@@ -231,7 +231,7 @@ Your plot should look like this:
 
 ## Estimating host tolerance of immunopathology
 
-Example Figure 1 above demonstrates the interaction of host order with lifespan, demonstrating how some hosts of certain orders (e.g. Chiroptera, Cingulata,Monotremata, Primates) are significantly longer-lived and hosts of other orders are significantly shorter-lived (e.g Afrosoricida, Dasyuromorphia,Didelphimorphia, Eulipotyphla, Notoryctemorphia, Peramelemorphia) than predicted by their body mass. 
+Example Figure 1 above demonstrates the interaction of host order with lifespan, demonstrating how some hosts of certain orders (e.g. Chiroptera, Cingulata,Monotremata, Primates) are significantly longer-lived and hosts of other orders are significantly shorter-lived (e.g Afrosoricida, Dasyuromorphia, Didelphimorphia, Eulipotyphla, Notoryctemorphia, Peramelemorphia) than predicted by their body mass. 
 
 We hypothesized that host longevity in excess of that predicted by body size should be associated with highly efficient anti-aging pathways, which are likely anti-inflammatory in nature. We additionally hypothesized that these anti-inflammatory, anti-aging mechanisms might also double as promoting host tolerance to the inflammation incurred by immunopathology, a claim which is supported in the [literature](https://www.nature.com/articles/s41598-017-12769-7).
 
@@ -308,7 +308,7 @@ p4
 
 Your plot should look like this:
 
-<img src="brief/Fig4.png" alt = "Example Fig. 4" width="500">
+<img src="brief/Fig4.png" alt = "Example Fig. 4" width="550">
 
 
 Since these relationships are derived from the same model, we identify the same positive associations with tolerance of immunopathology as we do with longevity above.
