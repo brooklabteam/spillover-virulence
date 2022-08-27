@@ -2,7 +2,7 @@
 
 This repository compiles code for [Brook et al. 2022](https://doi.org/10.1101/2021.10.06.463372), "Reservoir host immunology and life history shape virulence evolution in zoonotic viruses", currently in review. You should be able to reproduce all analyses by cloning this repo to your computer and editing the "homewd" address to your own working directory at the top of each R-script. 
 
-There are nine main folders:
+There are ten main folders:
 
 - duration-infection-refs: This folder contains raw .pdf files and a formatted Bibliography (in both Word and .pdf form) summarizing all citations used to procure the 'duration of infection' data with which we supplemented the "stringent_data_guth2021.csv" file (in "source") to convert reported human case fatality rates from zoonoses to measures of infection-induced mortality ('virulence').
 
@@ -15,6 +15,8 @@ There are nine main folders:
 - figure-s1: This folder contains one script only ('FigS1-make-PIP.R') which is self-contained and produces the supplementary figure S1, a pairwise invasibility plot (save to the supp-figs folder).
 
 - main-figs:  This folder contains all of the main figures for the paper, produced in figure-2 and figure-3 folders above, as well as the composie image of our conceptual figure.
+
+- mathematica: This contains original mathematica notebooks and converted pdf files corresponding to all solutions for both the population-level and within-host models analysed in the main text methods and Supplementary Information Appendix.
 
 - phylo-tree: This folder contains scripts and data from timeTree.org that produce the phylogenetic tree seen in Figure 3 and the measures of phylogenetic distance used throughout the manuscript.
 

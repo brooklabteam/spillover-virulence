@@ -1,0 +1,314 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     12938,        306]
+NotebookOptionsPosition[     12278,        287]
+NotebookOutlinePosition[     12669,        303]
+CellTagsIndexPosition[     12626,        300]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ StyleBox["1. Population-level dynamics - R0\n",
+  FontWeight->"Bold",
+  FontSlant->"Italic"],
+ "Follow Miller et al to find disease-free equilibrium and evaluate stability \
+to get R0.\nFirst solve assuming an SI pathogen with density-dependent \
+regulation on the population"
+}], "Text",
+ CellChangeTimes->{{3.793038922688816*^9, 3.793038926914592*^9}, {
+   3.793039135234372*^9, 3.7930391355692453`*^9}, {3.793039172299799*^9, 
+   3.7930391891830673`*^9}, {3.7933167139264393`*^9, 3.793316750905744*^9}, {
+   3.793317040831243*^9, 3.793317041496848*^9}, {3.793317137484335*^9, 
+   3.79331713831961*^9}, {3.793317345506442*^9, 3.793317386604143*^9}, 
+   3.793318633240816*^9, 3.7933195602880383`*^9, {3.793545410770094*^9, 
+   3.7935454348905163`*^9}, {3.7935456859618607`*^9, 3.793545698490984*^9}, {
+   3.7936693206834383`*^9, 3.793669354399426*^9}, {3.793669594744104*^9, 
+   3.793669657017395*^9}, {3.793669742229164*^9, 3.793669742721507*^9}, {
+   3.821283941213323*^9, 3.8212839759069767`*^9}, {3.821284174676331*^9, 
+   3.821284185882245*^9}, {3.8213807076695004`*^9, 3.821380732571968*^9}, {
+   3.821381124161357*^9, 3.821381161888556*^9}, {3.821383527889872*^9, 
+   3.821383544911965*^9}, {3.826304678229185*^9, 3.826304689313673*^9}, {
+   3.8263103177185087`*^9, 3.8263103458305063`*^9}, 
+   3.8642216519705887`*^9},ExpressionUUID->"177f5904-4ea3-452b-8b42-\
+29a0429fe9c2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"S", "+", "Inf"}], ")"}], "*", 
+        RowBox[{"(", 
+         RowBox[{"b", "-", 
+          RowBox[{"q", "*", 
+           RowBox[{"(", 
+            RowBox[{"S", "+", "Inf"}], ")"}]}]}], ")"}]}], "-", " ", 
+       RowBox[{"betar", "*", "S", "*", "Inf"}], "-", " ", 
+       RowBox[{"mu", "*", "S"}]}], " ", "\[Equal]", "0"}], ",", "  ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"betar", "*", "S", "*", "Inf"}], "-", 
+       RowBox[{"mu", "*", "Inf"}], "-", 
+       RowBox[{"alphar", "*", "Inf"}]}], "\[Equal]", "0"}]}], "}"}], ",", 
+   "  ", 
+   RowBox[{"{", 
+    RowBox[{"S", ",", "Inf"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{
+  3.793669321892804*^9, {3.794747937299075*^9, 3.7947479477800303`*^9}, {
+   3.794852892051591*^9, 3.794852904827221*^9}, {3.7951079161549892`*^9, 
+   3.795107945714861*^9}, {3.7977840818574123`*^9, 3.7977840821104393`*^9}, {
+   3.797784710781712*^9, 3.797784720894272*^9}, {3.797786937480184*^9, 
+   3.797786941543118*^9}, 3.821283932711665*^9, {3.821283988748959*^9, 
+   3.8212840715091963`*^9}, {3.8212841324306793`*^9, 3.821284132730448*^9}, 
+   3.8212890421877203`*^9, {3.821289392277177*^9, 3.82128939886172*^9}, {
+   3.821289431964966*^9, 3.821289438940608*^9}, {3.821289797575045*^9, 
+   3.8212898073700666`*^9}, {3.8212899296564083`*^9, 3.8212899300979233`*^9}, 
+   3.8212900303943863`*^9, {3.821290176043159*^9, 3.821290178350466*^9}, 
+   3.821290319927436*^9, {3.821380816498622*^9, 3.821380933831119*^9}, {
+   3.821383548010767*^9, 3.821383565662826*^9}, 3.8213838729447803`*^9, {
+   3.826310355446597*^9, 3.8263103697419252`*^9}, {3.864221661209909*^9, 
+   3.8642216670850143`*^9}, {3.8642298858280888`*^9, 3.864229892106577*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"521304a0-bb30-4678-a3fa-1888bca1bba9"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"S", "\[Rule]", "0"}], ",", 
+     RowBox[{"Inf", "\[Rule]", "0"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"S", "\[Rule]", 
+      FractionBox[
+       RowBox[{"alphar", "+", "mu"}], "betar"]}], ",", 
+     RowBox[{"Inf", "\[Rule]", 
+      RowBox[{
+       FractionBox["1", 
+        RowBox[{"2", " ", 
+         SuperscriptBox["betar", "2"], " ", "q"}]], 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "alphar"}], " ", 
+          SuperscriptBox["betar", "2"]}], "+", 
+         RowBox[{"b", " ", 
+          SuperscriptBox["betar", "2"]}], "-", 
+         RowBox[{
+          SuperscriptBox["betar", "2"], " ", "mu"}], "-", 
+         RowBox[{"2", " ", "alphar", " ", "betar", " ", "q"}], "-", 
+         RowBox[{"2", " ", "betar", " ", "mu", " ", "q"}], "-", 
+         RowBox[{
+          SuperscriptBox["betar", 
+           RowBox[{"3", "/", "2"}]], " ", 
+          RowBox[{"\[Sqrt]", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{
+              SuperscriptBox["alphar", "2"], " ", "betar"}], "-", 
+             RowBox[{"2", " ", "alphar", " ", "b", " ", "betar"}], "+", 
+             RowBox[{
+              SuperscriptBox["b", "2"], " ", "betar"}], "+", 
+             RowBox[{"2", " ", "alphar", " ", "betar", " ", "mu"}], "-", 
+             RowBox[{"2", " ", "b", " ", "betar", " ", "mu"}], "+", 
+             RowBox[{"betar", " ", 
+              SuperscriptBox["mu", "2"]}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox["alphar", "2"], " ", "q"}], "+", 
+             RowBox[{"4", " ", "alphar", " ", "mu", " ", "q"}]}], ")"}]}]}]}],
+         ")"}]}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"S", "\[Rule]", 
+      FractionBox[
+       RowBox[{"alphar", "+", "mu"}], "betar"]}], ",", 
+     RowBox[{"Inf", "\[Rule]", 
+      RowBox[{
+       FractionBox["1", 
+        RowBox[{"2", " ", 
+         SuperscriptBox["betar", "2"], " ", "q"}]], 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "alphar"}], " ", 
+          SuperscriptBox["betar", "2"]}], "+", 
+         RowBox[{"b", " ", 
+          SuperscriptBox["betar", "2"]}], "-", 
+         RowBox[{
+          SuperscriptBox["betar", "2"], " ", "mu"}], "-", 
+         RowBox[{"2", " ", "alphar", " ", "betar", " ", "q"}], "-", 
+         RowBox[{"2", " ", "betar", " ", "mu", " ", "q"}], "+", 
+         RowBox[{
+          SuperscriptBox["betar", 
+           RowBox[{"3", "/", "2"}]], " ", 
+          RowBox[{"\[Sqrt]", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{
+              SuperscriptBox["alphar", "2"], " ", "betar"}], "-", 
+             RowBox[{"2", " ", "alphar", " ", "b", " ", "betar"}], "+", 
+             RowBox[{
+              SuperscriptBox["b", "2"], " ", "betar"}], "+", 
+             RowBox[{"2", " ", "alphar", " ", "betar", " ", "mu"}], "-", 
+             RowBox[{"2", " ", "b", " ", "betar", " ", "mu"}], "+", 
+             RowBox[{"betar", " ", 
+              SuperscriptBox["mu", "2"]}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox["alphar", "2"], " ", "q"}], "+", 
+             RowBox[{"4", " ", "alphar", " ", "mu", " ", "q"}]}], ")"}]}]}]}],
+         ")"}]}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"S", "\[Rule]", 
+      FractionBox[
+       RowBox[{"b", "-", "mu"}], "q"]}], ",", 
+     RowBox[{"Inf", "\[Rule]", "0"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.8288141978228827`*^9, 3.829571960596266*^9, 
+  3.830518662831327*^9, 3.86422167055298*^9, 3.864229895159367*^9, 
+  3.866022805656336*^9},
+ CellLabel->"Out[1]=",ExpressionUUID->"4bdf589d-c1d7-4f08-9d4f-218b310ce3de"]
+}, Open  ]],
+
+Cell[TextData[{
+ "We find both a disease-free equilibrium (DFE) and an endemic-infection \
+equilibrium.\nAt DFE: S* = ",
+ Cell[BoxData[
+  FractionBox[
+   RowBox[{"b", "-", "mu"}], "q"]],
+  CellChangeTimes->{3.821383572177827*^9},ExpressionUUID->
+  "71d69610-2204-46d8-a413-6432aa8a6415"],
+ "and I* = 0.\nAt endemic infection: S*= ",
+ Cell[BoxData[
+  FractionBox[
+   RowBox[{"alphar", "+", "mu"}], "betar"]],
+  CellChangeTimes->{3.821383572177827*^9},ExpressionUUID->
+  "4fd7ded6-6f43-49bd-b5d3-4d588cba166d"],
+ " and I* = ",
+ Cell[BoxData[
+  RowBox[{
+   FractionBox["1", 
+    RowBox[{"2", " ", 
+     SuperscriptBox["betar", "2"], " ", "q"}]], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "alphar"}], " ", 
+      SuperscriptBox["betar", "2"]}], "+", 
+     RowBox[{"b", " ", 
+      SuperscriptBox["betar", "2"]}], "-", 
+     RowBox[{
+      SuperscriptBox["betar", "2"], " ", "mu"}], "-", 
+     RowBox[{"2", " ", "alphar", " ", "betar", " ", "q"}], "-", 
+     RowBox[{"2", " ", "betar", " ", "mu", " ", "q"}], "+", 
+     RowBox[{
+      SuperscriptBox["betar", 
+       RowBox[{"3", "/", "2"}]], " ", 
+      RowBox[{"\[Sqrt]", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          SuperscriptBox["alphar", "2"], " ", "betar"}], "-", 
+         RowBox[{"2", " ", "alphar", " ", "b", " ", "betar"}], "+", 
+         RowBox[{
+          SuperscriptBox["b", "2"], " ", "betar"}], "+", 
+         RowBox[{"2", " ", "alphar", " ", "betar", " ", "mu"}], "-", 
+         RowBox[{"2", " ", "b", " ", "betar", " ", "mu"}], "+", 
+         RowBox[{"betar", " ", 
+          SuperscriptBox["mu", "2"]}], "+", 
+         RowBox[{"4", " ", 
+          SuperscriptBox["alphar", "2"], " ", "q"}], "+", 
+         RowBox[{"4", " ", "alphar", " ", "mu", " ", "q"}]}], ")"}]}]}]}], 
+    ")"}]}]],
+  CellChangeTimes->{{3.8263885296478167`*^9, 3.8263885371709414`*^9}, 
+    3.828816920749379*^9, {3.864221699858081*^9, 3.8642217286488647`*^9}, {
+    3.864229905449185*^9, 3.8642299252834597`*^9}},ExpressionUUID->
+  "c7f2c8e3-5e8e-474f-a28d-344a684be38e"],
+ "\nNow, we evaluate the stability of the Jacobian matrix at DFE. This occurs \
+when either (a) the trace of the Jacobian is positive or (b) the determinant \
+of the Jacobian is negative. A little algebra will establish that both of \
+these approaches yield the same equation, which we call R_0, representing the \
+conditions under which a pathogen can invade the system. \nSolving for that \
+expression with this Jacobian yields the following equation for R_{0} in this \
+system :\n\nR0 = ",
+ Cell[BoxData[
+  FractionBox[
+   RowBox[{"betar", " ", 
+    RowBox[{"(", 
+     RowBox[{"b", "-", "mu"}], ")"}]}], 
+   RowBox[{"b", " ", 
+    RowBox[{"(", 
+     RowBox[{"alphar", "+", "mu"}], ")"}]}]]],
+  CellChangeTimes->{{3.821383675307276*^9, 3.821383704032351*^9}, {
+   3.821383896447441*^9, 3.821383904040791*^9}, {3.821384474869038*^9, 
+   3.821384519570895*^9}},ExpressionUUID->
+  "71adf068-9b7b-4423-aad7-70f4aa9b7e04"],
+ "\n\n"
+}], "Text",
+ CellChangeTimes->{{3.793038922688816*^9, 3.793038926914592*^9}, {
+   3.793039135234372*^9, 3.7930391355692453`*^9}, {3.793039172299799*^9, 
+   3.7930391891830673`*^9}, {3.7933167139264393`*^9, 3.793316750905744*^9}, {
+   3.793317040831243*^9, 3.793317041496848*^9}, {3.793317137484335*^9, 
+   3.79331713831961*^9}, {3.793317345506442*^9, 3.793317386604143*^9}, 
+   3.793318633240816*^9, 3.7933195602880383`*^9, {3.793545410770094*^9, 
+   3.7935454348905163`*^9}, {3.7935456859618607`*^9, 3.793545698490984*^9}, {
+   3.7936693206834383`*^9, 3.793669354399426*^9}, {3.793669594744104*^9, 
+   3.793669657017395*^9}, {3.793669742229164*^9, 3.793669742721507*^9}, {
+   3.821283941213323*^9, 3.8212839759069767`*^9}, {3.821284174676331*^9, 
+   3.821284185882245*^9}, {3.8213807076695004`*^9, 3.821380732571968*^9}, {
+   3.821381124161357*^9, 3.821381161888556*^9}, {3.821383527889872*^9, 
+   3.821383544911965*^9}, {3.821383589725234*^9, 3.821383701564569*^9}, {
+   3.82138391107699*^9, 3.821383911077125*^9}, {3.821384411598186*^9, 
+   3.8213844807450047`*^9}, {3.821384532955957*^9, 3.8213845939181347`*^9}, 
+   3.821385036881987*^9, 3.821385119240034*^9, {3.826310551386207*^9, 
+   3.826310571434504*^9}, {3.82631251960054*^9, 3.826312519600727*^9}, {
+   3.826313322262088*^9, 3.826313324519246*^9}, {3.8288169250430307`*^9, 
+   3.8288169250432997`*^9}, {3.8642217445769978`*^9, 
+   3.8642217494188633`*^9}, {3.8642298573166847`*^9, 3.864229857736279*^9}, {
+   3.864229934254738*^9, 3.8642299765086527`*^9}, {3.866022875588883*^9, 
+   3.866022893532517*^9}},ExpressionUUID->"a0bfb0d8-941a-49cc-b2e7-\
+877ef0f63ded"]
+},
+WindowSize->{671, 732},
+WindowMargins->{{48, Automatic}, {Automatic, 6}},
+FrontEndVersion->"12.3 for Mac OS X ARM (64-bit) (July 9, 2021)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"34c1108d-6bc2-4e87-990a-1e7b59ef30df"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 1401, 23, 81, "Text",ExpressionUUID->"177f5904-4ea3-452b-8b42-29a0429fe9c2"],
+Cell[CellGroupData[{
+Cell[1984, 47, 1923, 40, 52, "Input",ExpressionUUID->"521304a0-bb30-4678-a3fa-1888bca1bba9"],
+Cell[3910, 89, 3742, 96, 289, "Output",ExpressionUUID->"4bdf589d-c1d7-4f08-9d4f-218b310ce3de"]
+}, Open  ]],
+Cell[7667, 188, 4607, 97, 438, "Text",ExpressionUUID->"a0bfb0d8-941a-49cc-b2e7-877ef0f63ded"]
+}
+]
+*)
+
