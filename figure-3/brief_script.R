@@ -363,7 +363,8 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig4.png"),
 # and mass-specific BMR, and positively with (c) higher host
 # exposure/ promiscuity/ gregariousness
 
-# We scale by (a) after Cynthia Downs' 2020 AmNat paper 
+# We scale constitutive immunity by neutrophils concentrations
+# reported in the Species360 data
 
 # First, load the data
 wbc.dat <- read.csv(file = "species_360_neut.csv", header=TRUE, stringsAsFactors = FALSE)
