@@ -544,12 +544,12 @@ following orders:
 5.  Scandentia
 
 We can then use the fitted model to estimate
-![g\[0\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g%5B0%5D "g[0]")
+![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
 for our within-host model. Our goal is for g0 to span 0 to 1 for model
 parameterization. We only allow for linear transformations of the data,
 in order to retain differences in the magnitude of effect. We add to the
 predict.dat database from above among the orders and plot
-![g\[0\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g%5B0%5D "g[0]")
+![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
 across orders:
 
     tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
@@ -596,7 +596,7 @@ Your plot should look like this:
 
 Finally, in our equation for spillover virulence, we define one final
 parameter,
-![T\[vS\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T%5BvS%5D "T[vS]"),
+![TvS\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;TvS%5D "TvS]"),
 the spillover host tolerance of virus-induced pathology for a pathogen
 evolved in a phylogenetically-distant reservoir host. Building from the
 literature (e.g. [Guth et
@@ -616,7 +616,7 @@ orders modeled in our Pantheria dataset. See subfolder
 of this analysis.
 
 Here, we estimate the
-![T\[vS\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T%5BvS%5D "T[vS]")
+![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}")
 parameter from these relationships and plot across mammalian orders:
 
     # Load the tree data
@@ -680,7 +680,7 @@ values used to generate Fig. 2 in the main text and allow
 ![\\mu](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmu "\mu"),
 ![T\[w\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T%5Bw%5D "T[w]"),
 and
-![g\[0\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g%5B0%5D "g[0]")
+![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
 to vary by order based on the analyses outlined above. Relate these
 parameters to a prediction of
 ![r^\*](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;r%5E%2A "r^*"),
@@ -750,7 +750,7 @@ The resulting plot should look like this:
 
 Virulence in the human host is a function of phylogenetic distance,
 which we capture in order-specific
-![T\[vS\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T%5BvS%5D "T[vS]").
+![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}").
 Following spillover, tolerance of immunopathology is now a property of
 the spillover host (here, human), so we hold it constant across all
 reservoir predictions. As above, calculations of spillover virulence are
