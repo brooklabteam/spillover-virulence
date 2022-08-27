@@ -545,10 +545,12 @@ following orders:
 
 We can then use the fitted model to estimate
 ![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-for our within-host model. Our goal is for g0 to span 0 to 1 for model
-parameterization. We only allow for linear transformations of the data,
-in order to retain differences in the magnitude of effect. We add to the
-predict.dat database from above among the orders and plot
+for our within-host model. Our goal is for
+![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
+to span 0 to 1 for model parameterization. We only allow for linear
+transformations of the data, in order to retain differences in the
+magnitude of effect. We add to the predict.dat database from above among
+the orders and plot
 ![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
 across orders:
 
@@ -596,7 +598,7 @@ Your plot should look like this:
 
 Finally, in our equation for spillover virulence, we define one final
 parameter,
-![TvS\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;TvS%5D "TvS]"),
+![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}"),
 the spillover host tolerance of virus-induced pathology for a pathogen
 evolved in a phylogenetically-distant reservoir host. Building from the
 literature (e.g. [Guth et

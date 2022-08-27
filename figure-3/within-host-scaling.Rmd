@@ -464,7 +464,7 @@ We see significant negative associations (indicative of weak constitutive immuni
 4. Proboscidea
 5. Scandentia
 
-We can then use the fitted model to estimate $g_0$ for our within-host model. Our goal is for g0 to span 0 to 1 for model parameterization. We only allow for linear transformations of the data, in order 
+We can then use the fitted model to estimate $g_0$ for our within-host model. Our goal is for $g_0$ to span 0 to 1 for model parameterization. We only allow for linear transformations of the data, in order 
 to retain differences in the magnitude of effect. We add to the predict.dat database from above among the orders and plot $g_0$ across orders:
 
 ```
@@ -512,7 +512,7 @@ Your plot should look like this:
 
 ## Estimating spillover host tolerance from phylogenetic distance
 
-Finally, in our equation for spillover virulence, we define one final parameter, $TvS]$, the spillover host tolerance of virus-induced pathology for a pathogen evolved in a phylogenetically-distant reservoir host. Building from the literature (e.g. [Guth et al. 2019](https://doi.org/10.1098/rstb.2019.0296), [Guth et al. 2022](https://doi.org/10.1073/pnas.2113628119), [Farrell and Davies 2019](https://doi.org/10.1073/pnas.1817323116), [Longdon et al. 2011](https://doi.org/10.1371/journal.ppat.1002260), [Longdon et al. 2015](https://doi.org/10.1371/journal.ppat.1004728)), we chose to model this viral tolerance as a function of phylogenetic distance between spillover and reservoir host.
+Finally, in our equation for spillover virulence, we define one final parameter, $T_{vS}$, the spillover host tolerance of virus-induced pathology for a pathogen evolved in a phylogenetically-distant reservoir host. Building from the literature (e.g. [Guth et al. 2019](https://doi.org/10.1098/rstb.2019.0296), [Guth et al. 2022](https://doi.org/10.1073/pnas.2113628119), [Farrell and Davies 2019](https://doi.org/10.1073/pnas.1817323116), [Longdon et al. 2011](https://doi.org/10.1371/journal.ppat.1002260), [Longdon et al. 2015](https://doi.org/10.1371/journal.ppat.1004728)), we chose to model this viral tolerance as a function of phylogenetic distance between spillover and reservoir host.
 
 To do this, we first used the database TimeTree (timetree.org) to build a phylogeny and extract the phylogenetic distance (in millions of years), based on Most Recent Common Ancestor across all 27 mammalian orders modeled in our Pantheria dataset. See subfolder [phylo-tree/get.phylo.dist.R](phylo-tree/get.phylo.dist.R) for details of this analysis.
 
