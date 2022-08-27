@@ -9,7 +9,7 @@ Since allometric scaling relationships with body mass are well-described in the 
 
 ## Estimating host natural mortality rates
 
-Allometric relationships between host body mass and longevity are well-established in the literature, particularly for mammals ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)). As a result, we estimated order-specific natural mortality rates ( $ \mu $ ) from the effect of order on the regression of log10 of host body mass against log10 maximum lifespan in years.
+Allometric relationships between host body mass and longevity are well-established in the literature, particularly for mammals ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)). As a result, we estimated order-specific natural mortality rates ( $\mu$ ) from the effect of order on the regression of log10 of host body mass against log10 maximum lifespan in years.
 
 First, set your home directory to this subfolder within your main "spillover-virulence" directory, and load appropriate packages:
 

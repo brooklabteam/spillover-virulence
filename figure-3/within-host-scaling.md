@@ -39,8 +39,9 @@ effect of host order
 Allometric relationships between host body mass and longevity are
 well-established in the literature, particularly for mammals ([Brown et
 al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)).
-As a result, we estimated order-specific natural mortality rates ( $ $ )
-from the effect of order on the regression of log10 of host body mass
+As a result, we estimated order-specific natural mortality rates (
+![\\mu](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmu "\mu")
+) from the effect of order on the regression of log10 of host body mass
 against log10 maximum lifespan in years.
 
 First, set your home directory to this subfolder within your main
