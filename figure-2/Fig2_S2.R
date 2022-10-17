@@ -108,9 +108,9 @@ par.plots <- function(dat.var, tol.shape, sub){
     facet_grid(~label, scales="free", labeller = label_parsed) +
     ylab(bquote(alpha^"*"~", virulence")) + theme_bw() +
     theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
-          axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text.y = element_text(size=14),
-          axis.text.x = element_blank(),axis.ticks.x = element_blank(), plot.margin = unit(c(0,.1,0,.7), "cm")) + coord_cartesian(ylim = c(0,.05)) +
-    scale_color_manual(values=colz)
+          axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text = element_text(size=14),
+          plot.margin = unit(c(0,.1,1,.7), "cm")) + coord_cartesian(ylim = c(0,.05)) +
+    scale_color_manual(values=colz) + scale_x_continuous(labels = label_comma())
   # print(pC)
   
   #and transmission
@@ -118,7 +118,7 @@ par.plots <- function(dat.var, tol.shape, sub){
   
   
   
-  out.all<- cowplot:: plot_grid(pA,pB,pC, nrow=3,ncol=1, rel_heights = c(1,.9,.9))
+  out.all<- cowplot:: plot_grid(pA,pB,pC, nrow=3,ncol=1, rel_heights = c(1,.9,1.1))
   # print(out.all)
   
   # return, and plot side by side with the heatmap
@@ -168,26 +168,27 @@ heat.plots <- function(dat.tol, tol.shape){
           axis.text.y = element_text(size=14, color="black"),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = unit(c(0,.2,0,1), "cm"))
+          plot.margin = unit(c(0,.3,0,1), "cm"))
   
   pC <- ggplot(a.dat) + geom_tile(aes(x=Tw, y=Tv, fill=value)) + 
     scale_fill_gradient(low="yellow", high="red", name=bquote(alpha^'*')) +
     theme_bw() + 
-    # xlab(bquote('T'[w]~'tolerance of immunopathology'))+
+     xlab(bquote('T'[w]~'tolerance of immunopathology'))+
     # ylab(bquote('T'[v]~'tolerance of viral pathology'))+
     theme(panel.grid = element_blank(),
-          axis.title = element_blank(),
-          axis.text.y = element_text(size=14, color="black"),
-          axis.text.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.title.x = element_text(size =16, color="navy"),
+          axis.text = element_text(size=14, color="black"),
+          #axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = unit(c(0,.4,0,1), "cm"))
+          plot.margin = unit(c(0,.4,.1,1), "cm"))
   # # print(pB)
   # 
   # 
   
   
   
-  p.heat <- cowplot::plot_grid(pA,pB,pC, ncol = 1, nrow = 3, rel_heights = c(1,.9,.9))
+  p.heat <- cowplot::plot_grid(pA,pB,pC, ncol = 1, nrow = 3, rel_heights = c(1,.9,1.1))
   
   
   p.heat2 <- p.heat + 
@@ -287,16 +288,19 @@ heat.plots.complete <- function(dat.tol, tol.shape){
     xlab(bquote('T'[w]~'tolerance of immunopathology'))+
     ylab(bquote('T'[v]~'tolerance of viral pathology'))+
     theme(panel.grid = element_blank(),
-          axis.title = element_blank(),
-          axis.text.y = element_text(size=14, color="black"),
-          axis.text.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.title.x = element_text(size =16, color="navy"),
+          axis.text = element_text(size=14, color="black"),
+          #axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          plot.margin = unit(c(0,.4,0,1), "cm"))
-  # print(pB)
+          plot.margin = unit(c(0,.4,.1,1), "cm"))
+  # # print(pB)
+  # 
+  # 
   
   
   
-  p.heat <- cowplot::plot_grid(pA,pB,pC, ncol = 1, nrow = 3, rel_heights = c(1,.9,.9))
+  p.heat <- cowplot::plot_grid(pA,pB,pC, ncol = 1, nrow = 3, rel_heights = c(1,.9,1.1))
   
   
   p.heat2 <- p.heat + 
@@ -392,20 +396,24 @@ par.plots.complete <- function(dat.var, tol.shape, sub, plot.prev){
   # print(pB)
   
   
+  
   pC <- ggplot(data=a.dat) +
     geom_line(aes(x=variable_par, y=value, color=tolerance), show.legend = F) +
     facet_grid(~label, scales="free", labeller = label_parsed) +
     ylab(bquote(alpha^"*"~", virulence")) + theme_bw() +
     theme(panel.grid = element_blank(), axis.title.x = element_blank(), strip.text = element_blank(),
-          axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text.y = element_text(size=14),
-          axis.text.x = element_blank(),axis.ticks.x = element_blank(), plot.margin = unit(c(0,.1,0,.7), "cm")) + coord_cartesian(ylim = c(0,.05)) +
-    scale_color_manual(values=colz)
+          axis.title.y = element_text(size=18), strip.background = element_blank(), axis.text = element_text(size=14),
+          plot.margin = unit(c(0,.1,1,.7), "cm")) + coord_cartesian(ylim = c(0,.05)) +
+    scale_color_manual(values=colz) + scale_x_continuous(labels = label_comma())
   # print(pC)
   
+  #and transmission
   
-  out.all<- cowplot:: plot_grid(pA,pB,pC, nrow=3,ncol=1, rel_heights = c(1,.9,.9))
+  
+  
+  
+  out.all<- cowplot:: plot_grid(pA,pB,pC, nrow=3,ncol=1, rel_heights = c(1,.9,1.1))
   # print(out.all)
-  
   # return, and plot side by side with the heatmap
   return(out.all)
   
