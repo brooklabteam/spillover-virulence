@@ -1,14 +1,14 @@
 order,species,phylo_dist
 Cetartiodactyla,Antilocapra americana,188
 Carnivora,Ailurus fulgens,188
-Chiroptera,Acerodon celebensis,188
+Chiroptera,Pteropus medius,188
 Diprotodontia,Phascolarctos cinereus,320
-Perissodactyla,Equus asinus,188
-Primates,Homo sapiens,0
+Perissodactyla,Equus ferus caballus,188
+Primates,Pan,0
 Rodentia,Rattus rattus,174
-Eulipotyphla,Suncus murinus,188
+Eulipotyphla,Atopogale_cubana,188
 Didelphimorphia,Didelphis virginiana,320
-Hyracoidea,Procavia capensis,197.8
+Hyracoidea,Hyracoidea,197.8
 Monotremata,Tachyglossus aculeatus,360.1322
 Pilosa,Choloepus didactylus,197.8
 Proboscidea,Loxodonta africana,197.8
@@ -18,11 +18,11 @@ Cingulata,Dasypus novemcinctus,197.8
 Dasyuromorphia,Sarcophilus harrisii,320
 Dermoptera,Cynocephalus volans,158.7294
 Lagomorpha,Oryctolagus cuniculus,174.4
-Macroscelidea,Elephantulus myurus,197.8
+Macroscelidea,Macroscelididae,197.8
 Microbiotheria,Dromiciops gliroides,320
 Notoryctemorphia,Notoryctes typhlops,320
-Paucituberculata,Rhyncholestes raphanurus,320
+Paucituberculata,Paucituberculata,320
 Peramelemorphia,Perameles nasuta,320
-Pholidota,Manis javanica,188
+Pholidota,Smutsia gigantea,188
 Scandentia,Tupaia glis,169.46
-Sirenia,Dugong dugon,197.8
+Sirenia,Dugongidae,197.8

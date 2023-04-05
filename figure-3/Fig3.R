@@ -211,7 +211,7 @@ tree <- ape::read.tree(file = paste0(homewd,"phylo-tree/Timetree_ReservoirRepres
 # Rename for the icons we want to use
 tree$tip.label
 tree$tip.label <- sub(pattern = " ", replacement = "_", x=tree$tip.label)
-tree$tip.label[tree$tip.label=="Homo_sapiens"] <-  "Gorilla_gorilla"
+tree$tip.label[tree$tip.label=="Homo_sapiens"] <-  "Pan"
 tree$tip.label[tree$tip.label=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
 tree$tip.label[tree$tip.label=="Antilocapra_americana"] <-  "Sus_scrofa"
 tree$tip.label[tree$tip.label=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
@@ -222,17 +222,28 @@ tree$tip.label[tree$tip.label=="Tupaia_glis"] <- "Dermoptera"
 
 
 # Call the phylopics
+tree$tip.label[tree$tip.label=="Rhyncholestes_raphanurus"] <- "Paucituberculata"
+tree$tip.label[tree$tip.label=="Suncus_murinus"] <- "Atopogale_cubana"
+tree$tip.label[tree$tip.label=="Manis_javanica"] <- "Smutsia_gigantea"
+tree$tip.label[tree$tip.label=="Acerodon_celebensis"] <- "Pteropus_medius"
+tree$tip.label[tree$tip.label=="Procavia_capensis"] <- "Hyracoidea"
+tree$tip.label[tree$tip.label=="Dugong_dugon"] <- "Dugongidae"
+tree$tip.label[tree$tip.label=="Elephantulus_myurus"] <- "Macroscelididae"
+tree$tip.label[tree$tip.label=="Equus_asinus"] <- "Equus_ferus_caballus"
 d <- ggimage::phylopic_uid(tree$tip.label)
 
 
 tree.dat <- cbind.data.frame(species=tree$tip.label)
+
+
 
 # Load the order meta-data and phylogenetic distance and combine with tree
 order.dat <- read.csv(file=paste0(homewd, "/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
 head(order.dat)
 order.dat$species
 order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
-order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Gorilla_gorilla"
+order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
+#order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Macaca_mulatta"
 order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
 order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
@@ -278,7 +289,7 @@ pC1 <- ggtree(tree, size=1)   %<+% d +
                         guide = guide_legend(direction = "vertical",title.position = "top")) +
   geom_tiplab(aes(label=label), color="black",offset = -65, size=4) + 
   # scale_color_gradient(low="black", high="red",  name=bquote(eta)) +
-  new_scale_color()+  theme_bw() +
+  ggnewscale::new_scale_color()+  theme_bw() +
   geom_tiplab(aes(image=uid, color=order),  geom="phylopic",offset = -10, size=.04) +
   scale_color_manual(values=colz, guide="none") + 
   theme(legend.position = c(.85,.8), 
@@ -386,7 +397,8 @@ head(order.dat)
 # Rename
 order.dat$species
 order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
-order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Gorilla_gorilla"
+order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
+order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Macaca_mulatta"
 order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
 order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
