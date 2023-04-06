@@ -2,13 +2,10 @@ Within-Host Scaling
 ================
 
 After deriving our equations for reservoir-host optimal virus growth
-rate (
-![r^ \*](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;r%5E%20%2A "r^ *")
-) and the equations for the spillover host virulence (
-![\\alpha_S](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Calpha_S "\alpha_S")
-), we next sought to use publicly-available allometric data to establish
-predictions of spillover host virulence for viruses derived from
-reservoir hosts of diverse mammalian orders.
+rate ( $r^ *$ ) and the equations for the spillover host virulence (
+$\alpha_S$ ), we next sought to use publicly-available allometric data
+to establish predictions of spillover host virulence for viruses derived
+from reservoir hosts of diverse mammalian orders.
 
 Since allometric scaling relationships with body mass are well-described
 in the literature ([Brown et
@@ -16,31 +13,24 @@ al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)
 [DeLeo and Dobson 1996](https://www.nature.com/articles/379720a0)), we
 opted to scale three key within-host parameters to host body-mass and
 establish summary estimates by mammalian order. We chose the parameters
-of host natural mortality rate (
-![\\mu](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmu "\mu")
-), tolerance of immunopathology (
-![T_w](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_w "T_w")
-), and the magnitude of the constitutive immune response (
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-) as parameters best-supported by publicly-available data. We
-additionally modeled tolerance of direct virus pathology for a human
-spillover host (
-![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}")
-), corresponding to phylogenetic distance between the reservoir host in
-question and humans. Because we opted to make predictions by mammalian
-order, we derived all parameter estimates using [generalized additive
-models
+of host natural mortality rate ( $\mu$ ), tolerance of immunopathology (
+$T_w$ ), and the magnitude of the constitutive immune response ( $g_0$ )
+as parameters best-supported by publicly-available data. We additionally
+modeled tolerance of direct virus pathology for a human spillover host (
+$T_{vS}$ ), corresponding to phylogenetic distance between the reservoir
+host in question and humans. Because we opted to make predictions by
+mammalian order, we derived all parameter estimates using [generalized
+additive models
 (GAMs)](https://researchportal.bath.ac.uk/en/publications/mgcv-mixed-gam-computation-vehicle-with-gcvaicreml-smoothness-est)
 fit to publicly-available life history data, incorporating a random
-effect of host order
+effect of host order.
 
 ## Estimating host natural mortality rates
 
 Allometric relationships between host body mass and longevity are
 well-established in the literature, particularly for mammals ([Brown et
 al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)).
-As a result, we estimated order-specific natural mortality rates (
-![\\mu](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmu "\mu")
+As a result, we estimated order-specific natural mortality rates ( $\mu$
 ) from the effect of order on the regression of log10 of host body mass
 against log10 maximum lifespan in years.
 
@@ -192,8 +182,13 @@ We see clear evidence of significant effects of host order on the
 relationship between body mass and longevity.
 
 In particular, significant positive associations with longevity,
-indicative of orders with longer lifespans than predicted by body size
-are: 1. Chiroptera 2. Cingulata 3. Monotremata 4. Primates
+indicative of orders with longer lifespans than predicted by body size,
+are: 
+
+1. Chiroptera 
+2. Cingulata 
+3. Monotremata 
+4. Primates
 
 Significant negative associations, indicative of orders with shorter
 lifespans than predicted by body size are:
@@ -205,11 +200,9 @@ lifespans than predicted by body size are:
 5.  Notoryctemorphia
 6.  Peramelemorphia
 
-Now, to parameterize
-![\\mu](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmu "\mu")
-, the annual mortality rate by order for our within-host model, we can
-simply predict lifespan from our fitted GAM, excluding the effects of
-body mass, then take the inverse:
+Now, to parameterize $\mu$ , the annual mortality rate by order for our
+within-host model, we can simply predict lifespan from our fitted GAM,
+excluding the effects of body mass, then take the inverse:
 
     predict.dat <- cbind.data.frame(order = order.dat[[1]]$order, log10mass_g=1)
     # You can insert any value you like for "log10mass_g" since we won't 
@@ -273,16 +266,12 @@ also double as promoting host tolerance to the inflammation incurred by
 immunopathology, a claim which is supported in the
 [literature](https://www.nature.com/articles/s41598-017-12769-7).
 
-As a result, we opted to parameterize
-(![T_w](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_w "T_w")),
-host tolerance of immunopathology, from the same regression of host
-longevity against body mass ([Example Fig. 1, above](briefFig1.png)).
-Since the raw values for
-![T_w](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_w "T_w")
-lack units in our within-host model, we can scale
-![T_w](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_w "T_w")
-from the partial effects of host order on the interaction between mass
-and lifespan:
+As a result, we opted to parameterize ($T_w$), host tolerance of
+immunopathology, from the same regression of host longevity against body
+mass ([Example Fig. 1, above](briefFig1.png)). Since the raw values for
+$T_w$ lack units in our within-host model, we can scale $T_w$ from the
+partial effects of host order on the interaction between mass and
+lifespan:
 
     # m1 from above should already be appropriate,
     # and Example Fig. 2 is also appropriate
@@ -361,9 +350,8 @@ do with longevity above.
 
 ## Estimating magnitude of host constitutive immunity
 
-Next, we sought to parameterize
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-, the magnitude of constitutive host immunity.
+Next, we sought to parameterize $g_0$ , the magnitude of constitutive
+host immunity.
 
 Prior work in the empirical literature shows that baseline blood
 concentrations of neutrophils, a broad class of leukocyte involved in
@@ -399,8 +387,7 @@ Because data on reliable data on host exposure rates and densities are
 largely lacking across mammalian orders (thereby limiting our ability to
 test theoretical predictions), we chose to build on prior empirical work
 and use baseline blood concentrations of neutrophils as a proxy for
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-across orders. We walk through our analyses of these cross-order
+$g_0$ across orders. We walk through our analyses of these cross-order
 neutrophil concentrations in the following steps.
 
 First, we downloaded data pairing neutrophil concentrations across 246
@@ -543,16 +530,11 @@ following orders:
 4.  Proboscidea
 5.  Scandentia
 
-We can then use the fitted model to estimate
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-for our within-host model. Our goal is for
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-to span 0 to 1 for model parameterization. We only allow for linear
-transformations of the data, in order to retain differences in the
-magnitude of effect. We add to the predict.dat database from above among
-the orders and plot
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-across orders:
+We can then use the fitted model to estimate $g_0$ for our within-host
+model. Our goal is for $g_0$ to span 0 to 1 for model parameterization.
+We only allow for linear transformations of the data, in order to retain
+differences in the magnitude of effect. We add to the predict.dat
+database from above among the orders and plot $g_0$ across orders:
 
     tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
 
@@ -597,11 +579,9 @@ Your plot should look like this:
 ## Estimating spillover host tolerance from phylogenetic distance
 
 Finally, in our equation for spillover virulence, we define one final
-parameter,
-![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}"),
-the spillover host tolerance of virus-induced pathology for a pathogen
-evolved in a phylogenetically-distant reservoir host. Building from the
-literature (e.g. [Guth et
+parameter, $T_{vS}$, the spillover host tolerance of virus-induced
+pathology for a pathogen evolved in a phylogenetically-distant reservoir
+host. Building from the literature (e.g. [Guth et
 al. 2019](https://doi.org/10.1098/rstb.2019.0296), [Guth et
 al. 2022](https://doi.org/10.1073/pnas.2113628119), [Farrell and Davies
 2019](https://doi.org/10.1073/pnas.1817323116), [Longdon et
@@ -617,9 +597,8 @@ orders modeled in our Pantheria dataset. See subfolder
 [phylo-tree/get.phylo.dist.R](phylo-tree/get.phylo.dist.R) for details
 of this analysis.
 
-Here, we estimate the
-![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}")
-parameter from these relationships and plot across mammalian orders:
+Here, we estimate the $T_{vS}$ parameter from these relationships and
+plot across mammalian orders:
 
     # Load the tree data
     load(paste0(homewd, "phylo-tree/phylo.dat.final.Rdata"))
@@ -672,22 +651,15 @@ Peramelemorphia).
 ## Estimating optimal virus growth rates (r\*) in reservoir hosts
 
 Now take all the predict.dat outputs and merge them into a prediction
-for
-![r^\*](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;r%5E%2A "r^*"),
-the optimal virus growth rate evolved in various mammalian reservoir
-hosts.
+for $r^*$, the optimal virus growth rate evolved in various mammalian
+reservoir hosts.
 
 Set all other within-host parameters to the same default parameter
-values used to generate Fig. 2 in the main text and allow
-![\\mu](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmu "\mu"),
-![T\[w\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T%5Bw%5D "T[w]"),
-and
-![g_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;g_0 "g_0")
-to vary by order based on the analyses outlined above. Relate these
-parameters to a prediction of
-![r^\*](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;r%5E%2A "r^*"),
-based on mathematical derivations outlined in detail in the
-Supplementary Appendix of our paper.
+values used to generate Fig. 2 in the main text and allow $\mu$, $T[w]$,
+and $g_0$ to vary by order based on the analyses outlined above. Relate
+these parameters to a prediction of $r^*$, based on mathematical
+derivations outlined in detail in the Supplementary Appendix of our
+paper.
 
     # First, make a list of default within-host parameters, suing the same values from main text Fig. 2.
     # The values for g0, Tw, Tv, and mu will get overwritten, so it does not really matter what you put here.
@@ -697,16 +669,16 @@ Supplementary Appendix of our paper.
     # Constant tolerance rstar predictions using order-specific g0, Tw, and mu
     # and default values for all other parameters
     predict.dat$rstar_constant <- (vir.par$c*predict.dat$g0/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu*predict.dat$Tw_constant*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
-    predict.dat$rstar_constant_lci <- (vir.par$c*predict.dat$g0/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu_lci*predict.dat$Tw_constant_lci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_lci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_lci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
-    predict.dat$rstar_constant_uci <- (vir.par$c*predict.dat$g0/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu_uci*predict.dat$Tw_constant_uci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_uci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_uci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
+    predict.dat$rstar_constant_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci*predict.dat$Tw_constant_lci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_lci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_lci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
+    predict.dat$rstar_constant_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci*predict.dat$Tw_constant_uci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_uci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_uci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
 
 
     # Complete rstar predictions using  order-specific g0, Tw, and mu
     # and default values for all other parameters
     predict.dat$rstar_complete <- (vir.par$c*predict.dat$g0/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu*vir.par$g*predict.dat$g0*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete-vir.par$Tv)))
-    predict.dat$rstar_complete_lci <- (vir.par$c*predict.dat$g0/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu_lci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_lci*vir.par$g*predict.dat$g0*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_lci-vir.par$Tv)))
+    predict.dat$rstar_complete_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_lci*vir.par$g*predict.dat$g0_lci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_lci-vir.par$Tv)))
     predict.dat$rstar_complete_lci[is.na(predict.dat$rstar_complete_lci)] <- 0
-    predict.dat$rstar_complete_uci <- (vir.par$c*predict.dat$g0/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu_uci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_uci*vir.par$g*predict.dat$g0*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_uci-vir.par$Tv)))
+    predict.dat$rstar_complete_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_uci*vir.par$g*predict.dat$g0_uci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_uci-vir.par$Tv)))
 
 
     # Then, get mean N across all the factors that went in to each prediction
@@ -748,16 +720,14 @@ The resulting plot should look like this:
 
 <img src="brief/Fig10.png" alt = "Example Fig. 10" width="500">
 
-## Estimating spillover virulence (![\\alpha\*\_S](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Calpha%2A_S "\alpha*_S")) in human hosts
+## Estimating spillover virulence ($\alpha*_S$) in human hosts
 
 Virulence in the human host is a function of phylogenetic distance,
-which we capture in order-specific
-![T\_{vS}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;T_%7BvS%7D "T_{vS}").
-Following spillover, tolerance of immunopathology is now a property of
-the spillover host (here, human), so we hold it constant across all
-reservoir predictions. As above, calculations of spillover virulence are
-derived from the equations shown in the Supplementary Appendix of our
-paper.
+which we capture in order-specific $T_{vS}$. Following spillover,
+tolerance of immunopathology is now a property of the spillover host
+(here, human), so we hold it constant across all reservoir predictions.
+As above, calculations of spillover virulence are derived from the
+equations shown in the Supplementary Appendix of our paper.
 
 We calculate and plot this spillover virulence here:
 
@@ -841,8 +811,7 @@ our within-host model (above).
 
 First, load GAM data adapted from [Guth et
 al. 2022](https://doi.org/10.1073/pnas.2113628119) and plot as
-![\\alpha_S^\*](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Calpha_S%5E%2A "\alpha_S^*")
-estimates by order, derived from the literature:
+$\alpha_S^*$ estimates by order, derived from the literature:
 
     load(paste0(homewd,"source/gam.dat.Guth.et.al.2021.Rdata"))
 

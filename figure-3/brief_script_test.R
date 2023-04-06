@@ -635,6 +635,10 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig9.png"),
 ######################################################
 ## 5. Now, estimate r*
 
+predict.dat <- read.csv(file=paste0(homewd, subwd, "/predict_pars.csv"), header = T, stringsAsFactors = F)
+head(predict.dat)
+
+
 # Now take all the outputs and merge them into a prediction for rstar and for alphastar-hum
 # Set all other within-host parameters to the same default parameter values
 # used to generate Fig. 2 in the main text.
@@ -671,7 +675,7 @@ predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order
 
 #Constant tolerance
 p10a <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-  geom_errorbar(aes(x=order, ymin=rstar_constant_lci, ymax=rstar_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  #geom_errorbar(aes(x=order, ymin=rstar_constant_lci, ymax=rstar_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(x=order, y=rstar_constant, fill=order, size=N_cumulative), pch=21) +
   scale_color_manual(values=colz)+
   scale_fill_manual(values=colz, guide="none")+theme_bw() +
@@ -685,7 +689,7 @@ p10a <- ggplot(data=subset(predict.dat, !is.na(g0))) +
 
 
 p10b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-  geom_errorbar(aes(x=order, ymin=rstar_complete_lci, ymax=rstar_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  #geom_errorbar(aes(x=order, ymin=rstar_complete_lci, ymax=rstar_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(x=order, y=rstar_complete, fill=order, size=N_cumulative), pch=21, show.legend = F) +
   scale_color_manual(values=colz)+
   scale_fill_manual(values=colz, guide="none")+theme_bw() +
@@ -699,24 +703,24 @@ p10b <- ggplot(data=subset(predict.dat, !is.na(g0))) +
 p10 <- cowplot::plot_grid(p10a, p10b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01, align = "v")
 
 #and save
-
-ggsave(file = paste0(homewd, subwd, "/brief/Fig10.png"),
-       plot = p10,
-       units="mm",  
-       width=50, 
-       height=70, 
-       scale=3, 
-       dpi=300)
-
-# This is also Fig. S5 of the main text:
-
-ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
-       plot = p10,
-       units="mm",  
-       width=50, 
-       height=70, 
-       scale=3, 
-       dpi=300)
+# 
+# ggsave(file = paste0(homewd, subwd, "/brief/Fig10.png"),
+#        plot = p10,
+#        units="mm",  
+#        width=50, 
+#        height=70, 
+#        scale=3, 
+#        dpi=300)
+# 
+# # This is also Fig. S5 of the main text:
+# 
+# ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
+#        plot = p10,
+#        units="mm",  
+#        width=50, 
+#        height=70, 
+#        scale=3, 
+#        dpi=300)
 
 
 
@@ -760,7 +764,7 @@ predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order
 
 # Constant
 p11a <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-  geom_errorbar(aes(x=order, ymin=alpha_star_human_constant_lci, ymax=alpha_star_human_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  #geom_errorbar(aes(x=order, ymin=alpha_star_human_constant_lci, ymax=alpha_star_human_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(x=order, y=alpha_star_human_constant, fill=order, size=N_cumulative), pch=21) +
   scale_color_manual(values=colz)+
   scale_fill_manual(values=colz, guide="none")+theme_bw() +
@@ -778,7 +782,7 @@ predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order
 
 # Complete
 p11b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-  geom_errorbar(aes(x=order, ymin=alpha_star_human_complete_lci, ymax=alpha_star_human_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  #geom_errorbar(aes(x=order, ymin=alpha_star_human_complete_lci, ymax=alpha_star_human_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(x=order, y=alpha_star_human_complete, fill=order, size=N_cumulative), pch=21, show.legend = F) +
   scale_color_manual(values=colz)+
   scale_fill_manual(values=colz, guide="none")+theme_bw() +
@@ -793,7 +797,7 @@ p11 <- cowplot::plot_grid(p11a, p11b, ncol=1, nrow = 2, labels=c("A", "B"), rel_
 
 
 #and save
-ggsave(file = paste0(homewd, subwd, "/brief/Fig11.png"),
+ggsave(file = paste0(homewd, "/test/modulateTvHumanOnly.png"),
        plot = p11,
        units="mm",  
        width=50, 
@@ -803,7 +807,7 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig11.png"),
 
 # And save the predict.dat for Fig S3
 
-write.csv(predict.dat, file = paste0(homewd, subwd, "/predict_pars.csv"), row.names = F)
+
 
 ######################################################
 ######################################################
