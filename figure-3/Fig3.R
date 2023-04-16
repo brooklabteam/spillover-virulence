@@ -380,11 +380,15 @@ plot.dat <- rbind(gam.plot.dat, share.dat.complete, share.dat.constant)
 plot.dat$source <- factor(plot.dat$source, levels=c("predicted from zoonoses", "predicted from\nnested model"))
 
 # Reorder, ranked by the constant data
-plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constant, desc(alpha))$order))
+share.dat.constant <- arrange(share.dat.constant, desc(alpha))
+plot.dat$order <- factor(plot.dat$order, levels=unique(share.dat.constant$order))
 
 head(plot.dat)
+plot.dat
+
 
 # And take only the complete data
+# first edit
 plot.dat <- plot.dat[complete.cases(plot.dat),]
 
 shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
@@ -393,6 +397,8 @@ shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
 
 order.dat <- read.csv(file=paste0(homewd,"/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
 head(order.dat)
+
+order.dat$order
 
 # Rename
 order.dat$species
@@ -421,6 +427,9 @@ pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="C
                   order == "Dasyuromorphia" | order == "Didelphimorphia" | order=="Diprotodontia"  | order=="Eulipotyphla" | order=="Hyracoidea" |
                   order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
                   order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
+
+setdiff(pic.df$order, plot.dat$order)
+setdiff(plot.dat$order, pic.df$order)
 
 # This is a part of Fig. 3 in the main text
 pDa <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +

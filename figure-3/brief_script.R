@@ -117,44 +117,79 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig1.png"),
        dpi=300)
 
 
-# Now, run a GAM to determine the partial effect of host order
+# Now, run a glm  to determine the partial effect of host order
 # (phylogeny) on maximum longevity, and predict lifespan 
 # rates by order:
 
-library(mgcv)
+
 pan.dat$log10mass_g <- log10(pan.dat$mass_g)
 pan.dat$order <- as.factor(pan.dat$order)
 pan.dat$log10_max_lifespan_yrs <- log10(pan.dat$max_lifespan_yrs)
 
-m1 <- gam(log10_max_lifespan_yrs~s(log10mass_g, bs = "tp") +
-                                  s(order, bs="re"),
-                                  data = pan.dat)
+library(lme4)
+library(sjPlot)
+m1 <- lmer(log10_max_lifespan_yrs~ log10mass_g + (1|order), data = pan.dat) #mass longevity linear interaction with separate intercepts per order
+plot_model(m1, type = "re")
 
-summary(m1) #deviance explained = 75.8%
 
+summary(m1) 
+
+order.dat <- cbind.data.frame(order = plot_model(m1, type = "re")$data$term, estimate= plot_model(m1, type = "re")$data$estimate, lci= plot_model(m1, type = "re")$data$conf.low, uci= plot_model(m1, type = "re")$data$conf.high)
+order.dat$sig <- "no"
+order.dat$sig[order.dat$lci>0 & order.dat$uci>0] <- "pos"
+order.dat$sig[order.dat$lci<0 & order.dat$uci<0] <- "neg"
+colz2 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
+
+
+mass.dat <- cbind.data.frame(mass= 10^(plot_model(m1, type = "pred")$log10mass$data$x), lifespan=10^(plot_model(m1, type = "pred")$log10mass$data$predicted), lifespan_uci=10^(plot_model(m1, type = "pred")$log10mass$data$conf.high), lifespan_lci=10^(plot_model(m1, type = "pred")$log10mass$data$conf.low))
 
 # And, plot the partial effects of order:
 # Source partial effects script from Mollentze and Streicker 2020:
 # This script includes two plotting functions, added by me!
 
-source(paste0(homewd,"source/mollentze-streicker-2020-functions.R"))
+#source(paste0(homewd,"source/mollentze-streicker-2020-functions.R"))
 
+#order.dat <- get_partial_effects(m1, var="order")
+#mass.dat <- get_partial_effects_continuous(m1, var="log10mass_g")
 
-order.dat <- get_partial_effects(m1, var="order")
-mass.dat <- get_partial_effects_continuous(m1, var="log10mass_g")
+newdata.df <- cbind.data.frame(log10mass_g=3.229679, order="Chiroptera")
 
-p2a <- plot.partial(df=order.dat, var="order", response_var = "max lifespan (yrs)")
-p2b <- plot.partial.cont(df=mass.dat, var="log10mass_g",  response_var = "max lifespan (yrs)", alt_var = "mass (g)", log = T)
+p2a <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
+        geom_linerange(aes(x=order, ymin=lci, ymax=uci, color=sig), show.legend = F) + 
+        scale_color_manual(values=colz2) +
+        ylab("order y-intercept on mass : lifespan relationship") +
+        geom_hline(aes(yintercept = 0), linetype=2) +
+        coord_flip() + theme_bw() + theme(panel.grid = element_blank(),
+                                         axis.text.x = element_text(size = 13),
+                                         axis.text.y = element_text(size = 10),
+                                         plot.margin = unit(c(.3,.3,.1,.5), "lines"), 
+                                         axis.title.y = element_blank(),
+                                         axis.title.x = element_text(size=14))
 
-p2 <- cowplot::plot_grid(p2a, p2b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = .1)
+mass.dat$mass_kg <- mass.dat$mass/1000
 
-ggsave(file = paste0(homewd, subwd, "/brief/Fig2.png"),
-       plot = p2,
-       units="mm",  
-       width=25, 
-       height=40, 
-       scale=5, 
-       dpi=300)
+p2b <-ggplot(data=mass.dat) + geom_line(aes(x=mass_kg, y=lifespan), size=1, color="red3") + 
+   geom_ribbon(aes(x=mass_kg, ymin=lifespan_lci, ymax=lifespan_uci), alpha=.3, fill="red3") + 
+   xlab("mass (kg)") + scale_y_log10() +
+   scale_x_log10(breaks = c(.1, 100, 1*10^5), labels=c(".1", "100","100000")) +
+   ylab("max lifespan (years)") + 
+   geom_hline(aes(yintercept = 0), linetype=2) +
+   theme_bw() + 
+   theme(panel.grid = element_blank(), 
+         axis.text = element_text(size = 13),
+         plot.margin = unit(c(.1,.3,.3,3.7), "lines"), 
+         axis.title = element_text(size=14))
+ 
+ 
+ p2 <- cowplot::plot_grid(p2a, p2b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = .002, label_size = 22)
+# 
+ ggsave(file = paste0(homewd, subwd, "/brief/Fig2.png"),
+        plot = p2,
+        units="mm",  
+        width=30, 
+        height=40, 
+        scale=5, 
+        dpi=300)
 
 
 
@@ -169,7 +204,8 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig2.png"),
 # And plot with predictions:
 
 pan.dat.sum <- cbind.data.frame(log10mass_g=seq(log10(min(pan.dat$mass_g)), max(log10(pan.dat$mass_g)), length=10), order = "Chiroptera")
-pan.dat.sum$predict_lifespan <- 10^(predict.gam(m1, newdata = pan.dat.sum, exclude = "s(order)"))
+#pan.dat.sum$predict_lifespan <- 10^(predict.gam(m1, newdata = pan.dat.sum, exclude = "s(order)"))
+pan.dat.sum$predict_lifespan <- 10^(predict(m1, newdata = pan.dat.sum, re.form=NA)) #predicts without random effects
 pan.dat.sum$mass_g <- 10^(pan.dat.sum$log10mass_g)
 pan.dat.sum = pan.dat.sum[pan.dat.sum$mass_g==min(pan.dat.sum$mass_g, na.rm=T) | pan.dat.sum$mass_g==max(pan.dat.sum$mass_g, na.rm=T),]
 
@@ -192,17 +228,57 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig1w_line.png"),
 
 
 # Now, to parameterize mu, the annual mortality rate by order for
-# our within-host model, we can simply predict lifespan from our fitted
-# GAM, excluding the effects of body mass, then take the inverse (but be sure to
+# our within-host model, we can refit a glm simply using order as a direct
+# predictor of lifespan excluding the effects of body mass, then take the inverse (but be sure to
 # express in timesteps of days to make comparable to the viral dynamics):
 
-predict.dat <- cbind.data.frame(order = order.dat[[1]]$order, log10mass_g=1)
+
+# Remake glm with no involvement of mass
+m1b <- lmer(log10_max_lifespan_yrs~ (1|order), data = pan.dat) 
+summary(m1b)
+
+plot_model(m1b, type="re")
+# 
+# 
+# m1b <- gam(log10_max_lifespan_yrs~ s(order, bs="re"), data = pan.dat) 
+# summary(m1b)
+
+
+predict.dat <- cbind.data.frame(order = unique(pan.dat$order))#, log10mass_g=1)
+
+#predict.dat <- cbind.data.frame(order = order.dat[[1]]$order, log10mass_g=1)
 # You can insert any value you like for "log10mass_g" since we won't 
 # be using it anyhow
 
-predict.dat$mu <- 1/((10^predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response"))*365)
-predict.dat$mu_lci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") +1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
-predict.dat$mu_uci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") -1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
+predict.dat$mu <- 1/((10^predict(m1b, newdata = predict.dat, type="response"))*365)
+
+# There is no option for computing standard errors of predictions for lmer
+# because it is difficult to define an efficient method that incorporates uncertainty
+# in the variance parameters; R help recommends bootMer for this task.
+
+# We do that here:
+predFun <- function(fit) {
+  1/((10^predict(fit,predict.dat))*365)
+}
+bb <- bootMer(m1b,nsim=200,FUN=predFun,seed=101)
+
+#now get CIs from bb
+sim.out <- bb$t #gives a matrix of 200 sims of all the data
+
+#get standard error:
+predict.dat$mu_se <- apply(sim.out, 2, sd)/sqrt(200)   
+predict.dat$mu_lci <- predict.dat$mu - 1.96*predict.dat$mu_se
+predict.dat$mu_uci <- predict.dat$mu + 1.96*predict.dat$mu_se
+#predict.dat$mu_lci <- 1/((10^(predict(m1b, newdata = predict.dat, type="response") +1.96*predict(m1b, newdata = predict.dat,  type="response", se.fit = T)$se))*365)
+#predict.dat$mu_uci <- 1/((10^(predict.gam(m1b, newdata = predict.dat,  type="response") -1.96*predict.gam(m1b, newdata = predict.dat, type="response", se.fit = T)$se))*365)
+# 
+# predict.dat$mu <- 1/((10^predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response"))*365)
+# predict.dat$mu_lci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") +1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
+# predict.dat$mu_uci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") -1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
+
+# predict.dat_b$mu_lci[predict.dat_b$mu_lci<0] <- 0
+# predict.dat_b$mu_uci[predict.dat_b$mu_uci>1] <- 1
+# 
 
 predict.dat$mu_lci[predict.dat$mu_lci<0] <- 0
 predict.dat$mu_uci[predict.dat$mu_uci>1] <- 1
@@ -211,34 +287,60 @@ predict.dat$mu_uci[predict.dat$mu_uci>1] <- 1
 mu.sum <- ddply(pan.dat, .(order), summarise, N_mu = length(binomial))
 
 predict.dat <- merge(predict.dat, mu.sum, by="order", all.x = T)
-predict.dat <- dplyr::select(predict.dat, -(log10mass_g))
+#predict.dat_b <- merge(predict.dat_b, mu.sum, by="order", all.x = T)
+predict.dat <- dplyr::select(predict.dat, -(mu_se))
 
 
 # and plot your predictions by order for mass
 
 # first, get your null
-y.int = 1/((10^(predict.gam(m1, 
-                    newdata = cbind.data.frame(order="Primates", log10mass_g = unique(order.dat[[1]]$log10mass_g)), 
-                    exclude = "s(order)", type = "response")))*365)
+# y.int = 1/((10^(predict.gam(m1, 
+#                     newdata = cbind.data.frame(order="Primates", log10mass_g = unique(order.dat[[1]]$log10mass_g)), 
+#                     exclude = "s(order)", type = "response")))*365)
+
+#set this y-int at the median of all the orders
+
+predict.dat$mu[which(predict.dat$mu==median(predict.dat$mu))]
+y.int = median(predict.dat$mu)
+
+
+
 
 # Now plot predictions against null:
 
 p3 <- ggplot(data=predict.dat) + 
-      geom_point(aes(x=order, y=mu, fill=order, size=N_mu), pch=21) + 
       theme_bw()  + 
+  geom_hline(aes(yintercept=y.int), linetype=2) +
       theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-            legend.position = c(.8,.91), legend.direction = "horizontal", 
+            legend.position = c(.7,.91), legend.direction = "horizontal", 
             legend.title = element_blank(),
             panel.grid = element_blank()) +
       scale_fill_manual(values=colz, guide="none") +
       scale_color_manual(values=colz) +
       geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
-      geom_hline(aes(yintercept=y.int), linetype=2) +
+      geom_point(aes(x=order, y=mu, fill=order, size=N_mu), pch=21) + 
       ylab(bquote("predicted annual mortality rate by order,"~mu~"("~days^-1~")")) 
 
 p3
 
-# And save
+
+# p3b <- ggplot(data=predict.dat_b) + 
+#   geom_point(aes(x=order, y=(1/mu)/365, fill=order, size=N_mu), pch=21) + 
+#   theme_bw()  + 
+#   theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
+#         legend.position = c(.8,.91), legend.direction = "horizontal", 
+#         legend.title = element_blank(),
+#         panel.grid = element_blank()) +
+#   scale_fill_manual(values=colz, guide="none") +
+#   scale_color_manual(values=colz) +
+#   geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
+#   #geom_hline(aes(yintercept=y.int_b), linetype=2) +
+#   ylab(bquote("predicted annual mortality rate by order,"~mu~"("~days^-1~")")) 
+# 
+# p3b
+# 
+# p3 | p3b
+# # And save
 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig3.png"),
        plot = p3,
@@ -256,6 +358,8 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig3.png"),
 # We can extract tolerance as the order-level effect on the 
 # above interaction (rather than the prediction)
 
+#or try it as the residual
+
 # Look at p1 again
 
 p1 <- ggplot(data=pan.dat) + 
@@ -272,7 +376,10 @@ p1
 # Make tolerance (Tw) a scaled version of the order effect in this relationship
 # First, get high and low confidence and estimate from this plot and scale as Tw
 
-tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
+tmp.dat = cbind.data.frame(order= plot_model(m1, type="re")$data$term, estimate=plot_model(m1, type="re")$data$estimate, conf.low=plot_model(m1, type="re")$data$conf.low, conf.high=plot_model(m1, type="re")$data$conf.high) 
+
+
+#tmp.dat <- cbind.data.frame(, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
 
 # Our goal is for Tw to span 0 to 1 for complete tolerance assumptions
 # and be >1 for constant tolerance assumptions. We only allow for 
@@ -307,21 +414,24 @@ head(predict.dat)
 
 # Constant tolerance (Tw)
 p4a <- ggplot(data=predict.dat) + 
+  geom_hline(aes(yintercept=1.5), linetype=2) +
+  geom_errorbar(aes(x=order, ymin=Tw_constant_lci, ymax=Tw_constant_uci, color=order), width=0, show.legend = F) +
   geom_point(aes(x=order, y=Tw_constant, fill=order, size=N_Tw), pch=21) + 
   theme_bw() +
   theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
         axis.ticks.x = element_blank(),
         plot.margin = unit(c(.1,.1,0,.5), "lines"), 
-        legend.position = c(.82,.91),
+        legend.position = c(.7,.91),
         panel.grid = element_blank(),
         legend.direction = "horizontal", legend.title = element_blank()) +
   scale_fill_manual(values=colz, guide="none") +
   scale_color_manual(values=colz) +
-  geom_errorbar(aes(x=order, ymin=Tw_constant_lci, ymax=Tw_constant_uci, color=order), width=0, show.legend = F) +
-  geom_hline(aes(yintercept=1.5), linetype=2) + ylab(bquote("constant immunopathology tolerance,"~T[w]))
+  ylab(bquote("constant immunopathology tolerance,"~T[w]))
 
 # Complete tolerance (Tw)
 p4b <- ggplot(data=predict.dat) + 
+  geom_hline(aes(yintercept=.5), linetype=2) +
+  geom_errorbar(aes(x=order, ymin=Tw_complete_lci, ymax=Tw_complete_uci, color=order), width=0, show.legend = F) +
   geom_point(aes(x=order, y=Tw_complete, fill=order, size=N_Tw), pch=21, show.legend = F) + 
   theme_bw() +
   scale_fill_manual(values=colz) +
@@ -330,8 +440,7 @@ p4b <- ggplot(data=predict.dat) +
         axis.title.x = element_blank(),
         plot.margin = unit(c(0,.1,.1,.5), "lines"),
         panel.grid = element_blank()) +
-  geom_errorbar(aes(x=order, ymin=Tw_complete_lci, ymax=Tw_complete_uci, color=order), width=0, show.legend = F) +
-  geom_hline(aes(yintercept=.5), linetype=2) + ylab(bquote("complete immunopathology tolerancem,"~T[w]))
+  ylab(bquote("complete immunopathology tolerancem,"~T[w]))
 
 # Visualize:
 p4 <- cowplot::plot_grid(p4a, p4b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
@@ -349,8 +458,8 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig4.png"),
 # Chiroptera, Cingulata, Monotremata, Primates
 
 # Significant negative associations with tolerance: 
-# Afrosoricida, Dasyuromorphia, Didelphimorphia,
-# Eulipotyphla, Notoryctemorphia, Peramelemorphia 
+# Afrosoricida, Cetartiodactyla, Dasyuromorphia, Didelphimorphia,
+# Eulipotyphla, Notoryctemorphia, Peramelemorphia, Rodentia
 
 
 
@@ -444,13 +553,16 @@ wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 
 wbc.dat$order <- as.factor(wbc.dat$order)
 
-m2a <- gam(ln10neutro~s(ln10BMR_W_g, bs="tp") +
-            s(order, bs="re"),
-          data=wbc.dat)
-summary(m2a) #51.8%; n =144
+
+m2a <- lmer(ln10neutro~ln10BMR_W_g + (1|order), data=wbc.dat)
+plot_model(m2a, type="re")
+
+
+
 
 wbc.pred = cbind.data.frame(ln10BMR_W_g=seq(min(wbc.dat$ln10BMR_W_g, na.rm=T),  max(wbc.dat$ln10BMR_W_g, na.rm=T), length=2),  order = "Chiroptera")
-wbc.pred$predict_neut <- 10^(predict.gam(m2a, newdata = wbc.pred, exclude = "s(order)"))
+#wbc.pred$predict_neut <- 10^(predict.gam(m2a, newdata = wbc.pred, exclude = "s(order)"))
+wbc.pred$predict_neut <- 10^(predict(m2a, newdata = wbc.pred, re.form=NA))
 wbc.pred$BMR_W_g <- 10^(wbc.pred$ln10BMR_W_g)
 
 
@@ -471,50 +583,98 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig6_w_line.png"),
        scale=3, 
        dpi=300)
 
-# Now, model effects of order as a GAM, using just mass
-wbc.dat$order <- as.factor(wbc.dat$order)
-wbc.dat$ln10mass <- log10(wbc.dat$mass_g)
-m2 <- gam(ln10neutro~s(ln10mass, bs="tp") +
-                        s(order, bs="re"),
-                        data=wbc.dat)
-summary(m2) #41.8%; n =365
-order.dat <- get_partial_effects(m2, var="order")
-plot.partial(order.dat, var="order", response_var = "log10 neutrophil conc.")
+
+ wbc.dat$order <- as.factor(wbc.dat$order)
+ wbc.dat$ln10mass <- log10(wbc.dat$mass_g)
 
 
 
+# now look at mass and BMR independently (model is stronger)
+library(lmerTest)
+m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=wbc.dat)
+summary(m3)
 
-
-# Or try including BMR
-m3 <- gam(ln10neutro~s(ln10mass, bs="tp") +
-                      s(BMR_W, bs="tp") +
-                      s(order, bs="re"),
-                      data=wbc.dat)
+plot_model(m3, type="re")
+plot_model(m3, type="pred")$ln10mass
+plot_model(m3, type="pred")$BMR_W
+plot_model(m3, type="int")
+# m3 <- gam(ln10neutro~s(ln10mass, bs="tp") +
+#                       s(BMR_W, bs="tp") +
+#                       s(order, bs="re"),
+#                       data=wbc.dat)
 summary(m3) #63.5%; n=144. much stronger model fit
-order.dat <- get_partial_effects(m3, var="order")
-mass.dat <- get_partial_effects_continuous(m3, var="ln10mass")
-BMR.dat <- get_partial_effects_continuous(m3, var="BMR_W")
+AIC(m2a, m3) #m3 best
 
-p7a <- plot.partial(order.dat, var="order", response_var = "log10 neutrophils")
-p7b <- plot.partial.cont(mass.dat, var="ln10mass", log = T, alt_var = "mass (g)", response_var = "log10 neutrophils")
-p7c <- plot.partial.cont(BMR.dat, var="BMR_W", log = F, alt_var = "BMR (W)", response_var = "log10 neutrophils")
+order.dat <- cbind.data.frame(order = plot_model(m3, type = "re")$data$term, estimate= plot_model(m3, type = "re")$data$estimate, lci= plot_model(m3, type = "re")$data$conf.low, uci= plot_model(m3, type = "re")$data$conf.high)
+order.dat$sig <- "no"
+order.dat$sig[order.dat$lci>0 & order.dat$uci>0] <- "pos"
+order.dat$sig[order.dat$lci<0 & order.dat$uci<0] <- "neg"
 
-
-#and plot together
-
-p7 <- cowplot::plot_grid(p7a, p7b, p7c, ncol=1, nrow = 3, labels=c("A", "B", "C"), label_x = 0.09)
+colz3 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
 
 
-ggsave(file = paste0(homewd, subwd, "/brief/Fig7.png"),
-       plot = p7,
-       units="mm",  
-       width=50, 
-       height=100, 
-       scale=3, 
-       dpi=300)
+
+
+
+mass.dat <- cbind.data.frame(mass= 10^(plot_model(m3, type = "pred")$ln10mass$data$x), neutro=10^(plot_model(m3, type = "pred")$ln10mass$data$predicted), neutro_uci=10^(plot_model(m3, type = "pred")$ln10mass$data$conf.high), neutro_lci=10^(plot_model(m3, type = "pred")$ln10mass$data$conf.low))
+BMR.dat <- cbind.data.frame(BMR_W= (plot_model(m3, type = "pred")$BMR_W$data$x), neutro=10^(plot_model(m3, type = "pred")$BMR_W$data$predicted), neutro_uci=10^(plot_model(m3, type = "pred")$BMR_W$data$conf.high), neutro_lci=10^(plot_model(m3, type = "pred")$BMR_W$data$conf.low))
+
+
+
+p7a <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
+  geom_linerange(aes(x=order, ymin=lci, ymax=uci, color=sig), show.legend = F) + 
+  scale_color_manual(values=colz3) +
+  ylab("order y-intercept on mass/BMR/neutrophil relationship") +
+  geom_hline(aes(yintercept = 0), linetype=2) +
+  coord_flip() + theme_bw() + theme(panel.grid = element_blank(),
+                                    axis.text.x = element_text(size = 13),
+                                    axis.text.y = element_text(size = 10),
+                                    plot.margin = unit(c(.3,.3,.3,.5), "lines"), 
+                                    axis.title.y = element_blank(),
+                                    axis.title.x = element_text(size=14))
+
+mass.dat$mass_kg <- mass.dat$mass/1000
+
+p7b <-ggplot(data=mass.dat) + geom_line(aes(x=mass_kg, y=neutro), size=1, color="red3") + 
+  geom_ribbon(aes(x=mass_kg, ymin=neutro_lci, ymax=neutro_uci), alpha=.3, fill="red3") + 
+  xlab("mass (kg)") + scale_y_log10() +
+  scale_x_log10(breaks = c(.1, 10, 1000), labels=c(".1", "10","1000")) +
+  ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))+
+  theme_bw() + 
+  theme(panel.grid = element_blank(), 
+        axis.text = element_text(size = 13),
+        plot.margin = unit(c(.2,.3,.3,3.7), "lines"), 
+        axis.title = element_text(size=14))
+
+p7c <-ggplot(data=BMR.dat) + geom_line(aes(x=BMR_W, y=neutro), size=1, color="blue4") + 
+  geom_ribbon(aes(x=BMR_W, ymin=neutro_lci, ymax=neutro_uci), alpha=.3, fill="blue4") + 
+  xlab("BMR (W)") + scale_y_log10() +
+  #scale_x_log10(breaks = c(.1, 10, 1000), labels=c(".1", "10","1000")) +
+  ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))+
+  theme_bw() + 
+  theme(panel.grid = element_blank(), 
+        axis.text = element_text(size = 13),
+        plot.margin = unit(c(.2,.3,.3,3.7), "lines"), 
+        axis.title = element_text(size=14))
+
+
+# 
+# #and plot together
+# 
+ p7 <- cowplot::plot_grid(p7a, p7b, p7c, ncol=1, nrow = 3, labels=c("A", "B", "C"), label_x = 0.01)
+# 
+# 
+ ggsave(file = paste0(homewd, subwd, "/brief/Fig7.png"),
+        plot = p7,
+        units="mm",  
+        width=50, 
+        height=100, 
+        scale=3, 
+        dpi=300)
 
 # Significant negative associations with:
-# Cetartiodactyal, Dasyuromorphia, Diprotodontia, Scandentia
+#  Cetartiodactyal, Dasyuromorphia, Diprotodontia, Scandentia
+
 
 #Significant positive associations with:
 # Monotremata, Primates
@@ -523,8 +683,11 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig7.png"),
 
 #and finally, calculate g0 as the order effects from this model
 
+tmp.dat = cbind.data.frame(order= plot_model(m3, type="re")$data$term, estimate=plot_model(m3, type="re")$data$estimate, conf.low=plot_model(m3, type="re")$data$conf.low, conf.high=plot_model(m3, type="re")$data$conf.high) 
 
-tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
+
+
+# tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
 
 # Our goal is for g0 to span 0 to 1 for model parameterization.
 # We only allow for linear transformations of the data, in order 
@@ -534,15 +697,25 @@ tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]
 
 # Linear transformation: 
 # g0: Make all effects positive
-tmp.dat$g0 <- tmp.dat$estimate + abs(min(tmp.dat$conf.low))
-tmp.dat$g0_lci <- tmp.dat$conf.low + abs(min(tmp.dat$conf.low))
-tmp.dat$g0_uci <- tmp.dat$conf.high + abs(min(tmp.dat$conf.low))
+tmp.dat$g0 <- tmp.dat$estimate + abs(min(tmp.dat$conf.low)) +.0000001
+tmp.dat$g0_lci <- tmp.dat$conf.low + abs(min(tmp.dat$conf.low))+.0000001
+tmp.dat$g0_uci <- tmp.dat$conf.high + abs(min(tmp.dat$conf.low))+.0000001
+
+#and rescale to fall within a range that causes normalized impact
+tmp.dat$g0 <-  scales::rescale(x =tmp.dat$g0, from=c(min(tmp.dat$g0_lci), max(tmp.dat$g0_uci)), to =c(.0000001,.1)) 
+tmp.dat$g0_lci <-  scales::rescale(x =tmp.dat$g0_lci, from=c(min(tmp.dat$g0_lci), max(tmp.dat$g0_uci)), to =c(.0000001,.1)) 
+tmp.dat$g0_uci <-  scales::rescale(x =tmp.dat$g0_uci, from=c(min(tmp.dat$g0_lci), max(tmp.dat$g0_uci)), to =c(.0000001,.1)) 
+
 
 # Now merge with predict.dat
 tmp.dat <- dplyr::select(tmp.dat, order, g0, g0_lci, g0_uci)
 
+
 predict.dat <- merge(predict.dat, tmp.dat, by="order", all.x = T)
 head(predict.dat)
+
+
+
 
 # Now calculate "N" (the number of observations upon which 
 # each parameter estimate is based) for g0
@@ -554,18 +727,19 @@ head(predict.dat)
 
 # g0
 p8 <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
+  geom_hline(aes(yintercept=0.05), linetype=2) +
   geom_point(aes(x=order, y=g0, fill=order, size=N_g0), pch=21) + 
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90),axis.title.x = element_blank(),
         plot.margin = unit(c(.1,.1,.1,1.1), "lines"),
         panel.grid = element_blank(),
-        legend.position = c(.75,.92),
+        legend.position = c(.65,.92),
         legend.direction = "horizontal",
         legend.title = element_blank()) +
   geom_errorbar(aes(x=order, ymin=g0_lci, ymax=g0_uci, color=order), width=0, show.legend = F) +
   scale_color_manual(values=colz2) +
   scale_fill_manual(values=colz2, guide="none") +
-  geom_hline(aes(yintercept=0.5), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0]))
+  ylab(bquote("magnitude constitutive immunity, "~g[0]))
 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig8.png"),
        plot = p8,
@@ -648,7 +822,7 @@ vir.par <- list(b= .2, q = .0002, c=.5,  m=1/(21),  g=.9, g0 = .3, zeta=.2,
 # Constant tolerance rstar predictions using order-specific g0, Tw, and mu
 # and default values for all other parameters
 
-
+vir.par$Tv = 1.005
 predict.dat$rstar_constant <- (vir.par$c*predict.dat$g0/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu*predict.dat$Tw_constant*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
 predict.dat$rstar_constant_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci*predict.dat$Tw_constant_lci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_lci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_lci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
 predict.dat$rstar_constant_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci*predict.dat$Tw_constant_uci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_uci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_uci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
@@ -656,9 +830,10 @@ predict.dat$rstar_constant_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + (sq
 
 # Complete rstar predictions using  order-specific g0, Tw, and mu
 # and default values for all other parameters
+vir.par$Tv=.005
 predict.dat$rstar_complete <- (vir.par$c*predict.dat$g0/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu*vir.par$g*predict.dat$g0*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete-vir.par$Tv)))
 predict.dat$rstar_complete_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_lci*vir.par$g*predict.dat$g0_lci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_lci-vir.par$Tv)))
-predict.dat$rstar_complete_lci[is.na(predict.dat$rstar_complete_lci)] <- 0
+#predict.dat$rstar_complete_lci[is.na(predict.dat$rstar_complete_lci)] <- .00000001
 predict.dat$rstar_complete_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_uci*vir.par$g*predict.dat$g0_uci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_uci-vir.par$Tv)))
 
 
@@ -753,7 +928,7 @@ predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vi
 predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_uci
 
 # Now, we rank by virulence, then confidence, and plot...
-predict.dat <- arrange(predict.dat, desc(alpha_star_human_complete), desc(N_cumulative))
+predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
 predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
 
 # Visualize alphastar in humans
@@ -773,7 +948,7 @@ p11a <- ggplot(data=subset(predict.dat, !is.na(g0))) +
   ylab(bquote("spillover virulence,"~alpha[S]~"(constant tolerance)"))
   
 
-predict.dat <- arrange(predict.dat, desc(alpha_star_human_complete), desc(N_cumulative))
+predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
 predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
 
 # Complete
