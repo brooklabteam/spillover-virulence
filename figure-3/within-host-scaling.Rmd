@@ -5,13 +5,13 @@ output: github_document
 
 After deriving our equations for reservoir-host optimal virus growth rate ( $r^ *$ ) and the equations for the spillover host virulence ( $\alpha_S$ ), we next sought to use publicly-available allometric data to establish predictions of spillover host virulence for viruses derived from reservoir hosts of diverse mammalian orders. 
 
-Since allometric scaling relationships with body mass are well-described in the literature ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000), [DeLeo and Dobson 1996](https://www.nature.com/articles/379720a0)), we opted to scale three key within-host parameters to host body-mass and establish summary estimates by mammalian order. We chose the parameters of host natural mortality rate ( $\mu$ ), tolerance of immunopathology ( $T_w$ ), and the magnitude of the constitutive immune response ( $g_0$ ) as parameters best-supported by publicly-available data. We additionally modeled tolerance of direct virus pathology for a human spillover host ( $T_{vS}$ ), corresponding to phylogenetic distance between the reservoir host in question and humans. Because we opted to make predictions by mammalian order, we derived all parameter estimates using  [generalized additive models (GAMs)](https://researchportal.bath.ac.uk/en/publications/mgcv-mixed-gam-computation-vehicle-with-gcvaicreml-smoothness-est) fit to publicly-available life history data, incorporating a random effect of host order
+Since allometric scaling relationships with body mass are well-described in the literature ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000), [DeLeo and Dobson 1996](https://www.nature.com/articles/379720a0)), we opted to scale three key within-host parameters to host body-mass and establish summary estimates by mammalian order. We chose the parameters of host natural mortality rate ( $\mu$ ), tolerance of immunopathology ( $T_w$ ), and the magnitude of the constitutive immune response ( $g_0$ ) as parameters best-supported by publicly-available data. We additionally modeled tolerance of direct virus pathology for a human spillover host ( $T_{vS}$ ), corresponding to phylogenetic distance between the reservoir host in question and humans. Because we opted to make predictions by mammalian order, we derived all parameter estimates using  generalized linear models fit to publicly-available life history data, incorporating a random effect of host order.
 
 ## Estimating host natural mortality rates
 
-Allometric relationships between host body mass and longevity are well-established in the literature, particularly for mammals ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)). As a result, we estimated order-specific natural mortality rates ( $\mu$ ) from the effect of order on the regression of log10 of host body mass against log10 maximum lifespan in years.
+Allometric relationships between host body mass and longevity are well-established in the literature, particularly for mammals ([Brown et al. 2004](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/03-9000)). As a result, we estimated order-specific natural mortality rates ( $\mu$ ) simply as the inverse of total lifespan as predicted by mammalian order and tolerance of immunopathology ($T_w$, see below section) from the effect of order on the regression of log10 of host body mass against log10 maximum lifespan in years. 
 
-First, set your home directory to this subfolder within your main "spillover-virulence" directory, and load appropriate packages:
+To follow our analyses, first, set your home directory to this subfolder within your main "spillover-virulence" directory, and load appropriate packages:
 
 ```
 rm(list=ls())
@@ -125,111 +125,78 @@ Your plot should look like this:
 <img src="brief/Fig1.png" alt = "Example Fig. 1" width="600">
 
 
-Now, run a GAM to determine the partial effect of host order (phylogeny) on maximum longevity, and use this to predict mortality rates by order:
+First, to predict host mortality rate (by order) and parameterize mu ($\mu$), the simply fit a glm simply using order as a direct predictor of lifespan (independent of body mass), then take the inverse (but be sure to express in timesteps of days to make comparable to the viral dynamics):
 
 ```
-library(mgcv)
-pan.dat$log10mass_g <- log10(pan.dat$mass_g)
-pan.dat$order <- as.factor(pan.dat$order)
-pan.dat$log10_max_lifespan_yrs <- log10(pan.dat$max_lifespan_yrs)
+# Make glm with no involvement of mass
 
-m1 <- gam(log10_max_lifespan_yrs~s(log10mass_g, bs = "tp") +
-                                  s(order, bs="re"),
-                                  data = pan.dat)
+m1b <- lmer(log10_max_lifespan_yrs~ (1|order), data = pan.dat) 
+summary(m1b)
 
-summary(m1) #deviance explained = 75.8%
+plot_model(m1b, type="re")
 
-# And, plot the partial effects of order:
-# Source partial effects script from Mollentze and Streicker 2020:
-# This script includes two plotting functions, added by me!
+predict.dat <- cbind.data.frame(order = unique(pan.dat$order))#, log10mass_g=1)
 
-source(paste0(homewd,"source/mollentze-streicker-2020-functions.R"))
+predict.dat$mu <- 1/((10^predict(m1b, newdata = predict.dat, type="response"))*365)
 
+# There is no option for computing standard errors of predictions for lmer
+# because it is difficult to define an efficient method that incorporates uncertainty
+# in the variance parameters; R help recommends bootMer for this task.
 
-order.dat <- get_partial_effects(m1, var="order")
-mass.dat <- get_partial_effects_continuous(m1, var="log10mass_g")
+# We do that here:
 
-p2a <- plot.partial(df=order.dat, var="order", response_var = "max lifespan (yrs)")
-p2b <- plot.partial.cont(df=mass.dat, var="log10mass_g",  response_var = "max lifespan (yrs)", alt_var = "mass (g)", log = T)
+predFun <- function(fit) {
+  1/((10^predict(fit,predict.dat))*365)
+}
+bb <- bootMer(m1b,nsim=200,FUN=predFun,seed=101)
 
-p2 <- cowplot::plot_grid(p3a, p3b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = .1)
-```
+#now get CIs from bb
+sim.out <- bb$t #gives a matrix of 200 sims of all the data
 
-Your plot should look like this:
-
-<img src="brief/Fig2.png" alt = "Example Fig. 2" width="400">
-
-
-We see clear evidence of significant effects of host order on the relationship between body mass and longevity. 
-
-In particular, significant positive associations with longevity, indicative of orders with longer lifespans than predicted by body size are:
-1. Chiroptera 
-2. Cingulata
-3. Monotremata
-4. Primates
-
-
-Significant negative associations, indicative of orders with shorter lifespans than predicted by body size are:
-
-1. Afrosoricida
-2. Dasyuromorphia
-3. Didelphimorphia
-4. Eulipotyphla
-5. Notoryctemorphia
-6. Peramelemorphia
-
-
-Now, to parameterize $\mu$ , the annual mortality rate by order for our within-host model, we can simply predict lifespan from our fitted GAM, excluding the effects of body mass, then take the inverse:
-
-
-```
-predict.dat <- cbind.data.frame(order = order.dat[[1]]$order, log10mass_g=1)
-# You can insert any value you like for "log10mass_g" since we won't 
-# be using it anyhow
-
-predict.dat$mu <- 1/(10^predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response"))
-predict.dat$mu_lci <- 1/(10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") -1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))
-predict.dat$mu_uci <- 1/(10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") +1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))
+#get standard error:
+predict.dat$mu_se <- apply(sim.out, 2, sd)/sqrt(200)   
+predict.dat$mu_lci <- predict.dat$mu - 1.96*predict.dat$mu_se
+predict.dat$mu_uci <- predict.dat$mu + 1.96*predict.dat$mu_se
 
 predict.dat$mu_lci[predict.dat$mu_lci<0] <- 0
 predict.dat$mu_uci[predict.dat$mu_uci>1] <- 1
-
 
 # Also compute the number of data entries per order used to determine this:
 mu.sum <- ddply(pan.dat, .(order), summarise, N_mu = length(binomial))
 
 predict.dat <- merge(predict.dat, mu.sum, by="order", all.x = T)
-predict.dat <- dplyr::select(predict.dat, -(log10mass_g))
-
+predict.dat <- dplyr::select(predict.dat, -(mu_se))
 
 # and plot your predictions by order for mass
 
-# first, get your null
-y.int = 1/(10^(predict.gam(m1, 
-                    newdata = cbind.data.frame(order="Primates", log10mass_g = unique(order.dat[[1]]$log10mass_g)), 
-                    exclude = "s(order)", type = "response")))
+#set this y-int at the median of all the orders
+predict.dat$mu[which(predict.dat$mu==median(predict.dat$mu))]
+y.int = median(predict.dat$mu)
+
 
 # Now plot predictions against null:
 
-p3 <- ggplot(data=predict.dat) + 
-      geom_point(aes(x=order, y=mu, fill=order, size=N_mu), pch=21) + 
+p2 <- ggplot(data=predict.dat) + 
       theme_bw()  + 
+  geom_hline(aes(yintercept=y.int), linetype=2) +
       theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-            legend.position = c(.8,.91), legend.direction = "horizontal", legend.title = element_blank()) +
+            legend.position = c(.7,.91), legend.direction = "horizontal", 
+            legend.title = element_blank(),
+            panel.grid = element_blank()) +
       scale_fill_manual(values=colz, guide="none") +
       scale_color_manual(values=colz) +
       geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
-      geom_hline(aes(yintercept=y.int), linetype=2) +
-      ylab(bquote("predicted annual mortality rate by order,"~mu~"("~yrs^-1~")")) 
+      geom_point(aes(x=order, y=mu, fill=order, size=N_mu), pch=21) + 
+      ylab(bquote("predicted annual mortality rate by order,"~mu~"("~days^-1~")")) 
 
-p3
+p2
 
 ```
 
-
 Your plot should look like this:
 
-<img src="brief/Fig3.png" alt = "Example Fig. 3" width="500">
+<img src="brief/Fig3.png" alt = "Example Fig. 2" width="400">
+
 
 
 ## Estimating host tolerance of immunopathology
@@ -238,16 +205,119 @@ Example Figure 1 above demonstrates the interaction of host order with lifespan,
 
 We hypothesized that host longevity in excess of that predicted by body size should be associated with highly efficient anti-aging pathways, which are likely anti-inflammatory in nature. We additionally hypothesized that these anti-inflammatory, anti-aging mechanisms might also double as promoting host tolerance to the inflammation incurred by immunopathology, a claim which is supported in the [literature](https://www.nature.com/articles/s41598-017-12769-7).
 
-As a result, we opted to parameterize ($T_w$), host tolerance of immunopathology, from the same regression of host longevity against body mass ([Example Fig. 1, above](briefFig1.png)). Since the raw values for $T_w$ lack units in our within-host model, we can scale $T_w$ from the partial effects of host order on the interaction between mass and lifespan:
+As a result, we opted to parameterize ($T_w$), host tolerance of immunopathology, based on order-level deviations from the regression of host longevity against body mass ([Example Fig. 1, above](briefFig1.png)). Since the raw values for $T_w$ lack units in our within-host model, we can scale $T_w$ from the partial effects of host order on the interaction between mass and lifespan:
 
 ```
-# m1 from above should already be appropriate,
-# and Example Fig. 2 is also appropriate
+# Now, run a glm  to determine the partial effect of host order
+# (phylogeny) on maximum longevity, and predict lifespan 
+# rates by order:
+
+
+pan.dat$log10mass_g <- log10(pan.dat$mass_g)
+pan.dat$order <- as.factor(pan.dat$order)
+pan.dat$log10_max_lifespan_yrs <- log10(pan.dat$max_lifespan_yrs)
+
+library(lme4)
+library(sjPlot)
+m1 <- lmer(log10_max_lifespan_yrs~ log10mass_g + (1|order), data = pan.dat) #mass longevity linear interaction with separate intercepts per order
+plot_model(m1, type = "re")
+
+
+summary(m1) 
+
+order.dat <- cbind.data.frame(order = plot_model(m1, type = "re")$data$term, estimate= plot_model(m1, type = "re")$data$estimate, lci= plot_model(m1, type = "re")$data$conf.low, uci= plot_model(m1, type = "re")$data$conf.high)
+order.dat$sig <- "no"
+order.dat$sig[order.dat$lci>0 & order.dat$uci>0] <- "pos"
+order.dat$sig[order.dat$lci<0 & order.dat$uci<0] <- "neg"
+colz2 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
+
+
+mass.dat <- cbind.data.frame(mass= 10^(plot_model(m1, type = "pred")$log10mass$data$x), lifespan=10^(plot_model(m1, type = "pred")$log10mass$data$predicted), lifespan_uci=10^(plot_model(m1, type = "pred")$log10mass$data$conf.high), lifespan_lci=10^(plot_model(m1, type = "pred")$log10mass$data$conf.low))
+
+# And, plot the partial effects of order:
+
+newdata.df <- cbind.data.frame(log10mass_g=3.229679, order="Chiroptera")
+
+p3a <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
+        geom_linerange(aes(x=order, ymin=lci, ymax=uci, color=sig), show.legend = F) + 
+        scale_color_manual(values=colz2) +
+        ylab("order y-intercept on mass : lifespan relationship") +
+        geom_hline(aes(yintercept = 0), linetype=2) +
+        coord_flip() + theme_bw() + theme(panel.grid = element_blank(),
+                                         axis.text.x = element_text(size = 13),
+                                         axis.text.y = element_text(size = 10),
+                                         plot.margin = unit(c(.3,.3,.1,.5), "lines"), 
+                                         axis.title.y = element_blank(),
+                                         axis.title.x = element_text(size=14))
+
+mass.dat$mass_kg <- mass.dat$mass/1000
+
+p3b <-ggplot(data=mass.dat) + geom_line(aes(x=mass_kg, y=lifespan), size=1, color="red3") + 
+   geom_ribbon(aes(x=mass_kg, ymin=lifespan_lci, ymax=lifespan_uci), alpha=.3, fill="red3") + 
+   xlab("mass (kg)") + scale_y_log10() +
+   scale_x_log10(breaks = c(.1, 100, 1*10^5), labels=c(".1", "100","100000")) +
+   ylab("max lifespan (years)") + 
+   geom_hline(aes(yintercept = 0), linetype=2) +
+   theme_bw() + 
+   theme(panel.grid = element_blank(), 
+         axis.text = element_text(size = 13),
+         plot.margin = unit(c(.1,.3,.3,3.7), "lines"), 
+         axis.title = element_text(size=14))
+ 
+ 
+ p3 <- cowplot::plot_grid(p3a, p3b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = .002, label_size = 22)
+ 
+ 
+
+# Significant positive associations with lifespan: 
+# Chiroptera, Cingulata, Monotremata, Primates
+
+# Significant negative associations with lifespan: 
+# Afrosoricida, Dasyuromorphia, Didelphimorphia,
+# Eulipotyphla, Notoryctemorphia, Peramelemorphia 
+
+
+```
+
+Your plot should look like this:
+
+<img src="brief/Fig2.png" alt = "Example Fig. 3" width="550">
+
+We can use this model to plot a regression line atop Example Figure 1 (above) to better visualize order-level deviations from predicted lifespan per mass:
+
+```
+# And plot with predictions:
+
+pan.dat.sum <- cbind.data.frame(log10mass_g=seq(log10(min(pan.dat$mass_g)), max(log10(pan.dat$mass_g)), length=10), order = "Chiroptera")
+#pan.dat.sum$predict_lifespan <- 10^(predict.gam(m1, newdata = pan.dat.sum, exclude = "s(order)"))
+pan.dat.sum$predict_lifespan <- 10^(predict(m1, newdata = pan.dat.sum, re.form=NA)) #predicts without random effects
+pan.dat.sum$mass_g <- 10^(pan.dat.sum$log10mass_g)
+pan.dat.sum = pan.dat.sum[pan.dat.sum$mass_g==min(pan.dat.sum$mass_g, na.rm=T) | pan.dat.sum$mass_g==max(pan.dat.sum$mass_g, na.rm=T),]
+
+p1b <- ggplot(data=pan.dat) + 
+  geom_point(aes(x=mass_g, y=max_lifespan_yrs,   fill=order), size =3, pch=21) +  
+  scale_fill_manual(values=colz) +
+  geom_line(data = pan.dat.sum, aes(x=mass_g, y=predict_lifespan), size=1) +
+  theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) + 
+  theme(panel.grid = element_blank()) +
+  xlab("mass (g)") + ylab("max lifespan (yrs)")
+p1b
+```
+
+The resulting plot will look like this:
+
+<img src="brief/Fig1w_line.png" alt = "Example Fig. 1 with regression" width="550">
+
+Finally, we can use the order-level partial effects of the regression of lifespan per body size (Fig. 2A, above) to scale an estimate of the $T_w$ parameter:
+
+```
 
 # Make tolerance (Tw) a scaled version of the order effect in this relationship
 # First, get high and low confidence and estimate from this plot and scale as Tw
 
-tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
+tmp.dat = cbind.data.frame(order= plot_model(m1, type="re")$data$term, estimate=plot_model(m1, type="re")$data$estimate, conf.low=plot_model(m1, type="re")$data$conf.low, conf.high=plot_model(m1, type="re")$data$conf.high) 
+
+ conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
 
 # Our goal is for Tw to span 0 to 1 for complete tolerance assumptions
 # and be >1 for constant tolerance assumptions. We only allow for 
@@ -282,31 +352,40 @@ head(predict.dat)
 
 # Constant tolerance (Tw)
 p4a <- ggplot(data=predict.dat) + 
+  geom_hline(aes(yintercept=1.5), linetype=2) +
+  geom_errorbar(aes(x=order, ymin=Tw_constant_lci, ymax=Tw_constant_uci, color=order), width=0, show.legend = F) +
   geom_point(aes(x=order, y=Tw_constant, fill=order, size=N_Tw), pch=21) + 
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 90),axis.title.x = element_blank(),
-        plot.margin = unit(c(.1,.1,.1,1.1), "lines"), legend.position = c(.82,.91),
-          legend.direction = "horizontal", legend.title = element_blank()) +
+  theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(.1,.1,0,.5), "lines"), 
+        legend.position = c(.7,.91),
+        panel.grid = element_blank(),
+        legend.direction = "horizontal", legend.title = element_blank()) +
   scale_fill_manual(values=colz, guide="none") +
   scale_color_manual(values=colz) +
-  geom_errorbar(aes(x=order, ymin=Tw_constant_lci, ymax=Tw_constant_uci, color=order), width=0, show.legend = F) +
-  geom_hline(aes(yintercept=1.5), linetype=2) + ylab(bquote("constant immunopathology tolerance,"~T[w]))
+  ylab(bquote("constant immunopathology tolerance,"~T[w]))
 
 # Complete tolerance (Tw)
 p4b <- ggplot(data=predict.dat) + 
+  geom_hline(aes(yintercept=.5), linetype=2) +
+  geom_errorbar(aes(x=order, ymin=Tw_complete_lci, ymax=Tw_complete_uci, color=order), width=0, show.legend = F) +
   geom_point(aes(x=order, y=Tw_complete, fill=order, size=N_Tw), pch=21, show.legend = F) + 
   theme_bw() +
   scale_fill_manual(values=colz) +
   scale_color_manual(values=colz) +
-  theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-        plot.margin = unit(c(.1,.1,.1,1.1), "lines")) +
-  geom_errorbar(aes(x=order, ymin=Tw_complete_lci, ymax=Tw_complete_uci, color=order), width=0, show.legend = F) +
-  geom_hline(aes(yintercept=.5), linetype=2) + ylab(bquote("complete immunopathology tolerancem,"~T[w]))
+  theme(axis.text.x = element_text(angle = 90), 
+        axis.title.x = element_blank(),
+        plot.margin = unit(c(0,.1,.1,.5), "lines"),
+        panel.grid = element_blank()) +
+  ylab(bquote("complete immunopathology tolerancem,"~T[w]))
 
 # Visualize:
-p4 <- cowplot::plot_grid(p4a, p4b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = 0)
+p4 <- cowplot::plot_grid(p4a, p4b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
 
-p4 
+
+
+
 ```
 
 Your plot should look like this:
@@ -314,7 +393,15 @@ Your plot should look like this:
 <img src="brief/Fig4.png" alt = "Example Fig. 4" width="550">
 
 
-Since these relationships are derived from the same model, we identify the same positive associations with tolerance of immunopathology as we do with longevity above.
+We see significant positive associations with tolerance and the orders: 
+Chiroptera, Cingulata, Monotremata, Primates
+
+And significant negative associations with tolerance and the orders: 
+Afrosoricida, Cetartiodactyla, Dasyuromorphia, Didelphimorphia,
+Eulipotyphla, Notoryctemorphia, Peramelemorphia, Rodentia
+
+
+
 
 ## Estimating magnitude of host constitutive immunity
 

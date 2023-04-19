@@ -144,13 +144,6 @@ colz2 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
 mass.dat <- cbind.data.frame(mass= 10^(plot_model(m1, type = "pred")$log10mass$data$x), lifespan=10^(plot_model(m1, type = "pred")$log10mass$data$predicted), lifespan_uci=10^(plot_model(m1, type = "pred")$log10mass$data$conf.high), lifespan_lci=10^(plot_model(m1, type = "pred")$log10mass$data$conf.low))
 
 # And, plot the partial effects of order:
-# Source partial effects script from Mollentze and Streicker 2020:
-# This script includes two plotting functions, added by me!
-
-#source(paste0(homewd,"source/mollentze-streicker-2020-functions.R"))
-
-#order.dat <- get_partial_effects(m1, var="order")
-#mass.dat <- get_partial_effects_continuous(m1, var="log10mass_g")
 
 newdata.df <- cbind.data.frame(log10mass_g=3.229679, order="Chiroptera")
 
@@ -324,23 +317,6 @@ p3 <- ggplot(data=predict.dat) +
 p3
 
 
-# p3b <- ggplot(data=predict.dat_b) + 
-#   geom_point(aes(x=order, y=(1/mu)/365, fill=order, size=N_mu), pch=21) + 
-#   theme_bw()  + 
-#   theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-#         legend.position = c(.8,.91), legend.direction = "horizontal", 
-#         legend.title = element_blank(),
-#         panel.grid = element_blank()) +
-#   scale_fill_manual(values=colz, guide="none") +
-#   scale_color_manual(values=colz) +
-#   geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
-#   #geom_hline(aes(yintercept=y.int_b), linetype=2) +
-#   ylab(bquote("predicted annual mortality rate by order,"~mu~"("~days^-1~")")) 
-# 
-# p3b
-# 
-# p3 | p3b
-# # And save
 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig3.png"),
        plot = p3,
