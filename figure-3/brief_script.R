@@ -649,10 +649,6 @@ p7c <-ggplot(data=BMR.dat) + geom_line(aes(x=BMR_W, y=neutro), size=1, color="bl
 
 tmp.dat = cbind.data.frame(order= plot_model(m3, type="re")$data$term, estimate=plot_model(m3, type="re")$data$estimate, conf.low=plot_model(m3, type="re")$data$conf.low, conf.high=plot_model(m3, type="re")$data$conf.high) 
 
-
-
-# tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
-
 # Our goal is for g0 to span 0 to 1 for model parameterization.
 # We only allow for linear transformations of the data, in order 
 # to retain differences in the magnitude of effect. We add to 
