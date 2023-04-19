@@ -400,448 +400,502 @@ Eulipotyphla, Notoryctemorphia, Peramelemorphia, Rodentia
 
 ## Estimating magnitude of host constitutive immunity
 
-Next, we sought to parameterize $g_0$ , the magnitude of constitutive
-host immunity.
+Next, we sought to parameterize $g_0$ , the magnitude of constitutive host immunity. 
 
-Prior work in the empirical literature shows that baseline blood
-concentrations of neutrophils, a broad class of leukocyte involved in
-innate mammalian immunity, scales positively (and hypermetrically) with
-body size across mammals ([Downs et
-al. 2020](https://www.journals.uchicago.edu/doi/full/10.1086/706235)),
-and is also correlated with mating promiscuity in primates ([Nunn et
-al. 2000](https://www.science.org/doi/10.1126/science.290.5494.1168))
-and mating promiscuity and sociality in carnivores ([Nunn et
-al. 2003](https://royalsocietypublishing.org/doi/abs/10.1098/rspb.2002.2249)).
-Additional empirical work demonstrates that bacterial killing ability
-(BKA, a measure of innate immune capacity of the complement) is
-negatively associated with mass-adjusted basal metabolic rates (BMR, and
-therefore positively associated with body mass) between species of
-tropical bird ([Tieleman et
-al. 2005](https://doi.org/10.1098/rspb.2005.3155)). Birds heterophils
-(the equivalent of mammalian neutrophils) are also known to correlate
-positively (and hypermetrically) with mass ([Ruhs et
-al. 2020](https://doi.org/10.1098/rspb.2020.0655)), and BMR has also
-been shown to be negatively correlated with heterophil concentrations
-and agglutination and lysis scores (innate immune metrics similar to
-BKA) in European birds ([Pap et
-al. 2011](https://link.springer.com/article/10.1007/s00442-014-3108-2)).
+Prior work in the empirical literature shows that baseline blood concentrations of neutrophils, a broad class of leukocyte involved in innate mammalian immunity, scales positively (and hypermetrically) with body size across mammals ([Downs et al. 2020](https://www.journals.uchicago.edu/doi/full/10.1086/706235)), and is also correlated with mating promiscuity in primates ([Nunn et al. 2000](https://www.science.org/doi/10.1126/science.290.5494.1168)) and mating promiscuity and sociality in carnivores ([Nunn et al. 2003](https://royalsocietypublishing.org/doi/abs/10.1098/rspb.2002.2249)). Additional empirical work demonstrates that bacterial killing ability (BKA, a measure of innate immune capacity of the complement) is negatively associated with mass-adjusted basal metabolic rates (BMR, and therefore positively associated with body mass) between species of tropical bird ([Tieleman et al. 2005](https://doi.org/10.1098/rspb.2005.3155
+)). Birds heterophils (the equivalent of mammalian neutrophils) are also known to correlate positively (and hypermetrically) with mass ([Ruhs et al. 2020](https://doi.org/10.1098/rspb.2020.0655)), and BMR has also been shown to be negatively correlated with heterophil concentrations and agglutination  and  lysis  scores (innate immune metrics similar to BKA) in European birds ([Pap et al. 2011](https://link.springer.com/article/10.1007/s00442-014-3108-2)).
 
-The theoretical literature additionally predicts that the magnitude of
-investment in constitutive immunity should increase with host exposure
-to parasites ([Westra et
-al. 2015](https://doi.org/10.1016/j.cub.2015.01.065)) and higher host
-densities ([Boots and Best
-2018](https://doi.org/10.1098/rspb.2018.0658)).
+The theoretical literature additionally predicts that the magnitude of investment in constitutive immunity should increase with host exposure to parasites ([Westra et al. 2015](https://doi.org/10.1016/j.cub.2015.01.065)) and higher host densities ([Boots and Best 2018](https://doi.org/10.1098/rspb.2018.0658)).
 
-Because data on reliable data on host exposure rates and densities are
-largely lacking across mammalian orders (thereby limiting our ability to
-test theoretical predictions), we chose to build on prior empirical work
-and use baseline blood concentrations of neutrophils as a proxy for
-$g_0$ across orders. We walk through our analyses of these cross-order
-neutrophil concentrations in the following steps.
 
-First, we downloaded data pairing neutrophil concentrations across 246
-mammalian species and spanning 19 distinct orders from the [Species360
-database](https://zims.species360.org/) and linked it with data from
-[Jones et al. 2009](https://doi.org/10.1890/08-1494.1) and [Healy et.
-al. 2014](https://doi.org/10.1098/rspb.2014.0298), highlighted above.
-Note that we are not able to include the raw neutrophil data file in
-this github, as a result of datasharing restrictions from Species360.
-However, should you be interested in using it, please email
-corresponding author, Cara Brook at
-[cbrook@uchicago.edu](cbrook@uchicago.edu) :
+Because data on reliable data on host exposure rates and densities are largely lacking across mammalian orders (thereby limiting our ability to test theoretical predictions), we chose to build on prior empirical work and use baseline blood concentrations of neutrophils as a proxy for $g_0$ across orders. We walk through our analyses of these cross-order neutrophil concentrations in the following steps.
 
-    # First, load the data
-    wbc.dat <- read.csv(file = "species_360_neut.csv", header=TRUE, stringsAsFactors = FALSE)
-    head(wbc.dat)
+First, we downloaded data pairing neutrophil concentrations across 246 mammalian species and spanning 19 distinct orders from the [Species360 database](https://zims.species360.org/) and linked it with data from [Jones et al. 2009](https://doi.org/10.1890/08-1494.1) and [Healy et. al. 2014](https://doi.org/10.1098/rspb.2014.0298), highlighted above. Note that we are not able to include the raw neutrophil data file in this github, as a result of datasharing restrictions from Species360. However, should you be interested in using it, please email corresponding author, Cara Brook at [cbrook@uchicago.edu](cbrook@uchicago.edu) :
 
-    names(wbc.dat)[names(wbc.dat)=="phylo"] <- "binomial"
+```
+# First, load the data
+wbc.dat <- read.csv(file = "species_360_neut.csv", header=TRUE, stringsAsFactors = FALSE)
+head(wbc.dat)
 
-    unique(wbc.dat$Order)
+names(wbc.dat)[names(wbc.dat)=="phylo"] <- "binomial"
 
-    #Rename
-    names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
-    #names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
-    names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
+unique(wbc.dat$Order)
 
-    #and merge with features from pan.dat
-    pan.bmr <- dplyr::select(pan.dat, binomial, mass_g, log10mass_g, max_lifespan_yrs, log10_max_lifespan_yrs, BMR_W, BMR_W_g)#, pop_group_size, pop_density_N_km2, homerange_km2)
+#Rename
+names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
+#names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
+names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
 
-    wbc.dat <- merge(wbc.dat, pan.bmr, by="binomial", all.x = T)
+#and merge with features from pan.dat
+pan.bmr <- dplyr::select(pan.dat, binomial, mass_g, log10mass_g, max_lifespan_yrs, log10_max_lifespan_yrs, BMR_W, BMR_W_g)#, pop_group_size, pop_density_N_km2, homerange_km2)
 
-    head(wbc.dat)
-    wbc.dat$ln10neutro <- log10(wbc.dat$neutro_conc)
-    length(wbc.dat$mass_g[is.na(wbc.dat$mass_g)]) #102 with no mass
-    length(wbc.dat$mass_g[is.na(wbc.dat$max_lifespan_yrs)]) #102 with no lifespan
-    length(wbc.dat$mass_g[is.na(wbc.dat$BMR_W)]) #323 with no BMR
+wbc.dat <- merge(wbc.dat, pan.bmr, by="binomial", all.x = T)
 
-We then plotted relationships between log10 neutrophil concentration and
-log10 host body mass:
+head(wbc.dat)
+wbc.dat$ln10neutro <- log10(wbc.dat$neutro_conc)
+length(wbc.dat$mass_g[is.na(wbc.dat$mass_g)]) #102 with no mass
+length(wbc.dat$mass_g[is.na(wbc.dat$max_lifespan_yrs)]) #102 with no lifespan
+length(wbc.dat$mass_g[is.na(wbc.dat$BMR_W)]) #323 with no BMR
 
-    # Slim your colors down to only those in this dataset
-    colz2 = sort(colz[unique(wbc.dat$order)])
 
-    wbc.dat$order <- as.factor(wbc.dat$order)
+```
 
-    # Plot with mass
-    p5 <- ggplot(wbc.dat) + 
-      geom_point(aes(x=mass_g, y=neutro_conc, fill=order), size =3, pch=21) +  
-      theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) +
-      scale_fill_manual(values=colz2) +
-      theme(panel.grid = element_blank()) +
-      xlab("mass (g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
-    p5
+We then plotted relationships between log10 neutrophil concentration and log10 host body mass:
+
+```
+# Slim your colors down to only those in this dataset
+colz2 = sort(colz[unique(wbc.dat$order)])
+
+wbc.dat$order <- as.factor(wbc.dat$order)
+
+# Plot with mass
+p5 <- ggplot(wbc.dat) + 
+  geom_point(aes(x=mass_g, y=neutro_conc, fill=order), size =3, pch=21) +  
+  theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) +
+  scale_fill_manual(values=colz2) +
+  theme(panel.grid = element_blank()) +
+  xlab("mass (g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
+p5
+
+```
 
 Producing a plot like this:
 
 <img src="brief/Fig5.png" alt = "Example Fig. 5" width="500">
 
-Then, we additionally explored scaling with mass-specific basal
-metabolis rate (BMR):
+Then, we additionally explored scaling with mass-specific basal metabolis rate (BMR):
+
+```
 
 
 
+# BMR plot 
+p6 <- ggplot(wbc.dat) + 
+  geom_point(aes(x=BMR_W_g, y=neutro_conc, fill=order), size =3, pch=21) +  
+  theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) +
+  scale_fill_manual(values=colz2) +
+  theme(panel.grid = element_blank()) +
+  xlab("mass-specific BMR (W/g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
+p6
+```
 
-    # BMR plot 
-    p6 <- ggplot(wbc.dat) + 
-      geom_point(aes(x=BMR_W_g, y=neutro_conc, fill=order), size =3, pch=21) +  
-      theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) +
-      scale_fill_manual(values=colz2) +
-      theme(panel.grid = element_blank()) +
-      xlab("mass-specific BMR (W/g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
-    p6
 
 Producing a plot like this:
 
 <img src="brief/Fig6.png" alt = "Example Fig. 6" width="500">
 
-Next, we explored statistical correlates of neutrophil concentration,
-investigating models incorporating body mass and order only, as compared
-with those also examining BMR. We found stronger support for a model of
-mass-specific BMR than for body size alone, and thus, used this as a
-predictor of constitutive immunity:
+Next, we explored statistical correlates of neutrophil concentration, investigating models incorporating body mass and order only, as compared with those also examining BMR. We found stronger support for a model of mass-specific BMR than for body size alone, and thus, used this as a predictor of constitutive immunity:
+
+```
 
 
-    wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
+# plot with predictions
+wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 
-    wbc.dat$order <- as.factor(wbc.dat$order)
-
-    m2a <- gam(ln10neutro~s(ln10BMR_W_g, bs="tp") +
-                s(order, bs="re"),
-              data=wbc.dat)
-    summary(m2a) #51.8%; n =144
-
-    wbc.pred = cbind.data.frame(ln10BMR_W_g=seq(min(wbc.dat$ln10BMR_W_g, na.rm=T),  max(wbc.dat$ln10BMR_W_g, na.rm=T), length=2),  order = "Chiroptera")
-    wbc.pred$predict_neut <- 10^(predict.gam(m2a, newdata = wbc.pred, exclude = "s(order)"))
-    wbc.pred$BMR_W_g <- 10^(wbc.pred$ln10BMR_W_g)
+wbc.dat$order <- as.factor(wbc.dat$order)
 
 
-    # Significant negative associations with:
-    # Cetartiodactyal, Dasyuromorphia, Diprotodontia, Proboscidea, Scandentua
-
-    #Significant positive associations with:
-    # Monotremata, Primates
+m2a <- lmer(ln10neutro~ln10BMR_W_g + (1|order), data=wbc.dat)
+plot_model(m2a, type="re")
 
 
-    # Or try including BMR
-    m3 <- gam(ln10neutro~s(ln10mass, bs="tp") +
-                          s(BMR_W, bs="tp") +
-                          s(order, bs="re"),
-                          data=wbc.dat)
-    summary(m3) #63.5%; n=144. much stronger model fit
-    order.dat <- get_partial_effects(m3, var="order")
-    mass.dat <- get_partial_effects_continuous(m3, var="ln10mass")
-    BMR.dat <- get_partial_effects_continuous(m3, var="BMR_W")
-
-    p7a <- plot.partial(order.dat, var="order", response_var = "log10 neutrophils")
-    p7b <- plot.partial.cont(mass.dat, var="ln10mass", log = T, alt_var = "mass (g)", response_var = "log10 neutrophils")
-    p7c <- plot.partial.cont(BMR.dat, var="BMR_W", log = F, alt_var = "BMR (W)", response_var = "log10 neutrophils")
+wbc.pred = cbind.data.frame(ln10BMR_W_g=seq(min(wbc.dat$ln10BMR_W_g, na.rm=T),  max(wbc.dat$ln10BMR_W_g, na.rm=T), length=2),  order = "Chiroptera")
+wbc.pred$predict_neut <- 10^(predict(m2a, newdata = wbc.pred, re.form=NA))
+wbc.pred$BMR_W_g <- 10^(wbc.pred$ln10BMR_W_g)
 
 
-    #and plot together
+p6b <- ggplot(wbc.dat) + 
+  geom_point(aes(x=BMR_W_g, y=neutro_conc, fill=order), size =3, pch=21) +  
+  theme_bw() + scale_y_log10() + scale_x_log10(labels=scales::comma) +
+  geom_line(data = wbc.pred, aes(x=BMR_W_g , y=predict_neut), size=1) +
+  scale_fill_manual(values=colz2) +
+  theme(panel.grid = element_blank()) +
+  xlab("mass-specific BMR (W/g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
+p6b
 
-    p7 <- cowplot::plot_grid(p7a, p7b, p7c, ncol=1, nrow = 3, labels=c("A", "B", "C"), label_x = 0.09)
+
+```
+From this model, we could fit a regression line to the neutrophil concentration as predicted by mass-specific metabolic rate:
+
+
+<img src="brief/Fig6_w_line.png" alt = "Example Fig. 6-alt" width="500">
+
+Finally, we examined mass and BMR as independent predictors of neutrophil concentration:
+
+```
+
+ wbc.dat$order <- as.factor(wbc.dat$order)
+ wbc.dat$ln10mass <- log10(wbc.dat$mass_g)
+
+# now look at mass and BMR independently 
+m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=wbc.dat)
+summary(m3)
+
+plot_model(m3, type="re")
+plot_model(m3, type="pred")$ln10mass
+plot_model(m3, type="pred")$BMR_W
+plot_model(m3, type="int")
+
+summary(m3) 
+AIC(m2a, m3) #compared the two models - m3 is better
+
+order.dat <- cbind.data.frame(order = plot_model(m3, type = "re")$data$term, estimate= plot_model(m3, type = "re")$data$estimate, lci= plot_model(m3, type = "re")$data$conf.low, uci= plot_model(m3, type = "re")$data$conf.high)
+order.dat$sig <- "no"
+order.dat$sig[order.dat$lci>0 & order.dat$uci>0] <- "pos"
+order.dat$sig[order.dat$lci<0 & order.dat$uci<0] <- "neg"
+
+colz3 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
+
+
+# now look at mass and BMR independently 
+m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=wbc.dat)
+summary(m3)
+
+plot_model(m3, type="re")
+plot_model(m3, type="pred")$ln10mass
+plot_model(m3, type="pred")$BMR_W
+plot_model(m3, type="int")
+
+summary(m3) 
+AIC(m2a, m3)
+
+order.dat <- cbind.data.frame(order = plot_model(m3, type = "re")$data$term, estimate= plot_model(m3, type = "re")$data$estimate, lci= plot_model(m3, type = "re")$data$conf.low, uci= plot_model(m3, type = "re")$data$conf.high)
+order.dat$sig <- "no"
+order.dat$sig[order.dat$lci>0 & order.dat$uci>0] <- "pos"
+order.dat$sig[order.dat$lci<0 & order.dat$uci<0] <- "neg"
+
+colz3 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
+
+
+
+mass.dat <- cbind.data.frame(mass= 10^(plot_model(m3, type = "pred")$ln10mass$data$x), neutro=10^(plot_model(m3, type = "pred")$ln10mass$data$predicted), neutro_uci=10^(plot_model(m3, type = "pred")$ln10mass$data$conf.high), neutro_lci=10^(plot_model(m3, type = "pred")$ln10mass$data$conf.low))
+BMR.dat <- cbind.data.frame(BMR_W= (plot_model(m3, type = "pred")$BMR_W$data$x), neutro=10^(plot_model(m3, type = "pred")$BMR_W$data$predicted), neutro_uci=10^(plot_model(m3, type = "pred")$BMR_W$data$conf.high), neutro_lci=10^(plot_model(m3, type = "pred")$BMR_W$data$conf.low))
+
+
+
+p7a <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
+  geom_linerange(aes(x=order, ymin=lci, ymax=uci, color=sig), show.legend = F) + 
+  scale_color_manual(values=colz3) +
+  ylab("order y-intercept on mass/BMR/neutrophil relationship") +
+  geom_hline(aes(yintercept = 0), linetype=2) +
+  coord_flip() + theme_bw() + theme(panel.grid = element_blank(),
+                                    axis.text.x = element_text(size = 13),
+                                    axis.text.y = element_text(size = 10),
+                                    plot.margin = unit(c(.3,.3,.3,.5), "lines"), 
+                                    axis.title.y = element_blank(),
+                                    axis.title.x = element_text(size=14))
+
+mass.dat$mass_kg <- mass.dat$mass/1000
+
+p7b <-ggplot(data=mass.dat) + geom_line(aes(x=mass_kg, y=neutro), size=1, color="red3") + 
+  geom_ribbon(aes(x=mass_kg, ymin=neutro_lci, ymax=neutro_uci), alpha=.3, fill="red3") + 
+  xlab("mass (kg)") + scale_y_log10() +
+  scale_x_log10(breaks = c(.1, 10, 1000), labels=c(".1", "10","1000")) +
+  ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))+
+  theme_bw() + 
+  theme(panel.grid = element_blank(), 
+        axis.text = element_text(size = 13),
+        plot.margin = unit(c(.2,.3,.3,3.7), "lines"), 
+        axis.title = element_text(size=14))
+
+p7c <-ggplot(data=BMR.dat) + geom_line(aes(x=BMR_W, y=neutro), size=1, color="blue4") + 
+  geom_ribbon(aes(x=BMR_W, ymin=neutro_lci, ymax=neutro_uci), alpha=.3, fill="blue4") + 
+  xlab("BMR (W)") + scale_y_log10() +
+  #scale_x_log10(breaks = c(.1, 10, 1000), labels=c(".1", "10","1000")) +
+  ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))+
+  theme_bw() + 
+  theme(panel.grid = element_blank(), 
+        axis.text = element_text(size = 13),
+        plot.margin = unit(c(.2,.3,.3,3.7), "lines"), 
+        axis.title = element_text(size=14))
+
+# #and plot together
+
+ p7 <- cowplot::plot_grid(p7a, p7b, p7c, ncol=1, nrow = 3, labels=c("A", "B", "C"), label_x = 0.01)
+# 
+```
 
 This resulting in the following plot:
 
 <img src="brief/Fig7.png" alt = "Example Fig. 7" width="400">
 
-We see significant positive associations with neutrophil concentrations
-(indicative of robust constitutive immunity for body size and BMR
-predictions) for the following orders: 1. Chiroptera 2. Monotremata
 
-We see significant negative associations (indicative of weak
-constitutive immunity for body size and BMR predictions) for the
-following orders:
+We see significant positive associations with neutrophil concentrations (indicative of robust constitutive immunity for body size and BMR predictions) for the following orders:
+1. Chiroptera 
+2. Monotremata
 
-1.  Cetartiodactyal
-2.  Diprotodontia
-3.  Dasyuromorphia
-4.  Proboscidea
-5.  Scandentia
+We see significant negative associations (indicative of weak constitutive immunity for body size and BMR predictions) for the following orders:
 
-We can then use the fitted model to estimate $g_0$ for our within-host
-model. Our goal is for $g_0$ to span 0 to 1 for model parameterization.
-We only allow for linear transformations of the data, in order to retain
-differences in the magnitude of effect. We add to the predict.dat
-database from above among the orders and plot $g_0$ across orders:
+1. Cetartiodactyal
+2. Diprotodontia
+3. Dasyuromorphia
+4. Scandentia
 
-    tmp.dat <- cbind.data.frame(order= order.dat[[1]]$order, estimate=order.dat[[1]]$y, conf.low=order.dat[[1]]$ylower, conf.high=order.dat[[1]]$yupper)
+We can then use the fitted model to estimate $g_0$ for our within-host model. Our goal is for $g_0$ to span 0 to 1 for model parameterization. We only allow for linear transformations of the data, in order 
+to retain differences in the magnitude of effect. We add to the predict.dat database from above among the orders and plot $g_0$ across orders:
 
-    # Linear transformation: 
-    # g0: Make all effects positive
-    tmp.dat$g0 <- tmp.dat$estimate + abs(min(tmp.dat$conf.low))
-    tmp.dat$g0_lci <- tmp.dat$conf.low + abs(min(tmp.dat$conf.low))
-    tmp.dat$g0_uci <- tmp.dat$conf.high + abs(min(tmp.dat$conf.low))
+```
+#and finally, calculate g0 as the order effects from this model
 
-    # Now merge with predict.dat
-    tmp.dat <- dplyr::select(tmp.dat, order, g0, g0_lci, g0_uci)
+tmp.dat = cbind.data.frame(order= plot_model(m3, type="re")$data$term, estimate=plot_model(m3, type="re")$data$estimate, conf.low=plot_model(m3, type="re")$data$conf.low, conf.high=plot_model(m3, type="re")$data$conf.high) 
 
-    predict.dat <- merge(predict.dat, tmp.dat, by="order", all.x = T)
-    head(predict.dat)
+# Our goal is for g0 to span 0 to 1 for model parameterization.
+# We only allow for linear transformations of the data, in order 
+# to retain differences in the magnitude of effect. We add to 
+# the predict.dat database from above among the orders. 
 
-    # Now calculate "N" (the number of observations upon which 
-    # each parameter estimate is based) for g0
-    g0.sum <- ddply(wbc.dat, .(order), summarise, N_g0=length(binomial))
-    predict.dat <- merge(predict.dat, g0.sum, by="order", all.x = T)
 
-    head(predict.dat)
+# Linear transformation: 
+# g0: Make all effects positive
+tmp.dat$g0 <- tmp.dat$estimate + abs(min(tmp.dat$conf.low)) +.0000001
+tmp.dat$g0_lci <- tmp.dat$conf.low + abs(min(tmp.dat$conf.low))+.0000001
+tmp.dat$g0_uci <- tmp.dat$conf.high + abs(min(tmp.dat$conf.low))+.0000001
 
-    p8 <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-      geom_point(aes(x=order, y=g0, fill=order, size=N_g0), pch=21) + 
-      theme_bw() +
-      theme(axis.text.x = element_text(angle = 90),axis.title.x = element_blank(),
-            plot.margin = unit(c(.1,.1,.1,1.1), "lines"),
-            legend.position = c(.75,.92),
-            legend.direction = "horizontal",
-            legend.title = element_blank()) +
-      geom_errorbar(aes(x=order, ymin=g0_lci, ymax=g0_uci, color=order), width=0, show.legend = F) +
-      scale_color_manual(values=colz2) +
-      scale_fill_manual(values=colz2, guide="none") +
-      geom_hline(aes(yintercept=0.5), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0]))
+#and rescale to fall within a range that causes normalized impact
+tmp.dat$g0 <-  scales::rescale(x =tmp.dat$g0, from=c(min(tmp.dat$g0_lci), max(tmp.dat$g0_uci)), to =c(.0000001,.1)) 
+tmp.dat$g0_lci <-  scales::rescale(x =tmp.dat$g0_lci, from=c(min(tmp.dat$g0_lci), max(tmp.dat$g0_uci)), to =c(.0000001,.1)) 
+tmp.dat$g0_uci <-  scales::rescale(x =tmp.dat$g0_uci, from=c(min(tmp.dat$g0_lci), max(tmp.dat$g0_uci)), to =c(.0000001,.1)) 
 
-    p8
+
+# Now merge with predict.dat
+tmp.dat <- dplyr::select(tmp.dat, order, g0, g0_lci, g0_uci)
+
+
+predict.dat <- merge(predict.dat, tmp.dat, by="order", all.x = T)
+head(predict.dat)
+
+# Now calculate "N" (the number of observations upon which 
+# each parameter estimate is based) for g0
+g0.sum <- ddply(wbc.dat, .(order), summarise, N_g0=length(binomial))
+predict.dat <- merge(predict.dat, g0.sum, by="order", all.x = T)
+
+head(predict.dat)
+
+
+# g0
+p8 <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
+  geom_hline(aes(yintercept=0.05), linetype=2) +
+  geom_point(aes(x=order, y=g0, fill=order, size=N_g0), pch=21) + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90),axis.title.x = element_blank(),
+        plot.margin = unit(c(.1,.1,.1,1.1), "lines"),
+        panel.grid = element_blank(),
+        legend.position = c(.65,.92),
+        legend.direction = "horizontal",
+        legend.title = element_blank()) +
+  geom_errorbar(aes(x=order, ymin=g0_lci, ymax=g0_uci, color=order), width=0, show.legend = F) +
+  scale_color_manual(values=colz2) +
+  scale_fill_manual(values=colz2, guide="none") +
+  ylab(bquote("magnitude constitutive immunity, "~g[0]))
+```
 
 Your plot should look like this:
-
+  
 <img src="brief/Fig8.png" alt = "Example Fig. 8" width="400">
+
 
 ## Estimating spillover host tolerance from phylogenetic distance
 
-Finally, in our equation for spillover virulence, we define one final
-parameter, $T_{vS}$, the spillover host tolerance of virus-induced
-pathology for a pathogen evolved in a phylogenetically-distant reservoir
-host. Building from the literature (e.g. [Guth et
-al. 2019](https://doi.org/10.1098/rstb.2019.0296), [Guth et
-al. 2022](https://doi.org/10.1073/pnas.2113628119), [Farrell and Davies
-2019](https://doi.org/10.1073/pnas.1817323116), [Longdon et
-al. 2011](https://doi.org/10.1371/journal.ppat.1002260), [Longdon et
-al. 2015](https://doi.org/10.1371/journal.ppat.1004728)), we chose to
-model this viral tolerance as a function of phylogenetic distance
-between spillover and reservoir host.
+Finally, in our equation for spillover virulence, we define one final parameter, $T_{vS}$, the spillover host tolerance of virus-induced pathology for a pathogen evolved in a phylogenetically-distant reservoir host. Building from the literature (e.g. [Guth et al. 2019](https://doi.org/10.1098/rstb.2019.0296), [Guth et al. 2022](https://doi.org/10.1073/pnas.2113628119), [Farrell and Davies 2019](https://doi.org/10.1073/pnas.1817323116), [Longdon et al. 2011](https://doi.org/10.1371/journal.ppat.1002260), [Longdon et al. 2015](https://doi.org/10.1371/journal.ppat.1004728)), we chose to model this viral tolerance as a function of phylogenetic distance between spillover and reservoir host.
 
-To do this, we first used the database TimeTree (timetree.org) to build
-a phylogeny and extract the phylogenetic distance (in millions of
-years), based on Most Recent Common Ancestor across all 27 mammalian
-orders modeled in our Pantheria dataset. See subfolder
-[phylo-tree/get.phylo.dist.R](phylo-tree/get.phylo.dist.R) for details
-of this analysis.
+To do this, we first used the database TimeTree (timetree.org) to build a phylogeny and extract the phylogenetic distance (in millions of years), based on Most Recent Common Ancestor across all 27 mammalian orders modeled in our Pantheria dataset. See subfolder [phylo-tree/get.phylo.dist.R](phylo-tree/get.phylo.dist.R) for details of this analysis.
 
-Here, we estimate the $T_{vS}$ parameter from these relationships and
-plot across mammalian orders:
+Here, we estimate the $T_{vS}$ parameter from these relationships and plot across mammalian orders:
 
-    # Load the tree data
-    load(paste0(homewd, "phylo-tree/phylo.dat.final.Rdata"))
+```
+# Load the tree data
+load(paste0(homewd, "phylo-tree/phylo.dat.final.Rdata"))
 
 
-    # Merge the phylogenetic distance (eta_R) into the existing tree
-    predict.dat <- merge(predict.dat, phylo.dat, by="order", all.x = T, sort=F)
+# Merge the phylogenetic distance (eta_R) into the existing tree
+predict.dat <- merge(predict.dat, phylo.dat, by="order", all.x = T, sort=F)
 
-    head(predict.dat)
+head(predict.dat)
 
-    # Now, estimate Tv_human (Tv_S), using similar scaling as above for Tw:
-    # Constant tolerance needs to be >1 and 
-    # Complete tolerance needs to be >0 and <1
+# Now, estimate Tv_human (Tv_S), using similar scaling as above for Tw:
+# Constant tolerance needs to be >1 and 
+# Complete tolerance needs to be >0 and <1
 
-    # Here, small phylogenetic distance equates to high tolerance, so we
-    # subtract from 2 and 1 rather than adding:
-    predict.dat$Tv_human_constant <- 2-(predict.dat$phylo_dist/max(predict.dat$phylo_dist, na.rm=T))
-    predict.dat$Tv_human_complete <- 1-(predict.dat$phylo_dist/max(predict.dat$phylo_dist, na.rm=T))
+# Here, small phylogenetic distance equates to high tolerance, so we
+# subtract from 2 and 1 rather than adding:
+predict.dat$Tv_human_constant <- 2-(predict.dat$phylo_dist/max(predict.dat$phylo_dist, na.rm=T))
+predict.dat$Tv_human_complete <- 1-(predict.dat$phylo_dist/max(predict.dat$phylo_dist, na.rm=T))
 
-    # Visualize both constant (p4a) and complete (p4b) estimates for Tvs
-    p9a <- ggplot(data=predict.dat) + theme_bw() +
-            geom_point(aes(x=order, y=Tv_human_constant, fill=order), pch=21, show.legend = F, size=3) + 
-            scale_fill_manual(values=colz) + ylab(bquote("constant viral spillover tolerance,"~T[vS])) +
-            theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
-                  axis.title.x = element_blank(),
-                  plot.margin = unit(c(.1,.1,0,.5), "lines")) +
-            geom_hline(aes(yintercept=1.5), linetype=2)
-    p9b <- ggplot(data=predict.dat) + theme_bw() +
-           geom_point(aes(x=order, y=Tv_human_complete, fill=order), pch=21, show.legend = F, size=3) + 
-           scale_fill_manual(values=colz) + ylab(bquote("complete viral spillover tolerance,"~T[vS])) +
-           theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
-                 plot.margin = unit(c(0,.1,.1,.5), "lines")) +
-          geom_hline(aes(yintercept=0.5), linetype=2)
+# Visualize both constant (p4a) and complete (p4b) estimates for Tvs
+p9a <- ggplot(data=predict.dat) + theme_bw() +
+        geom_point(aes(x=order, y=Tv_human_constant, fill=order), pch=21, show.legend = F, size=3) + 
+        scale_fill_manual(values=colz) + ylab(bquote("constant viral spillover tolerance,"~T[vS])) +
+        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+              axis.title.x = element_blank(),
+              plot.margin = unit(c(.1,.1,0,.5), "lines")) +
+        geom_hline(aes(yintercept=1.5), linetype=2)
+p9b <- ggplot(data=predict.dat) + theme_bw() +
+       geom_point(aes(x=order, y=Tv_human_complete, fill=order), pch=21, show.legend = F, size=3) + 
+       scale_fill_manual(values=colz) + ylab(bquote("complete viral spillover tolerance,"~T[vS])) +
+       theme(axis.text.x = element_text(angle = 90), axis.title.x = element_blank(),
+             plot.margin = unit(c(0,.1,.1,.5), "lines")) +
+      geom_hline(aes(yintercept=0.5), linetype=2)
 
-    p9 <- cowplot::plot_grid(p9a, p9b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
+p9 <- cowplot::plot_grid(p9a, p9b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
+```
 
 The resulting plot should look like this:
 
 <img src="brief/Fig9.png" alt = "Example Fig. 9" width="500">
 
-This scales spillover viral tolerance based on relative phylogenetic
-distance between each mammalian reservoir order and humans. Humans
-demonstrate highest tolerance to viruses spilling over from Primates
-(which share the same evolutionary divergence time as humans) and the
-lowest tolerance to viruses spilling over from the most phylogenetically
-distant marsupial orders (e.g. Monotremata, Dasyuormorphia,
-Didelphimorphia, Diprotodontia, Microbiotheria, Notoryctemorphia,
-Peramelemorphia).
+This scales spillover viral tolerance based on relative phylogenetic distance between each mammalian reservoir order and humans. Humans demonstrate highest tolerance to viruses spilling over from Primates (which share the same evolutionary divergence time as humans) and the lowest tolerance to viruses spilling over from the most phylogenetically distant marsupial orders (e.g. Monotremata, Dasyuormorphia, Didelphimorphia, Diprotodontia, Microbiotheria, Notoryctemorphia, Peramelemorphia).
 
-## Estimating optimal virus growth rates (r\*) in reservoir hosts
+## Estimating optimal virus growth rates (r*) in reservoir hosts
 
-Now take all the predict.dat outputs and merge them into a prediction
-for $r^*$, the optimal virus growth rate evolved in various mammalian
-reservoir hosts.
+Now take all the predict.dat outputs and merge them into a prediction for $r^*$, the optimal virus growth rate evolved in various mammalian reservoir hosts.
 
-Set all other within-host parameters to the same default parameter
-values used to generate Fig. 2 in the main text and allow $\mu$, $T[w]$,
-and $g_0$ to vary by order based on the analyses outlined above. Relate
-these parameters to a prediction of $r^*$, based on mathematical
-derivations outlined in detail in the Supplementary Appendix of our
-paper.
+Set all other within-host parameters to the same default parameter values used to generate Fig. 2 in the main text and allow $\mu$, $T[w]$, and $g_0$ to vary by order based on the analyses outlined above. Relate these parameters to a prediction of $r^*$, based on mathematical derivations outlined in detail in the Supplementary Appendix of our paper.
 
-    # First, make a list of default within-host parameters, suing the same values from main text Fig. 2.
-    # The values for g0, Tw, Tv, and mu will get overwritten, so it does not really matter what you put here.
+```
+# Now take all the outputs and merge them into a prediction for rstar and for alphastar-hum
+# Set all other within-host parameters to the same default parameter values
+# used to generate Fig. 2 in the main text.
+# The values for g0, Tw, Tv, and mu will get overwritten, so it does not 
+# really matter what you put here.
 
-    vir.par <- list(b= .2, q = .0002, c=.5,  m=1/(21), g=.9, g0 = .5, zeta=.2, v=1, w=1, gamma=.001, Tv=.005, Tw=.005, mu = 1/(20*365))
-
-    # Constant tolerance rstar predictions using order-specific g0, Tw, and mu
-    # and default values for all other parameters
-    predict.dat$rstar_constant <- (vir.par$c*predict.dat$g0/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu*predict.dat$Tw_constant*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
-    predict.dat$rstar_constant_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci*predict.dat$Tw_constant_lci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_lci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_lci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
-    predict.dat$rstar_constant_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci*predict.dat$Tw_constant_uci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_uci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_uci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
+vir.par <- list(b= .2, q = .0002, c=.5,  m=1/(21),  g=.9, g0 = .3, zeta=.2,
+                v=1, w=1,  Tv=.005, Tw=.005,mu = 1/(20*365))
 
 
-    # Complete rstar predictions using  order-specific g0, Tw, and mu
-    # and default values for all other parameters
-    predict.dat$rstar_complete <- (vir.par$c*predict.dat$g0/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu*vir.par$g*predict.dat$g0*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete-vir.par$Tv)))
-    predict.dat$rstar_complete_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_lci*vir.par$g*predict.dat$g0_lci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_lci-vir.par$Tv)))
-    predict.dat$rstar_complete_lci[is.na(predict.dat$rstar_complete_lci)] <- 0
-    predict.dat$rstar_complete_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_uci*vir.par$g*predict.dat$g0_uci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_uci-vir.par$Tv)))
+# Constant tolerance rstar predictions using order-specific g0, Tw, and mu
+# and default values for all other parameters
+
+vir.par$Tv = 1.005
+predict.dat$rstar_constant <- (vir.par$c*predict.dat$g0/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu*predict.dat$Tw_constant*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
+predict.dat$rstar_constant_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci*predict.dat$Tw_constant_lci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_lci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_lci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
+predict.dat$rstar_constant_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + (sqrt((vir.par$m^2)*(vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci*predict.dat$Tw_constant_uci*vir.par$Tv*(vir.par$v*predict.dat$Tw_constant_uci+vir.par$g*vir.par$w*vir.par$Tv)))/((vir.par$v*(vir.par$m^2)*predict.dat$Tw_constant_uci) +(vir.par$g*vir.par$w*(vir.par$m^2)*vir.par$Tv))
 
 
-    # Then, get mean N across all the factors that went in to each prediction
-    predict.dat$N_cumulative <-rowMeans(cbind(predict.dat$N_mu, predict.dat$N_Tw, predict.dat$N_g0))
-    predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
-    predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
-
-    # Then, visualize rstar by order
-
-    p10a <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-      geom_errorbar(aes(x=order, ymin=rstar_constant_lci, ymax=rstar_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
-      geom_point(aes(x=order, y=rstar_constant, fill=order, size=N_cumulative), pch=21) +
-      scale_color_manual(values=colz)+
-      scale_fill_manual(values=colz, guide="none")+theme_bw() +
-      theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
-            axis.title.x = element_blank(),
-            panel.grid = element_blank(),
-            legend.title = element_blank(), legend.direction = "horizontal",
-            legend.position = c(.75,.9),
-            plot.margin = unit(c(.1,.1,0,.8), "lines")) +
-      ylab(bquote("optimal virus growth rate in reservoir,"~r~"* (constant)"))
+# Complete rstar predictions using  order-specific g0, Tw, and mu
+# and default values for all other parameters
+vir.par$Tv=.005
+predict.dat$rstar_complete <- (vir.par$c*predict.dat$g0/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0*predict.dat$mu)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu*vir.par$g*predict.dat$g0*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete-vir.par$Tv)))
+predict.dat$rstar_complete_lci <- (vir.par$c*predict.dat$g0_lci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_lci*predict.dat$mu_lci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_lci*vir.par$g*predict.dat$g0_lci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_lci-vir.par$Tv)))
+#predict.dat$rstar_complete_lci[is.na(predict.dat$rstar_complete_lci)] <- .00000001
+predict.dat$rstar_complete_uci <- (vir.par$c*predict.dat$g0_uci/vir.par$m) + ((vir.par$c^2)*vir.par$g*predict.dat$g0_uci*predict.dat$mu_uci)/(sqrt((vir.par$m^2)*(vir.par$c^2)*predict.dat$mu_uci*vir.par$g*predict.dat$g0_uci*(vir.par$g*vir.par$w+vir.par$v-vir.par$g*predict.dat$Tw_complete_uci-vir.par$Tv)))
 
 
-    p10b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-      geom_errorbar(aes(x=order, ymin=rstar_complete_lci, ymax=rstar_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
-      geom_point(aes(x=order, y=rstar_complete, fill=order, size=N_cumulative), pch=21, show.legend = F) +
-      scale_color_manual(values=colz)+
-      scale_fill_manual(values=colz, guide="none")+theme_bw() +
-      theme(axis.text.x = element_text(angle = 90),
-            axis.title.x = element_blank(),
-            panel.grid = element_blank(),
-            plot.margin = unit(c(.1,.1,.1,.5), "lines")) +
-      ylab(bquote("optimal virus growth rate in reservoir,"~r~"* (complete)"))
+# First, get mean N across all the factors that went in to each prediction
+predict.dat$N_cumulative <-rowMeans(cbind(predict.dat$N_mu, predict.dat$N_Tw, predict.dat$N_g0))
+predict.dat <- arrange(predict.dat, desc(rstar_constant), desc(N_cumulative))
+predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
+
+# Visualize rstar by order
+
+#Constant tolerance
+p10a <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
+  geom_errorbar(aes(x=order, ymin=rstar_constant_lci, ymax=rstar_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  geom_point(aes(x=order, y=rstar_constant, fill=order, size=N_cumulative), pch=21) +
+  scale_color_manual(values=colz)+
+  scale_fill_manual(values=colz, guide="none")+theme_bw() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid = element_blank(),
+        legend.title = element_blank(), legend.direction = "horizontal",
+        legend.position = c(.75,.9),
+        plot.margin = unit(c(.1,.1,0,.8), "lines")) +
+  ylab(bquote(atop("optimal virus growth rate", "in reservoir,"~r~"* (constant tolerance)")))
 
 
-    p10 <- cowplot::plot_grid(p10a, p10b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
+p10b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
+  geom_errorbar(aes(x=order, ymin=rstar_complete_lci, ymax=rstar_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  geom_point(aes(x=order, y=rstar_complete, fill=order, size=N_cumulative), pch=21, show.legend = F) +
+  scale_color_manual(values=colz)+
+  scale_fill_manual(values=colz, guide="none")+theme_bw() +
+  theme(axis.text.x = element_text(angle = 90),
+        axis.title.x = element_blank(),
+        panel.grid = element_blank(),
+        plot.margin = unit(c(.1,.1,.1,.8), "lines")) +
+  ylab(bquote(atop("optimal virus growth rate", "in reservoir,"~r~"* (complete tolerance)")))
+
+
+p10 <- cowplot::plot_grid(p10a, p10b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01, align = "v")
+
+
+```
 
 The resulting plot should look like this:
 
 <img src="brief/Fig10.png" alt = "Example Fig. 10" width="500">
 
+
 ## Estimating spillover virulence ($\alpha*_S$) in human hosts
 
-Virulence in the human host is a function of phylogenetic distance,
-which we capture in order-specific $T_{vS}$. Following spillover,
-tolerance of immunopathology is now a property of the spillover host
-(here, human), so we hold it constant across all reservoir predictions.
-As above, calculations of spillover virulence are derived from the
-equations shown in the Supplementary Appendix of our paper.
+Virulence in the human host is a function of phylogenetic distance, which we capture in order-specific $T_{vS}$. Following spillover, tolerance of immunopathology is now a property of the spillover host (here, human), so we hold it constant across all reservoir predictions. As above, calculations of spillover virulence are derived from the equations shown in the Supplementary Appendix of our paper.
 
 We calculate and plot this spillover virulence here:
 
-    # First, calculate Vmax in the human host:
-    predict.dat$Vs_max_constant <- predict.dat$rstar_constant/(vir.par$g*vir.par$c) - predict.dat$rstar_constant/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant*vir.par$g)
-    predict.dat$Vs_max_constant_lci <- predict.dat$rstar_constant_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_lci*vir.par$g)
-    predict.dat$Vs_max_constant_uci <- predict.dat$rstar_constant_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_uci*vir.par$g)
 
-    predict.dat$Vs_max_complete <- predict.dat$rstar_complete/(vir.par$g*vir.par$c) - predict.dat$rstar_complete/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete*vir.par$g)
-    predict.dat$Vs_max_complete_lci <- predict.dat$rstar_complete_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_lci*vir.par$g)
-    predict.dat$Vs_max_complete_uci <- predict.dat$rstar_complete_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_uci*vir.par$g)
+```
+# First, calculate Vmax in the human host:
+predict.dat$Vs_max_constant <- predict.dat$rstar_constant/(vir.par$g*vir.par$c) - predict.dat$rstar_constant/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant*vir.par$g)
+predict.dat$Vs_max_constant_lci <- predict.dat$rstar_constant_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_lci*vir.par$g)
+predict.dat$Vs_max_constant_uci <- predict.dat$rstar_constant_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_uci*vir.par$g)
 
-
-    # Next, take that viral load and calculate spillover virulence, here for the constant tolerance assumption:
-    vir.par$Tw = 1
-    predict.dat$alpha_star_human_constant <- ((predict.dat$rstar_constant*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant)/vir.par$Tw)*predict.dat$Vs_max_constant
-    predict.dat$alpha_star_human_constant_lci <- ((predict.dat$rstar_constant_lci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_lci)/vir.par$Tw)*predict.dat$Vs_max_constant_lci
-    predict.dat$alpha_star_human_constant_uci <- ((predict.dat$rstar_constant_uci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_uci)/vir.par$Tw)*predict.dat$Vs_max_constant_uci
+predict.dat$Vs_max_complete <- predict.dat$rstar_complete/(vir.par$g*vir.par$c) - predict.dat$rstar_complete/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete*vir.par$g)
+predict.dat$Vs_max_complete_lci <- predict.dat$rstar_complete_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_lci*vir.par$g)
+predict.dat$Vs_max_complete_uci <- predict.dat$rstar_complete_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_uci*vir.par$g)
 
 
-    # And here for complete tolerance:
-    vir.par$Tw = 0
-    predict.dat$alpha_star_human_complete <- (predict.dat$rstar_complete*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete
-    predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_lci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_lci
-    predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_uci
+# Next, take that viral load and calculate spillover virulence, here for the constant tolerance assumption:
+vir.par$Tw = 1
+predict.dat$alpha_star_human_constant <- ((predict.dat$rstar_constant*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant)/vir.par$Tw)*predict.dat$Vs_max_constant
+predict.dat$alpha_star_human_constant_lci <- ((predict.dat$rstar_constant_lci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_lci)/vir.par$Tw)*predict.dat$Vs_max_constant_lci
+predict.dat$alpha_star_human_constant_uci <- ((predict.dat$rstar_constant_uci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_uci)/vir.par$Tw)*predict.dat$Vs_max_constant_uci
 
-    # Now, we rank by virulence, then confidence, and plot...
-    predict.dat <- arrange(predict.dat, desc(alpha_star_human_complete), desc(N_cumulative))
-    predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
 
-    # Visualize alphastar in humans
+# And here for complete tolerance:
+vir.par$Tw = 0
+predict.dat$alpha_star_human_complete <- (predict.dat$rstar_complete*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete
+predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_lci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_lci
+predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_uci
 
-    # Constant
-    p11a <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-      geom_errorbar(aes(x=order, ymin=alpha_star_human_constant_lci, ymax=alpha_star_human_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
-      geom_point(aes(x=order, y=alpha_star_human_constant, fill=order, size=N_cumulative), pch=21) +
-      scale_color_manual(values=colz)+
-      scale_fill_manual(values=colz, guide="none")+theme_bw() +
-      theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
-            axis.title.x = element_blank(),
-            panel.grid = element_blank(),
-            legend.title = element_blank(), legend.direction = "horizontal",
-            legend.position = c(.75,.9),
-            plot.margin = unit(c(.1,.1,0,.8), "lines")) +
-      ylab(bquote("spillover virulence,"~alpha[S]~"(constant tolerance)"))
-      
+# Now, we rank by virulence, then confidence, and plot...
+predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
+predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
 
-    predict.dat <- arrange(predict.dat, desc(alpha_star_human_complete), desc(N_cumulative))
-    predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
+# Visualize alphastar in humans
 
-    # Complete
-    p11b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
-      geom_errorbar(aes(x=order, ymin=alpha_star_human_complete_lci, ymax=alpha_star_human_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
-      geom_point(aes(x=order, y=alpha_star_human_complete, fill=order, size=N_cumulative), pch=21, show.legend = F) +
-      scale_color_manual(values=colz)+
-      scale_fill_manual(values=colz, guide="none")+theme_bw() +
-      theme(axis.text.x = element_text(angle = 90),
-            axis.title.x = element_blank(),
-            panel.grid = element_blank(),
-            plot.margin = unit(c(.1,.1,.1,.5), "lines")) +
-      ylab(bquote("spillover virulence,"~alpha[S]~"(complete tolerance)"))
+# Constant
+p11a <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
+  geom_errorbar(aes(x=order, ymin=alpha_star_human_constant_lci, ymax=alpha_star_human_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  geom_point(aes(x=order, y=alpha_star_human_constant, fill=order, size=N_cumulative), pch=21) +
+  scale_color_manual(values=colz)+
+  scale_fill_manual(values=colz, guide="none")+theme_bw() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid = element_blank(),
+        legend.title = element_blank(), legend.direction = "horizontal",
+        legend.position = c(.75,.9),
+        plot.margin = unit(c(.1,.1,0,.8), "lines")) +
+  ylab(bquote("spillover virulence,"~alpha[S]~"(constant tolerance)"))
+  
 
-    # Visualize together
-    p11 <- cowplot::plot_grid(p11a, p11b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
+predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
+predict.dat$order <- factor(predict.dat$order, levels = unique(predict.dat$order))
+
+# Complete
+p11b <- ggplot(data=subset(predict.dat, !is.na(g0))) + 
+  geom_errorbar(aes(x=order, ymin=alpha_star_human_complete_lci, ymax=alpha_star_human_complete_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  geom_point(aes(x=order, y=alpha_star_human_complete, fill=order, size=N_cumulative), pch=21, show.legend = F) +
+  scale_color_manual(values=colz)+
+  scale_fill_manual(values=colz, guide="none")+theme_bw() +
+  theme(axis.text.x = element_text(angle = 90),
+        axis.title.x = element_blank(),
+        panel.grid = element_blank(),
+        plot.margin = unit(c(.1,.1,.1,.5), "lines")) +
+  ylab(bquote("spillover virulence,"~alpha[S]~"(complete tolerance)"))
+
+# Visualize together
+p11 <- cowplot::plot_grid(p11a, p11b, ncol=1, nrow = 2, labels=c("A", "B"), rel_heights = c(1,1.3), label_x = -0.01)
+
+
+```
 
 The resulting plot should look like this:
 
@@ -849,190 +903,187 @@ The resulting plot should look like this:
 
 ## Comparison with the literature
 
-We compiled literature-derived estimates for mammalian order-level
-averages of case fatality rates (CFRs) for viral zoonoses following
-spillover into a human host in [Guth et
-al. 2022](https://doi.org/10.1073/pnas.2113628119). In the [source
-subfolder](source/guth-2021-cfr-virus-exclude.R), we convert these CFR
-averages to virulence averages using data on the average duration of
-infection. Here, we plot the relative magnitude of these values by order
-and compare with our predictions from life history data encapsulated in
-our within-host model (above).
+We compiled literature-derived estimates for mammalian order-level averages of case fatality rates (CFRs) for viral zoonoses following spillover into a human host in [Guth et al. 2022](https://doi.org/10.1073/pnas.2113628119). In the [source subfolder](source/guth-2021-cfr-virus-exclude.R), we convert these CFR averages to virulence averages using data on the average duration of infection. Here, we plot the relative magnitude of these values by order and compare with our predictions from life history data encapsulated in our within-host model (above).
 
-First, load GAM data adapted from [Guth et
-al. 2022](https://doi.org/10.1073/pnas.2113628119) and plot as
-$\alpha_S^*$ estimates by order, derived from the literature:
+First, load GAM data adapted from [Guth et al. 2022](https://doi.org/10.1073/pnas.2113628119) and plot as $\alpha_S^*$ estimates by order, derived from the literature:
 
-    load(paste0(homewd,"source/gam.dat.Guth.et.al.2021.Rdata"))
+```
+load(paste0(homewd,"source/gam.dat.Guth.et.al.2021.Rdata"))
 
-    # Plot alpha_S for real
-    p12 <- ggplot(data=gam.dat) + 
-      geom_errorbar(aes(x=hOrder, ymin=alpha_lci, ymax=alpha_uci, color=hOrder),  width=0, linetype=3, show.legend=F) +
-      geom_point(aes(hOrder, alpha, color=hOrder, size=Nobs), show.legend=F) + 
-      theme_bw() +
-      scale_color_manual(values=colz) +
-      theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=14),
-            axis.text.y = element_text(size=12), axis.text.x = element_text(size=12, angle = 90), legend.title = element_blank()) + 
-      ylab(bquote("predicted"~alpha[S]~"by order ("~days^-1~")")) #+ coord_cartesian(ylim=c(0,100))
+# Plot alpha_S for real
+p12 <- ggplot(data=gam.dat) + 
+  geom_errorbar(aes(x=hOrder, ymin=alpha_lci, ymax=alpha_uci, color=hOrder),  width=0, linetype=3, show.legend=F) +
+  geom_point(aes(hOrder, alpha, color=hOrder, size=Nobs), show.legend=F) + 
+  theme_bw() +
+  scale_color_manual(values=colz) +
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=14),
+        axis.text.y = element_text(size=12), axis.text.x = element_text(size=12, angle = 90), legend.title = element_blank()) + 
+  ylab(bquote("predicted"~alpha[S]~"by order ("~days^-1~")")) #+ coord_cartesian(ylim=c(0,100))
+
+p12
 
 
-    p12
+
+```
 
 The resulting plot should look like this:
 
 <img src="brief/Fig12.png" alt = "Example Fig. 12" width="500">
 
-Next, scale these literature-derived estimates of spillover virulence to
-a relative magnitude and compare against predictions from the
-within-host model:
+Next, scale these literature-derived estimates of spillover virulence to a relative magnitude and compare against predictions from the within-host model:
+
+```
+
+#rank by descending alpha, then confidence
+gam.dat <- arrange(gam.dat, desc(alpha), desc(Nobs))
 
 
-    #rank by descending alpha, then confidence
-    gam.dat <- arrange(gam.dat, desc(alpha), desc(Nobs))
+# Merge our nested model predictions with those from Guth et al. 2022
+
+# Make columns match
+head(gam.dat)
+names(gam.dat)[1] <- "order"
+names(gam.dat)[3] <- "N"
+names(predict.dat)[names(predict.dat)=="N_cumulative"] <- "N"
+head(predict.dat)
+
+# And rescale alpha in both vectors
+
+# Constant
+predict.dat$alpha_star_human_constant[!is.na(predict.dat$alpha_star_human_constant)] <- scales::rescale(x =predict.dat$alpha_star_human_constant[!is.na(predict.dat$alpha_star_human_constant)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_constant_lci[!is.na(predict.dat$alpha_star_human_constant_lci)] <- scales::rescale(x =predict.dat$alpha_star_human_constant_lci[!is.na(predict.dat$alpha_star_human_constant_lci)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_constant_uci[!is.na(predict.dat$alpha_star_human_constant_uci)] <- scales::rescale(x =predict.dat$alpha_star_human_constant_uci[!is.na(predict.dat$alpha_star_human_constant_uci)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
 
 
-    # Merge our nested model predictions with those from Guth et al. 2022
-
-    # Make columns match
-    head(gam.dat)
-    names(gam.dat)[1] <- "order"
-    names(gam.dat)[3] <- "N"
-    names(predict.dat)[names(predict.dat)=="N_cumulative"] <- "N"
-    head(predict.dat)
-
-    # And rescale alpha in both vectors
-
-    # Constant
-    predict.dat$alpha_star_human_constant[!is.na(predict.dat$alpha_star_human_constant)] <- scales::rescale(x =predict.dat$alpha_star_human_constant[!is.na(predict.dat$alpha_star_human_constant)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
-    predict.dat$alpha_star_human_constant_lci[!is.na(predict.dat$alpha_star_human_constant_lci)] <- scales::rescale(x =predict.dat$alpha_star_human_constant_lci[!is.na(predict.dat$alpha_star_human_constant_lci)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
-    predict.dat$alpha_star_human_constant_uci[!is.na(predict.dat$alpha_star_human_constant_uci)] <- scales::rescale(x =predict.dat$alpha_star_human_constant_uci[!is.na(predict.dat$alpha_star_human_constant_uci)], from=c(min(predict.dat$alpha_star_human_constant_lci, na.rm = T), max(predict.dat$alpha_star_human_constant_uci, na.rm = T)), to =c(0,1)) 
+# Complete
+predict.dat$alpha_star_human_complete[!is.na(predict.dat$alpha_star_human_complete)] <- scales::rescale(x =predict.dat$alpha_star_human_complete[!is.na(predict.dat$alpha_star_human_complete)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_complete_lci[!is.na(predict.dat$alpha_star_human_complete_lci)] <- scales::rescale(x =predict.dat$alpha_star_human_complete_lci[!is.na(predict.dat$alpha_star_human_complete_lci)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
+predict.dat$alpha_star_human_complete_uci[!is.na(predict.dat$alpha_star_human_complete_uci)] <- scales::rescale(x =predict.dat$alpha_star_human_complete_uci[!is.na(predict.dat$alpha_star_human_complete_uci)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
 
 
-    # Complete
-    predict.dat$alpha_star_human_complete[!is.na(predict.dat$alpha_star_human_complete)] <- scales::rescale(x =predict.dat$alpha_star_human_complete[!is.na(predict.dat$alpha_star_human_complete)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
-    predict.dat$alpha_star_human_complete_lci[!is.na(predict.dat$alpha_star_human_complete_lci)] <- scales::rescale(x =predict.dat$alpha_star_human_complete_lci[!is.na(predict.dat$alpha_star_human_complete_lci)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
-    predict.dat$alpha_star_human_complete_uci[!is.na(predict.dat$alpha_star_human_complete_uci)] <- scales::rescale(x =predict.dat$alpha_star_human_complete_uci[!is.na(predict.dat$alpha_star_human_complete_uci)], from=c(min(predict.dat$alpha_star_human_complete_lci, na.rm = T), max(predict.dat$alpha_star_human_complete_uci, na.rm = T)), to =c(0,1)) 
+# And do the same for gam.dat
+gam.dat$alpha <- scales::rescale(x =gam.dat$alpha, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
+gam.dat$alpha_lci <- scales::rescale(x =gam.dat$alpha_lci, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
+gam.dat$alpha_uci <- scales::rescale(x =gam.dat$alpha_uci, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
 
 
-    # And do the same for gam.dat
-    gam.dat$alpha <- scales::rescale(x =gam.dat$alpha, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
-    gam.dat$alpha_lci <- scales::rescale(x =gam.dat$alpha_lci, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
-    gam.dat$alpha_uci <- scales::rescale(x =gam.dat$alpha_uci, from=c(min(gam.dat$alpha_lci), max(gam.dat$alpha_uci)), to =c(0,1)) 
+# And merge the data
+gam.plot.dat <-  dplyr::select(gam.dat, order, N, alpha, alpha_lci, alpha_uci)
+share.dat.constant <- dplyr::select(predict.dat,order, N, alpha_star_human_constant, alpha_star_human_constant_lci, alpha_star_human_constant_uci)
+share.dat.complete <- dplyr::select(predict.dat,order, N, alpha_star_human_complete, alpha_star_human_complete_lci, alpha_star_human_complete_uci)
+names(share.dat.complete) <- names(share.dat.constant) <- names(gam.plot.dat)
+  
+share.dat.constant <- arrange(share.dat.constant, desc(alpha))
+share.dat.complete <- arrange(share.dat.complete, desc(alpha))
+  
+  
+gam.plot.dat[,3:5] <- -1*gam.plot.dat[,3:5] 
+share.dat.complete$tolerance = "complete"
+share.dat.constant$tolerance = "constant"
+gam.plot.dat$tolerance = "natural"
+share.dat.complete$source <- share.dat.constant$source <-  "predicted from\nnested model"
+gam.plot.dat$source <- "predicted from zoonoses"
+plot.dat <- rbind(gam.plot.dat, share.dat.complete, share.dat.constant)
+plot.dat$source <- factor(plot.dat$source, levels=c("predicted from zoonoses", "predicted from\nnested model"))
+  
+# Reorder, ranked by the constant data
+plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constant, desc(alpha))$order))
+
+head(plot.dat)
+
+# And take only the complete data
+plot.dat <- plot.dat[complete.cases(plot.dat),]
+
+shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
 
 
-    # And merge the data
-    gam.plot.dat <-  dplyr::select(gam.dat, order, N, alpha, alpha_lci, alpha_uci)
-    share.dat.constant <- dplyr::select(predict.dat,order, N, alpha_star_human_constant, alpha_star_human_constant_lci, alpha_star_human_constant_uci)
-    share.dat.complete <- dplyr::select(predict.dat,order, N, alpha_star_human_complete, alpha_star_human_complete_lci, alpha_star_human_complete_uci)
-    names(share.dat.complete) <- names(share.dat.constant) <- names(gam.plot.dat)
-      
-    share.dat.constant <- arrange(share.dat.constant, desc(alpha))
-    share.dat.complete <- arrange(share.dat.complete, desc(alpha))
-      
-      
-    gam.plot.dat[,3:5] <- -1*gam.plot.dat[,3:5] 
-    share.dat.complete$tolerance = "complete"
-    share.dat.constant$tolerance = "constant"
-    gam.plot.dat$tolerance = "natural"
-    share.dat.complete$source <- share.dat.constant$source <-  "predicted from\nnested model"
-    gam.plot.dat$source <- "predicted from zoonoses"
-    plot.dat <- rbind(gam.plot.dat, share.dat.complete, share.dat.constant)
-    plot.dat$source <- factor(plot.dat$source, levels=c("predicted from zoonoses", "predicted from\nnested model"))
-      
-    # Reorder, ranked by the constant data
-    plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constant, desc(alpha))$order))
+# And add images by order
 
-    head(plot.dat)
+order.dat <- read.csv(file=paste0(homewd,"/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
+head(order.dat)
 
-    # And take only the complete data
-    plot.dat <- plot.dat[complete.cases(plot.dat),]
-
-    shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
-
-
-    # And add images by order
-
-    order.dat <- read.csv(file=paste0(homewd,"/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
-    head(order.dat)
-
-    # Rename
-    order.dat$species
-    order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
-    order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Gorilla_gorilla"
-    order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
-    order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
-    order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
-    order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
-    order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
-    order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
-    order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
-
-
-
-    # Load images - will take a moment
-    pic.df <- ggimage::phylopic_uid(order.dat$species) 
-
-    pic.df$order <- order.dat$order
-
-    unique(plot.dat$order)
-    unique(pic.df$order)
-
-    setdiff(unique(pic.df$order), unique(plot.dat$order)) #these are those that don't overlap
-    sort(intersect(unique(pic.df$order), unique(plot.dat$order))) #these are those that do overlap
-    #and only plot those for which there are predictions 
-    pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="Cetartiodactyla" | order=="Chiroptera" |order== "Cingulata" | 
-                    order == "Dasyuromorphia" | order == "Didelphimorphia" | order=="Diprotodontia"  | order=="Eulipotyphla" | order=="Hyracoidea" |
-                    order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
-                    order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
-                      
-
-
-    # This is a part of Fig. 3 in the main text
-    p13a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
-      geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
-      geom_point(aes(order, alpha, fill=order, size=N, shape=source)) + 
-      theme_bw() +
-      scale_color_manual(values=colz, guide="none") +
-      scale_fill_manual(values=colz, guide="none") +
-      scale_shape_manual(values=shapez, guide="none") +
-      #facet_grid(source~., scales = "free_y") +
-      theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=16), 
-            legend.direction = "horizontal", legend.position = c(.74,.95),
-            axis.text.y = element_text(size=14), 
-            axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
-            plot.margin = unit(c(.2,1.5,1,.2), "cm")) + 
-      ylab(bquote("relative spillover virulence,"~alpha[S]~"(constant tolerance)")) + 
-      scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
-      coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
-      geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
+# Rename
+order.dat$species
+order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
+order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Gorilla_gorilla"
+order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
+order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
+order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
+order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
+order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
+order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
+order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
 
 
 
-    p13 <- p13a + geom_text(x=21, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
-      coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
+# Load images - will take a moment
+pic.df <- ggimage::phylopic_uid(order.dat$species) 
 
-The resulting plot should look like this - this is a component of Fig 3
-(main text), here plotted under the assumption of constant tolerance:
+pic.df$order <- order.dat$order
+
+unique(plot.dat$order)
+unique(pic.df$order)
+
+setdiff(unique(pic.df$order), unique(plot.dat$order)) #these are those that don't overlap
+sort(intersect(unique(pic.df$order), unique(plot.dat$order))) #these are those that do overlap
+#and only plot those for which there are predictions 
+pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="Cetartiodactyla" | order=="Chiroptera" |order== "Cingulata" | 
+                order == "Dasyuromorphia" | order == "Didelphimorphia" | order=="Diprotodontia"  | order=="Eulipotyphla" | order=="Hyracoidea" |
+                order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
+                order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
+                  
+
+
+# This is a part of Fig. 3 in the main text
+p13a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
+  geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
+  geom_point(aes(order, alpha, fill=order, size=N, shape=source)) + 
+  theme_bw() +
+  scale_color_manual(values=colz, guide="none") +
+  scale_fill_manual(values=colz, guide="none") +
+  scale_shape_manual(values=shapez, guide="none") +
+  #facet_grid(source~., scales = "free_y") +
+  theme(panel.grid = element_blank(), axis.title.x = element_blank(), axis.title.y = element_text(size=16), 
+        legend.direction = "horizontal", legend.position = c(.74,.95),
+        axis.text.y = element_text(size=14), 
+        axis.text.x = element_text(size=14, vjust=.1, hjust=-.2, angle=90),
+        plot.margin = unit(c(.2,1.5,1,.2), "cm")) + 
+  ylab(bquote("relative spillover virulence,"~alpha[S]~"(constant tolerance)")) + 
+  scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
+  coord_cartesian(ylim=c(-1.1,1.1), clip = "off") + 
+  geom_phylopic(data=pic.df, aes(x=order, y = -1.3, image=uid, color=order), size=.05)
+
+
+
+p13 <- p13a + geom_text(x=21, y=0, label="      From nested model       From zoonotic literature   ", angle=270, nudge_y = 2, size=6) + 
+  coord_cartesian(ylim=c(-1.1,1.1), clip = "off") 
+
+
+
+```
+
+
+
+The resulting plot should look like this - this is a component of Fig 3 (main text), here plotted under the assumption of constant tolerance:
 
 <img src="brief/Fig13.png" alt = "Example Fig. 13" width="500">
 
-We see that are predictions are fairly accurate in terms of relative
-rank - we over-predict the virulence of Primates and under-predict the
-virulence of Carnivores.
 
-We can also plot these predictions from complete tolerance assumptions,
-here replicating Fig. S4 of the Supplementary Information Appendix:
+We see that are predictions are fairly accurate in terms of relative rank - we over-predict the virulence of Primates and under-predict the virulence of Carnivores. 
+
+
+We can also plot these predictions from complete tolerance assumptions, here replicating Fig. S4 of the Supplementary Information Appendix:
 
 <img src="brief/Fig14.png" alt = "Example Fig. 14" width="500">
 
-However, when we plot against a different dataset with rabies excluded
-from the Guth et al. 2022 dataset, we find that our predictions align
-even better, here across the whole dataset (note that this is Fig. S5A
-of the Supplementary Information Appendix):
+
+However, when we plot against a different dataset with rabies excluded from the Guth et al. 2022 dataset, we find that our predictions align even better, here across the whole dataset (note that this is Fig. S5A of the Supplementary Information Appendix):
 
 <img src="brief/Fig15.png" alt = "Example Fig. 15" width="500">
 
-And here under complete tolerance assumptions with rabies excluded as
-well (Fig. S5B of the Supplementary Information Appendix):
+
+And here under complete tolerance assumptions with rabies excluded as well (Fig. S5B of the Supplementary Information Appendix):
 
 <img src="brief/Fig16.png" alt = "Example Fig. 16" width="500">
+
+
