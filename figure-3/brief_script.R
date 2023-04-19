@@ -523,8 +523,6 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig6.png"),
 
 
 # plot with predictions
-# faux gam first
-#wbc.dat$ln10BMR_W_g <- log10(wbc.dat$mass_g)/wbc.dat$BMR_W
 wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 
 wbc.dat$order <- as.factor(wbc.dat$order)
@@ -535,9 +533,7 @@ plot_model(m2a, type="re")
 
 
 
-
 wbc.pred = cbind.data.frame(ln10BMR_W_g=seq(min(wbc.dat$ln10BMR_W_g, na.rm=T),  max(wbc.dat$ln10BMR_W_g, na.rm=T), length=2),  order = "Chiroptera")
-#wbc.pred$predict_neut <- 10^(predict.gam(m2a, newdata = wbc.pred, exclude = "s(order)"))
 wbc.pred$predict_neut <- 10^(predict(m2a, newdata = wbc.pred, re.form=NA))
 wbc.pred$BMR_W_g <- 10^(wbc.pred$ln10BMR_W_g)
 
@@ -565,8 +561,7 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig6_w_line.png"),
 
 
 
-# now look at mass and BMR independently (model is stronger)
-library(lmerTest)
+# now look at mass and BMR independently 
 m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=wbc.dat)
 summary(m3)
 
@@ -574,12 +569,9 @@ plot_model(m3, type="re")
 plot_model(m3, type="pred")$ln10mass
 plot_model(m3, type="pred")$BMR_W
 plot_model(m3, type="int")
-# m3 <- gam(ln10neutro~s(ln10mass, bs="tp") +
-#                       s(BMR_W, bs="tp") +
-#                       s(order, bs="re"),
-#                       data=wbc.dat)
-summary(m3) #63.5%; n=144. much stronger model fit
-AIC(m2a, m3) #m3 best
+
+summary(m3) 
+AIC(m2a, m3)
 
 order.dat <- cbind.data.frame(order = plot_model(m3, type = "re")$data$term, estimate= plot_model(m3, type = "re")$data$estimate, lci= plot_model(m3, type = "re")$data$conf.low, uci= plot_model(m3, type = "re")$data$conf.high)
 order.dat$sig <- "no"
@@ -587,8 +579,6 @@ order.dat$sig[order.dat$lci>0 & order.dat$uci>0] <- "pos"
 order.dat$sig[order.dat$lci<0 & order.dat$uci<0] <- "neg"
 
 colz3 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
-
-
 
 
 
@@ -633,13 +623,11 @@ p7c <-ggplot(data=BMR.dat) + geom_line(aes(x=BMR_W, y=neutro), size=1, color="bl
         plot.margin = unit(c(.2,.3,.3,3.7), "lines"), 
         axis.title = element_text(size=14))
 
-
-# 
 # #and plot together
-# 
+
  p7 <- cowplot::plot_grid(p7a, p7b, p7c, ncol=1, nrow = 3, labels=c("A", "B", "C"), label_x = 0.01)
 # 
-# 
+
  ggsave(file = paste0(homewd, subwd, "/brief/Fig7.png"),
         plot = p7,
         units="mm",  
