@@ -97,6 +97,8 @@ colz=c(colz, "red")
 
 names(colz) <- c(sort(unique(pan.dat$order))[sort(unique(pan.dat$order))!="Chiroptera"], "Chiroptera")
 
+#save this color bar
+save(colz, file = paste0(homewd, "/figure-3/color-bar.Rdata"))
 
 p1 <- ggplot(data=pan.dat) + 
   geom_point(aes(x=mass_g, y=max_lifespan_yrs,   fill=order), size =3, pch=21) +  

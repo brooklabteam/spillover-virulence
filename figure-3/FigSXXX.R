@@ -661,15 +661,61 @@ head(alpha.fit)
 shapez = c('glm fit for\nall parameters' = 21, 'one parameter profiled;\nother parameters\nfrom glm fitting' = 24, 'one parameter profiled;\nother parameters\nheld constant'=22)
 colz2 = c('glm fit for\nall parameters' = "red4", 'one parameter profiled;\nother parameters\nfrom glm fitting' = "black", 'one parameter profiled;\nother parameters\nheld constant'="black")
 
-pFinal <- ggplot(data=alpha.fit) + theme_bw() +
-  geom_point(aes(x=lit_alpha_scale, y= alpha, fill=order, shape=alpha_type, color=alpha_type), size=3, stroke=1) +
-  scale_shape_manual(values=shapez) +
-  scale_color_manual(values=colz2) +
-  facet_grid(tolerance~fit_par_ID) + geom_abline() +
-  ylab(bquote("predicted spillover virulence,"~alpha[S])) + 
-  xlab(bquote("observed spillover virulence,"~alpha[S])) 
+load(paste0(homewd, "/figure-3/color-bar.Rdata"))
 
-pFinal
+alpha.fit$tolerance <- as.character(alpha.fit$tolerance)
+alpha.fit$tolerance[alpha.fit$tolerance=="constant"] <- "'constant tolerance'"
+alpha.fit$tolerance[alpha.fit$tolerance=="complete"] <- "'complete tolerance'"
+alpha.fit$tolerance <- factor(alpha.fit$tolerance, levels=c("'constant tolerance'", "'complete tolerance'"))
+
+# and add labels for strip labels
+alpha.fit$label= NA
+
+alpha.fit$label[alpha.fit$fit_par_ID=="Tw"] <- "atop(T[w]~', reservoir tolerance', 'of immunopathology')"
+alpha.fit$label[alpha.fit$fit_par_ID=="Tv_human"] <- "atop(T[v]~', spillover host tolerance', 'of direct virus pathology')"
+alpha.fit$label[alpha.fit$fit_par_ID=="g0"] <- "atop(g[0]~', constitutive ', 'immunity in reservoir')"
+
+
+
+
+alpha.fit$label = factor(alpha.fit$label, levels = c("atop(T[w]~', reservoir tolerance', 'of immunopathology')",
+                                                     "atop(T[v]~', spillover host tolerance', 'of direct virus pathology')",
+                                                     "atop(g[0]~', constitutive ', 'immunity in reservoir')"))
+
+
+label_parseall <- function(variable, value) {
+  plyr::llply(value, function(x) parse(text = paste("", 
+                                                    x, sep = "")))
+}
+
+pFigSXX <- ggplot(data=alpha.fit) + theme_bw() +
+  geom_point(aes(x=lit_alpha_scale, y= alpha, fill=order, 
+                 shape=alpha_type, color=alpha_type), size=3, stroke=1) +
+  scale_shape_manual(values=shapez) +
+  scale_color_manual(values=colz2) + 
+  scale_fill_manual(values=colz) + 
+  theme(strip.background = element_rect(fill="white"), 
+        axis.title = element_text(size=14), 
+        strip.text= element_text(size=14), 
+        panel.grid = element_blank(),
+        axis.text = element_text(size=12)) +
+  facet_grid(tolerance~label,labeller = label_parseall) + geom_abline() +
+  ylab(bquote("predicted spillover virulence,"~alpha[S])) + 
+  xlab(bquote("observed spillover virulence,"~alpha[S])) +
+  guides(fill = guide_legend(override.aes=list(shape=21)), 
+         color=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch"), 
+         shape=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch")) #+
+  
+
+pFigSXX
+
+ggsave(file = paste0(homewd,"/supp-figs/FigSXX.png"),
+       plot = pFigSXX,
+       units="mm",  
+       width=120, 
+       height=70, 
+       scale=3, 
+       dpi=300)
 
 
 merge(alpha.fit, alpha.melt.orig, by=c("order", "tolerance", "lit_alpha_scale", "alpha_type"))
