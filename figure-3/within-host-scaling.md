@@ -265,14 +265,7 @@ p3b <-ggplot(data=mass.dat) + geom_line(aes(x=mass_kg, y=lifespan), size=1, colo
  
  p3 <- cowplot::plot_grid(p3a, p3b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = .002, label_size = 22)
  
- 
 
-# Significant positive associations with lifespan: 
-# Chiroptera, Cingulata, Monotremata, Primates
-
-# Significant negative associations with lifespan: 
-# Afrosoricida, Dasyuromorphia, Didelphimorphia,
-# Eulipotyphla, Notoryctemorphia, Peramelemorphia 
 
 
 ```
@@ -281,7 +274,13 @@ Your plot should look like this:
 
 <img src="brief/Fig2.png" alt = "Example Fig. 3" width="550">
 
-We can use this model to plot a regression line atop Example Figure 1 (above) to better visualize order-level deviations from predicted lifespan per mass:
+We see significant positive associations with lifespan per body size for the orders: 
+Chiroptera, Cingulata, Monotremata, Primates
+
+And we see significant negative associations with lifespan per body size for the orders: 
+Afrosoricida, Dasyuromorphia, Didelphimorphia, Eulipotyphla, Notoryctemorphia, Peramelemorphia 
+
+We can use the above model to plot a regression line atop Example Figure 1 (above) to better visualize order-level deviations from predicted lifespan per mass:
 
 ```
 # And plot with predictions:
