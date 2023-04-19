@@ -169,7 +169,7 @@ predict.dat <- dplyr::select(predict.dat, -(mu_se))
 
 #set this y-int at the median of all the orders
 predict.dat$mu[which(predict.dat$mu==median(predict.dat$mu))]
-y.int = median(predict.dat$mu)
+y.int = predict.dat$mu[predict.dat$order=="Diprotodontia"]
 
 
 # Now plot predictions against null:

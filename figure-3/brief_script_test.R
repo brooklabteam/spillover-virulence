@@ -124,23 +124,6 @@ m1 <- lmer(log10_max_lifespan_yrs~ log10mass_g + (1|order), data = pan.dat) #mas
 plot_model(m1, type = "re")
 summary(m1) 
 
-
-# And, plot the partial effects of order:
-# Source partial effects script from Mollentze and Streicker 2020:
-# This script includes two plotting functions, added by me!
-# 
-# source(paste0(homewd,"source/mollentze-streicker-2020-functions.R"))
-# 
-# 
-# order.dat <- get_partial_effects(m1, var="order")
-# mass.dat <- get_partial_effects_continuous(m1, var="log10mass_g")
-# 
-# p2a <- plot.partial(df=order.dat, var="order", response_var = "max lifespan (yrs)")
-# p2b <- plot.partial.cont(df=mass.dat, var="log10mass_g",  response_var = "max lifespan (yrs)", alt_var = "mass (g)", log = T)
-# 
-# p2 <- cowplot::plot_grid(p2a, p2b, ncol=1, nrow = 2, labels=c("A", "B"), label_x = .1)
-
-
 newdata.df <- cbind.data.frame(log10mass_g=3.229679, order="Chiroptera")
 
 
@@ -181,11 +164,8 @@ p1b
 m1b <- lmer(log10_max_lifespan_yrs~ (1|order), data = pan.dat) 
 summary(m1b)
 
-plot_model(m1b, type="re")
-# 
-# 
-# m1b <- gam(log10_max_lifespan_yrs~ s(order, bs="re"), data = pan.dat) 
-# summary(m1b)
+plot_model(m1b, type="re") #Diprotodonia is the middle
+
 
 
 predict.dat <- cbind.data.frame(order = unique(pan.dat$order))#, log10mass_g=1)
@@ -230,7 +210,7 @@ predict.dat <- dplyr::select(predict.dat, -(mu_se))
 
 # first, get your null
 predict.dat$mu[which(predict.dat$mu==median(predict.dat$mu))]
-y.int = median(predict.dat$mu)
+y.int = predict.dat$mu[predict.dat$order=="Diprotodontia"]
 
 
 
