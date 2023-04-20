@@ -69,44 +69,6 @@ get.alphastar.general <- function(par.dat, tol.type){
   }
   
 }
-get.alpha.spillover <- function(par.dat, tol.type){
-  
-  
-  if(tol.type=="complete-tolerance"){
-    
-    #first, get rstar
-    rstar = get.rstar.general(par.dat = par.dat, tol.type = tol.type)
-    
-    #then, get Vmax
-    par.dat$Vs_max <- rstar/(par.dat$g_spill*par.dat$c_spill) - rstar/(2*par.dat$g_spill*par.dat$c_spill) + 1 - 1/(par.dat$g_spill) + par.dat$c_spill/(2*rstar*par.dat$g_spill)
-    
-    
-    #and convert to alpha spillover
-    
-    alpha_spillover <- (rstar*(par.dat$v_spill-par.dat$Tv_spill) + rstar*par.dat$g_spill*(par.dat$w_spill-par.dat$Tw_spill))*par.dat$Vs_max
-    
-    
-    
-  }else if(tol.type=="constant-tolerance"){
-    
-    #first, get rstar
-    rstar = get.rstar.general(par.dat = par.dat, tol.type = tol.type)
-    
-    #then, calculate Vmax in the human host
-    par.dat$Vs_max <-     rstar/(par.dat$g_spill*par.dat$c_spill) - rstar/(2*par.dat$g_spill*par.dat$c_spill) + 1 - 1/(par.dat$g_spill) + par.dat$c_spill/(2*rstar*par.dat$g_spill)
-    
-    #and convert to alpha spillover
-  
-    
-    alpha_spillover <- ((rstar*par.dat$v_spill)/par.dat$Tv_spill  + (par.dat$g_spill*par.dat$w_spill*rstar)/par.dat$Tw_spill)*par.dat$Vs_max
-    
-    
-   
-  }
-  
-  return(alpha_spillover)
-  
-}
 get.prevalence <- function(par.dat, tol.type){
   
   rstar = get.rstar.general(par.dat = par.dat, tol.type = tol.type)
@@ -292,25 +254,14 @@ make.curve <- function(par.dat, tolerance.vect, var.vect, var, tol.shape, tol.ty
           M[i,j] = (get.absInfmort(par.dat = par.dat, tol.type = tol.type))
           # this fills in a column of the matrix
         }}
-    }else if (outcome=="alphaSpillover"){
-      
-      par.dat[var] <- var.vect[i]
-      par.dat["Tw"] <- tolerance.vect[j]
-      par.dat["Tv"] <- tolerance.vect[j]
-      M[i,j] = (get.alpha.spillover(par.dat = par.dat, tol.type = tol.type))
-  
     }
     
   }else if(tol.shape=="Tv"){
     
     if(tol.type=="constant-tolerance"){
-      par.dat["Tw_spill"] <- 1
-      par.dat["Tv_spill"] <- 1
       par.dat["Tw"] <- 1
     }else if (tol.type=="complete-tolerance"){
       par.dat["Tw"] <-0
-      par.dat["Tw_spill"] <- 0
-      par.dat["Tv_spill"] <- 0
     }
     
     if(outcome=="rstar"){
@@ -367,28 +318,15 @@ make.curve <- function(par.dat, tolerance.vect, var.vect, var, tol.shape, tol.ty
           M[i,j] = (get.absInfmort(par.dat = par.dat, tol.type = tol.type))
           # this fills in a column of the matrix
         }}
-    }else if (outcome=="alphaSpillover"){
-      
-      for (j in 1:length(tolerance.vect)){ # this is the column (loops through the resident)
-        for(i in 1:length(var.vect)){ # this is the row (loops through the mutant)
-          
-      par.dat[var] <- var.vect[i]
-      # par.dat["Tw"] <- tolerance.vect[j]
-      par.dat["Tv"] <- tolerance.vect[j]
-      M[i,j] = (get.alpha.spillover(par.dat = par.dat, tol.type = tol.type))
-        }} 
     }
+    
   }else if(tol.shape=="Tw"){
     
     
     if(tol.type=="constant-tolerance"){
       par.dat["Tv"] <- 1
-      par.dat["Tv_spill"] <- 1
-      par.dat["Tw_spill"] <- 1
     }else if (tol.type=="complete-tolerance"){
       par.dat["Tv"] <-0
-      par.dat["Tv_spill"] <- 0
-      par.dat["Tw_spill"] <- 0
     }
     
     if(outcome=="rstar"){
@@ -444,16 +382,6 @@ make.curve <- function(par.dat, tolerance.vect, var.vect, var, tol.shape, tol.ty
           # par.dat["Tv"] <- tolerance.vect[j]
           M[i,j] = (get.absInfmort(par.dat = par.dat, tol.type = tol.type))
           # this fills in a column of the matrix
-        }}
-    }else if (outcome=="alphaSpillover"){
-      
-      for (j in 1:length(tolerance.vect)){ # this is the column (loops through the resident)
-        for(i in 1:length(var.vect)){ # this is the row (loops through the mutant)
-      
-      par.dat[var] <- var.vect[i]
-      par.dat["Tw"] <- tolerance.vect[j]
-      # par.dat["Tv"] <- tolerance.vect[j]
-      M[i,j] = (get.alpha.spillover(par.dat = par.dat, tol.type = tol.type))
         }}
     }
     
@@ -484,11 +412,9 @@ make.all.curves <- function(par.dat, var, tol.type, tol.shape){
     tolerance.vect = c(.2,.5,.9)
   }
   if(var=="mu"){
-    var.vect = seq((1/(40*365)), (1/(1*365)), length.out = 1000)# different range for host mortality rates
+    var.vect = seq((1/(80*365)), (1/(10*365)), length.out = 100)# different range for host mortality rates
     #var.vect = seq(0.001, 1, length.out = 1000)
-    }else if ((var=="g0") |(var=="c") |(var=="m")) {
-      var.vect = seq(0.001, 1, length.out = 1000)  
-    }else{    
+    }else{
     var.vect = seq(0.001, 5, length.out = 1000)
   }
   
@@ -536,21 +462,20 @@ make.all.curves <- function(par.dat, var, tol.type, tol.shape){
                                   tol.type=tol.type,
                                   outcome="absInfMort")
   
-    map.alphaSpill <-   make.curve(par.dat=par.dat,
-                                   tolerance.vect=tolerance.vect,
-                                   var.vect=var.vect,
-                                   var=var,
-                                   tol.shape=tol.shape,
-                                   tol.type=tol.type,
-                                   outcome="alphaSpillover")
+  #  map.relInfMort <-   make.curve(par.dat=par.dat,
+  #                                 tolerance.vect=tolerance.vect,
+  #                                 var.vect=var.vect,
+  #                                 var=var,
+  #                                 tol.shape=tol.shape,
+  #                                 tol.type=tol.type,
+  #                                 outcome="relInfMort")
   #  
   
   map.combined  <- rbind(map.r, 
                          map.alpha, 
                          map.beta,
                          map.prev, 
-                         map.absInfMort,
-                         map.alphaSpill)
+                         map.absInfMort)
   
   
   
@@ -593,16 +518,6 @@ combine.all.curves <- function(par.dat){
   mu.maps.3 <- make.all.curves(par.dat = par.dat, var="mu", tol.type = "constant-tolerance", tol.shape = "Tv")
   mu.maps.4 <- make.all.curves(par.dat = par.dat, var="mu", tol.type = "complete-tolerance", tol.shape = "Tv")
   
-  TvSpill.maps.1 <- make.all.curves(par.dat = par.dat, var="Tv_spill", tol.type = "constant-tolerance", tol.shape = "Tw")
-  TvSpill.maps.2 <- make.all.curves(par.dat = par.dat, var="Tv_spill", tol.type = "complete-tolerance", tol.shape = "Tw")
-  TvSpill.maps.3 <- make.all.curves(par.dat = par.dat, var="Tv_spill", tol.type = "constant-tolerance", tol.shape = "Tv")
-  TvSpill.maps.4 <- make.all.curves(par.dat = par.dat, var="Tv_spill", tol.type = "complete-tolerance", tol.shape = "Tv")
-  
-  
-  TwSpill.maps.1 <- make.all.curves(par.dat = par.dat, var="Tw_spill", tol.type = "constant-tolerance", tol.shape = "Tw")
-  TwSpill.maps.2 <- make.all.curves(par.dat = par.dat, var="Tw_spill", tol.type = "complete-tolerance", tol.shape = "Tw")
-  TwSpill.maps.3 <- make.all.curves(par.dat = par.dat, var="Tw_spill", tol.type = "constant-tolerance", tol.shape = "Tv")
-  TwSpill.maps.4 <- make.all.curves(par.dat = par.dat, var="Tw_spill", tol.type = "complete-tolerance", tol.shape = "Tv")
   
   
  
@@ -611,9 +526,7 @@ combine.all.curves <- function(par.dat){
                    g.maps.1, g.maps.2, g.maps.3, g.maps.4, 
                    g0.maps.1, g0.maps.2, g0.maps.3, g0.maps.4, 
                    m.maps.1, m.maps.2, m.maps.3, m.maps.4, 
-                   mu.maps.1, mu.maps.2, mu.maps.3, mu.maps.4,
-                   TvSpill.maps.1, TvSpill.maps.2, TvSpill.maps.3, TvSpill.maps.4,
-                   TwSpill.maps.1, TwSpill.maps.2, TwSpill.maps.3, TwSpill.maps.4)
+                   mu.maps.1, mu.maps.2, mu.maps.3, mu.maps.4)
   
   
   
@@ -632,13 +545,7 @@ par.dat <- list(b= .2,# births, per capita per day
                 w=1, # natural damage from immunopathology
                 Tv=.005,# tolerance of virus virulence; these get overwritten so values don't matter
                 Tw=.005,# tolerance of immunopathology; these get overwritten so values don't matter
-                c_spill=.5, # consumption of virus by lymphocytes, per contact, per day
-                g_spill=.9, # growth of lymphocytes in response to virus, per day
-                v_spill=1, # intrinsic virus virulence
-                w_spill=1, # natural damage from immunopathology
-                mu = 1/(20*365),# host background death rate, in days
-                Tw_spill = 0.005,#spillover host tolerance of immunopathology. this gets overwritten so values don't matter
-                Tv_spill = .005) #spillover host tolerance of direct virus pathology. this gets overwritten so values don't matter
+                mu = 1/(20*365))# host background death rate, in days
 
 # The range of vectors to plot
 out.curves <- combine.all.curves(par.dat = par.dat)
@@ -663,12 +570,12 @@ out.curves$tolerance <- factor(out.curves$tolerance, levels=c("Tw=1.9",
                                                               "Tv=0.2"))
 
 
-out.curves$variable <- factor(out.curves$variable, levels=c("mu", "g0", "g", "c", "m", "Tv_spill", "Tw_spill"))
+out.curves$variable <- factor(out.curves$variable, levels=c("mu", "g0", "g", "c", "m"))
 
 names(out.curves)[5:6] <- c("tolerance_shape", "tolerance_type")
 
 # Then, build
-save(out.curves, file= paste0(homewd, subwd, "/out.curves.final.2023.Rdata"))
+save(out.curves, file= paste0(homewd, subwd, "/out.curves.final.2022.Rdata"))
 
 
 
@@ -677,14 +584,6 @@ make.map <- function(par.dat, Tw.vect, Tv.vect,  tol.shape,  outcome){
   
   # set up an empty matrix to hold your outputs
   M = matrix(0,nrow=length(Tv.vect), ncol=length(Tw.vect))
-  
-  if(tol.shape=="constant"){
-    par.dat["Tw_spill"] <- 1
-    par.dat["Tv_spill"] <- 1
-  }else if (tol.shape=="complete-tolerance"){
-    par.dat["Tw_spill"] <- 0
-    par.dat["Tv_spill"] <- 0
-  }
   
   
   if(outcome=="rstar"){
@@ -741,18 +640,10 @@ make.map <- function(par.dat, Tw.vect, Tv.vect,  tol.shape,  outcome){
         M[i,j] = (get.absInfmort(par.dat = par.dat, tol.type = tol.shape))
         # this fills in a column of the matrix
       }}
-  }else if(outcome=="alphaSpillover"){
-  
-    for (j in 1:length(Tw.vect)){ # this is the column (loops through the resident)
-      for(i in 1:length(Tv.vect)){ # this is the row (loops through the mutant)
-        par.dat["Tw"] <- Tw.vect[j]
-        par.dat["Tv"] <- Tv.vect[i]
-        M[i,j] = (get.alpha.spillover(par.dat = par.dat, tol.type = tol.shape))
-        # this fills in a column of the matrix
-      }}
-  
-  
   }
+  
+  
+  
   colnames(M) = Tw.vect
   rownames(M) = Tv.vect
   M.dat <- melt(M)
@@ -807,19 +698,12 @@ make.all.maps <- function(par.dat, tol.type){
                                tol.shape=tol.type,
                                outcome="absInfMort")
   
-  map.alphaSpill <-   make.map(par.dat=par.dat,
-                               Tw.vect = Tw.vect,
-                               Tv.vect = Tv.vect,
-                               tol.shape=tol.type,
-                               outcome="alphaSpillover")
-  
   
   map.combined  <- rbind(map.r, 
                          map.alpha,
                          map.beta,
                          map.prev, 
-                         map.absInfMort,
-                         map.alphaSpill)
+                         map.absInfMort)
   
   
   
@@ -832,6 +716,6 @@ map.constant <- make.all.maps(par.dat, tol.type = "constant-tolerance")
 # Complete
 map.complete <- make.all.maps(par.dat, tol.type = "complete-tolerance")
 tol.heatmap <- rbind(map.constant, map.complete)
-save(tol.heatmap, file = paste0(homewd, subwd, "/tol.heatmap.final.2023.Rdata"))
+save(tol.heatmap, file = paste0(homewd, subwd, "/tol.heatmap.final.2022.Rdata"))
 
 
