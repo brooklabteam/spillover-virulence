@@ -189,7 +189,9 @@ pA <- ggplot(data=pan.dat) +
         legend.position = c(.76,.2),
         legend.title = element_blank(),
         legend.key.size = unit(.3, "lines"),
-        legend.background = element_rect(color="black"),
+        panel.background = element_rect(fill='transparent'),
+        plot.background = element_rect(fill='transparent', color=NA),
+        legend.background = element_rect(color="black", fill='transparent'),
         axis.text = element_text(size = 14),
         plot.margin = unit(c(.5,.8,5,.5), "lines")) +
   xlab("mass (g)") + ylab("max lifespan (yrs)")
@@ -264,6 +266,8 @@ pB <- ggplot(wbc.dat) +
   scale_fill_manual(values=colz) +
   theme(panel.grid = element_blank(),
         axis.title = element_text(size=18),
+        panel.background = element_rect(fill='transparent'),
+        plot.background = element_rect(fill='transparent', color=NA),
         axis.text = element_text(size = 14),
         plot.margin = unit(c(.5,.7,5,1.5), "lines")) +
   xlab("mass-specific BMR (W/g)") + ylab(bquote("neutrophil concentrations ("~10^9~"cells/L)"))
@@ -403,9 +407,12 @@ pC1 <- ggtree(tree, size=1)   %<+% d +
   scale_color_manual(values=colz, guide="none") + 
   theme(legend.position = c(.82,.8), 
         legend.direction = "vertical", legend.title = element_text(size=12),
+        legend.background = element_rect(fill='transparent'),
         legend.text = element_text(size=12), legend.key.size = unit(c(.8), "cm"),
-        plot.margin = unit(c(.5,.5,7,1.5), "lines"),
+        plot.margin = unit(c(.5,.5,7.5,1.5), "lines"),
         panel.grid = element_blank(),
+        panel.background = element_rect(fill='transparent'),
+        plot.background = element_rect(fill='transparent', color=NA),
         axis.title = element_blank(),
         axis.ticks = element_blank(),
         axis.text = element_blank()) #+
@@ -451,7 +458,7 @@ order.dat$label = factor(order.dat$label, levels=c("atop(mu~', reservoir', 'annu
 #   #ylab("y-intercept of mass/BMR/neutrophil relationship, by order") +
 #   geom_hline(aes(yintercept = 0), linetype=2) +
 #   theme_bw() + theme(panel.grid = element_blank(),
-#                      strip.background = element_rect(fill="white"),
+#                      strip.background = element_rect(fill="transparent"),
 #                      #axis.text.x = element_text(size = 13, angle=90),
 #                      axis.text.x = element_blank(),
 #                      strip.text = element_text(size=14),
@@ -468,11 +475,13 @@ pD <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), s
   #ylab("y-intercept of mass/BMR/neutrophil relationship, by order") +
   geom_hline(aes(yintercept = 0), linetype=2) +
   theme_bw() + theme(panel.grid = element_blank(),
-                     strip.background = element_rect(fill="white"),
+                     strip.background = element_rect(fill='transparent'),
                      axis.text.x = element_text(size = 14),
                      #axis.text.x = element_blank(),
                      strip.text = element_text(size=18),
                      axis.text.y = element_text(size = 13),
+                     panel.background = element_rect(fill='transparent'),
+                     plot.background = element_rect(fill='transparent', color=NA),
                      plot.margin = unit(c(1,.5,5,.5), "lines"), 
                      axis.title.y = element_blank(),
                      axis.title.x = element_text(size=18))
@@ -487,11 +496,13 @@ pE <- ggplot(data=predict.dat) +
   #ylab(bquote(T[vS]~", spillover host tolerance of direct virus pathology")) +
   geom_hline(aes(yintercept = 1.5), linetype=2) +
   coord_flip() + scale_x_discrete(position="top") +
-  theme_bw() + theme(panel.grid = element_blank(),strip.background = element_rect(fill="white"),
+  theme_bw() + theme(panel.grid = element_blank(),strip.background = element_rect(fill='transparent'),
                                     strip.text = element_text(size=18),
                                     axis.text.x = element_text(size = 13),
                                     axis.text.y = element_text(size = 14),
-                                    plot.margin = unit(c(1,.5,7,1.5), "lines"), 
+                                    panel.background = element_rect(fill='transparent'),
+                                    plot.background = element_rect(fill='transparent', color=NA),
+                                    plot.margin = unit(c(1,.5,6.5,1.5), "lines"), 
                                     axis.title = element_blank())
 
 
@@ -553,8 +564,11 @@ pF <- ggplot(data=plot.df) +
         axis.text.x = element_text(size = 13, angle = 90),
         axis.title.x = element_text(size=18),
         axis.title.y = element_blank(),
+        panel.background = element_rect(fill='transparent'),
+        plot.background = element_rect(fill='transparent', color=NA),
         legend.title = element_blank(), legend.direction = "horizontal",
         legend.position = c(.82,.05),
+        legend.background = element_rect(fill='transparent'),
         plot.margin = unit(c(1.8,2,.5,.5), "lines")) +
   ylab(bquote(atop("",r~"*, optimal virus growth rate in reservoir"))) +
   geom_phylopic(data=pic.df, aes(x=order, y = -.045, image=uid, color=order), size=.05)
@@ -698,6 +712,9 @@ pGa <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(y
         legend.direction = "horizontal", legend.position = c(.15,.05), legend.title = element_blank(),
         axis.text.y = element_text(size=14), 
         axis.text.x = element_text(size=14, vjust=.1, hjust=-.2),
+        panel.background = element_rect(fill='transparent'),
+        plot.background = element_rect(fill='transparent', color=NA),
+        legend.background = element_rect(fill='transparent'),
         plot.margin = unit(c(1,.5,.5,3), "cm")) + 
   ylab(bquote(atop("","relative spillover virulence,"~alpha[S]))) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
@@ -720,20 +737,13 @@ Fig3bottom <- cowplot::plot_grid(pF,pG, ncol = 2, nrow = 1, labels = c("F", "G")
 
 Fig3 <- cowplot::plot_grid(Fig3top, Fig3mid, Fig3bottom, ncol =1, nrow=3, rel_heights = c(1.1,1.15,1))
 
-ggsave(file = paste0(homewd,"/main-figs/Fig3.png"),
+ggsave(file = paste0(homewd,"/main-figs/Fig3-draft.png"),
        plot = Fig3,
+       bg="transparent",
        units="mm",  
        width=160, 
        height=170, 
        scale=3, 
        dpi=300)
 
-#and pdf for submission
 
-ggsave(file = paste0(homewd,"/main-figs/Fig3.pdf"),
-       plot = Fig3,
-       units="mm",  
-       width=120, 
-       height=120, 
-       scale=3, 
-       dpi=300)
