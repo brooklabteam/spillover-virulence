@@ -500,7 +500,7 @@ plot.join.complete(dat.var = subset(out.curves, variable !="Tv_spill" & variable
 
 
 
-Fig.SX <- function(dat.var,  filename){
+Fig.S3 <- function(dat.var,  filename){
   
   # and add labels for strip labels
   dat.var$label= NA
@@ -588,7 +588,7 @@ Fig.SX <- function(dat.var,  filename){
   
 }
 
-Fig.SX(dat.var = subset(out.curves, variable =="Tv_spill" | variable=="Tw_spill"),
-       filename= paste0(homewd,"supp-figs/FigS3XXX.png"))
+Fig.S3(dat.var = subset(out.curves, variable =="Tv_spill" | variable=="Tw_spill"),
+       filename= paste0(homewd,"supp-figs/FigS3.png"))
 
        
