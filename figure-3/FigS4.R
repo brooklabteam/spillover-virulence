@@ -34,7 +34,7 @@ colz=c(colz, "red")
 
 names(colz) <- c(sort(unique(predict.dat$order)[unique(predict.dat$order)!="Chiroptera"]), "Chiroptera")
 
-y.int = 0.08894968/365 #from the brief_script.R file
+y.int = predict.dat$mu[predict.dat$order=="Diprotodontia"]
 
 ## First, mu
 p1 <- ggplot(data=predict.dat) + 
@@ -92,7 +92,7 @@ p3 <- ggplot(data=predict.dat) +
   geom_errorbar(aes(x=order, ymin=g0_lci, ymax=g0_uci, color=order), width=0, show.legend = F) +
   scale_color_manual(values=colz) +
   scale_fill_manual(values=colz, guide="none") +
-  geom_hline(aes(yintercept=0.5), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0]))
+  geom_hline(aes(yintercept=0.05), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0]))
 
 
 #  Tvs

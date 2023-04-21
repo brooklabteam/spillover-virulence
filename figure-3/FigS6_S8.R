@@ -224,7 +224,7 @@ trendline.dat <- cbind.data.frame(r_sq=c(summary(m1)$r.squared, summary(m2)$r.sq
 trendline.dat$label= paste0("R^'2'~'='~", round(trendline.dat$r_sq, 2))
     
 
-FigS7 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
+FigS6 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"),
         legend.title = element_blank(), legend.position = c(.87,.15), 
         legend.background = element_rect(color="black"), strip.text = element_text(size = 18),
@@ -238,10 +238,10 @@ FigS7 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
   geom_point(aes(x=lit_alpha, y=alpha, color=order), size=3) +
   facet_grid(tolerance~.) + scale_color_manual(values=colz)
 
-FigS7
+FigS6
 
-ggsave(file =paste0(homewd,"supp-figs/FigS7.png"),
-       plot = FigS7,
+ggsave(file =paste0(homewd,"supp-figs/FigS6.png"),
+       plot = FigS6,
        units="mm",  
        width=65, 
        height=80, 
@@ -494,7 +494,7 @@ trendline.dat <- cbind.data.frame(r_sq=c(summary(m1)$r.squared, summary(m2)$r.sq
 trendline.dat$label= paste0("R^'2'~'='~", round(trendline.dat$r_sq, 2))
 
 
-FigS9 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
+FigS8 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"),
         legend.title = element_blank(), legend.position = c(.87,.15), 
         legend.background = element_rect(color="black"), strip.text = element_text(size = 18),
@@ -509,10 +509,10 @@ FigS9 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
   facet_grid(tolerance~.) + scale_color_manual(values=colz)
 
 
-FigS9
+FigS8
 
-ggsave(file =paste0(homewd,"supp-figs/FigS9.png"),
-       plot = FigS9,
+ggsave(file =paste0(homewd,"supp-figs/FigS8.png"),
+       plot = FigS8,
        units="mm",  
        width=65, 
        height=80, 

@@ -688,7 +688,7 @@ label_parseall <- function(variable, value) {
                                                     x, sep = "")))
 }
 
-pFigSXX <- ggplot(data=alpha.fit) + theme_bw() +
+pFigS10 <- ggplot(data=alpha.fit) + theme_bw() +
   geom_point(aes(x=lit_alpha_scale, y= alpha, fill=order, 
                  shape=alpha_type, color=alpha_type), size=3, stroke=1) +
   scale_shape_manual(values=shapez) +
@@ -707,162 +707,162 @@ pFigSXX <- ggplot(data=alpha.fit) + theme_bw() +
          shape=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch")) #+
   
 
-pFigSXX
+pFigS10
 
-ggsave(file = paste0(homewd,"/supp-figs/FigSXX.png"),
-       plot = pFigSXX,
+ggsave(file = paste0(homewd,"/supp-figs/FigS10.png"),
+       plot = pFigS10,
        units="mm",  
        width=120, 
        height=70, 
        scale=3, 
        dpi=300)
-
-
-merge(alpha.fit, alpha.melt.orig, by=c("order", "tolerance", "lit_alpha_scale", "alpha_type"))
-out.fit
-
-#and melt to modulate alpha
-
-alpha.melt <- melt(out.fit, id.vars = c("order", "tolerance", "fitted_par", "lit_fit", "fit_par_ID", "lit_alpha_scale", "method"))
-
-names(alpha.melt)[names(alpha.melt)=="variable"] <- "alpha_form"
-names(alpha.melt)[names(alpha.melt)=="value"] <- "alpha"
-alpha.melt$alpha_form <- as.character(alpha.melt$alpha_form)
-#alpha.melt$alpha_form[alpha.melt$alpha_form=="lit_alpha_scale"] <- "alpha-literature"
-alpha.melt$alpha_form[alpha.melt$alpha_form=="alpha_human_fitted_orig_stat"] <- "glm-fit"
-alpha.melt$alpha_form[alpha.melt$alpha_form=="alpha_human_fitted"] <- "profiled-parameter"
-
-alpha.melt.orig <- subset(alpha.melt, alpha_form=="glm-fit")
-alpha.melt.orig$method = ""
-alpha.melt.orig$fitted_par <- NA
-alpha.melt.orig$lit_fit <- round(alpha.melt.orig$lit_fit, 4)
-alpha.melt.orig$lit_alpha_scale <- round(alpha.melt.orig$lit_alpha_scale, 4)
-alpha.melt.orig$alpha <- round(alpha.melt.orig$alpha, 4)
-
-alpha.melt.orig <- alpha.melt.orig[!duplicated(alpha.melt.orig),]
-
-alpha.melt
-alpha.melt$alpha_form <- factor(alpha.melt$alpha_form, levels=c("glm-fit", "profiled-parameter" ))
-
-#make a constant and a complete plot
-
-constant <- ggplot(data=subset(alpha.melt, tolerance=="constant")) + theme_bw() +
-  geom_point(aes(x=lit_alpha_scale, y= alpha, color=order, shape=alpha_form), size=3) +
-  facet_grid(method~fit_par_ID) + geom_abline() +ylab("predicted alpha") + xlab("observed alpha")
-
-constant
-# Prior work overestimated g0 for Eulipotyphla and overestimated Tv_human for bats
-# Fitting suggests that natural populations, excepting bats and carnivores, 
-# should be totally intolerant of the viruses they evolve
 # 
-
-# And try one other form of the plot...
-
-
-profile.plot <- function(par.fit, dat, lower.par, upper.par, tolerance_type, error_rate, stat.par){
- 
-    dat = subset(dat, tolerance==tolerance_type)
-    stat.par = subset(stat.par, tolerance==tolerance_type)
-  
-      
-      
-      par.guess.list = as.list(c(unlist(dat[par.fit])))
-      
-      dat.list <- dlply(dat, .(order))
-      
-      #apply fitting script over all
-      fitted.list <- mapply(profile.single.par, par=par.guess.list, dat=dat.list, 
-                            MoreArgs= list(lower.par=lower.par, upper.par=upper.par, 
-                                           error_rate=error_rate,
-                                           par.fit=par.fit, tolerance_type= tolerance_type), SIMPLIFY = FALSE)
-      
-      
-      fit.df <- data.table::rbindlist(fitted.list)
-      #ggplot(fit.df) + geom_point(aes(x=lit_alpha_scale,  y=alpha_human_fitted, color=order))
-      
-      #and subset to just those of interest
-      
-      #return()
-      
-      #and merge in the old stat.par
-      stat.merge <- dplyr::select(stat.par, order, par.fit, alpha_star_human)
-      names(stat.merge)[(length(names(stat.merge))-1)] <- "lit_fit" #paste0(par.fit,"_lit")
-      names(stat.merge)[length(names(stat.merge))] <- "alpha_human_fitted_orig_stat"
-      fit.df <- merge(fit.df, stat.merge)
-      
-      head(fit.df)
-      names(fit.df)[names(fit.df)=="alpha_star_human"] <- "alpha_human_fitted"
-      names(fit.df)[names(fit.df)==par.fit] <- "par.fit"
-      fit.df <- dplyr::select(fit.df, order, tolerance, par.fit, lit_fit, lit_alpha_scale, alpha_human_fitted, alpha_human_fitted_orig_stat)
-      names(fit.df) <- c("order", "tolerance", "fitted_par", "lit_fit", "lit_alpha_scale", "alpha_human_fitted", "alpha_human_fitted_orig_stat")
-      
-      fit.df$fit_par_ID <- par.fit
-      
-      
-      
-      
-      return(fit.df)  
-      
-      
-    
-    
-  
-  
-}
-
-dat <- read.csv(file=paste0(homewd,"figure-3/fit-par-dat.csv"), header = T, stringsAsFactors = F)
-head(dat)
-stat.par <- dplyr::select(dat, order, tolerance, g0, Tw, Tv_human, alpha_star_human)
-
-dat <- dplyr::select(dat, -(alpha_star_human))
-
-
-#Tw 
-out.fit.7 <- profile.plot(par.fit = "Tw",  dat=dat,   1.00001, 
-                          upper.par = 1.99999, tolerance_type = "constant", 
-                          error_rate = .5, stat.par = stat.par)
-
-#and g0
-out.fit.8 <- profile.plot(par.fit = "g0",  dat=dat,   lower.par = .00001, 
-                      upper.par = 0.99999, tolerance_type = "constant", 
-                      error_rate = .5, stat.par = stat.par)
-
-
-#Tv_human 
-out.fit.9 <- profile.plot(par.fit = "Tv_human",  dat=dat, lower.par =  1.00001, 
-                          upper.par = 1.99999, tolerance_type = "constant", 
-                          error_rate = .5, stat.par = stat.par)
-#and complete
-
-#Tw 
-out.fit.10 <- profile.plot(par.fit = "Tw",  dat=dat,  lower.par = 0.00001, 
-                          upper.par = 0.99999, tolerance_type = "complete", 
-                          error_rate = .5, stat.par = stat.par)
-
-#and g0
-out.fit.11 <- profile.plot(par.fit = "g0",  dat=dat,   lower.par = .00001, 
-                          upper.par = 0.99999, tolerance_type = "complete", 
-                          error_rate = .5, stat.par = stat.par)
-
-
-#Tv_human 
-out.fit.12 <- profile.plot(par.fit = "Tv_human",  dat=dat,   0.00001, 
-                          upper.par = 0.99999, tolerance_type = "complete", 
-                          error_rate = .5, stat.par = stat.par)
-
-
-
-out.fit <- rbind(out.fit.7, out.fit.8, out.fit.9, out.fit.10, out.fit.11, out.fit.12)
-head(out.fit)
-
-
-out.fit.sub = subset(out.fit, alpha_human_fitted<2)
-out.fit.sub$tolerance <- factor(out.fit.sub$tolerance, levels=c("constant", "complete"))
-p5 <- ggplot(out.fit.sub) + geom_point(aes(x=fitted_par, y=alpha_human_fitted, color=order)) +
-  geom_point(aes(x=lit_fit, y=  alpha_human_fitted_orig_stat, fill=order), size=3, shape=24) +
-  geom_point(aes(x=lit_fit, y=  lit_alpha_scale, fill=order), size=3, shape=22) +
-  facet_wrap(tolerance~fit_par_ID, scales = "free") 
-p5
-
-
-#and 
+# 
+# merge(alpha.fit, alpha.melt.orig, by=c("order", "tolerance", "lit_alpha_scale", "alpha_type"))
+# out.fit
+# 
+# #and melt to modulate alpha
+# 
+# alpha.melt <- melt(out.fit, id.vars = c("order", "tolerance", "fitted_par", "lit_fit", "fit_par_ID", "lit_alpha_scale", "method"))
+# 
+# names(alpha.melt)[names(alpha.melt)=="variable"] <- "alpha_form"
+# names(alpha.melt)[names(alpha.melt)=="value"] <- "alpha"
+# alpha.melt$alpha_form <- as.character(alpha.melt$alpha_form)
+# #alpha.melt$alpha_form[alpha.melt$alpha_form=="lit_alpha_scale"] <- "alpha-literature"
+# alpha.melt$alpha_form[alpha.melt$alpha_form=="alpha_human_fitted_orig_stat"] <- "glm-fit"
+# alpha.melt$alpha_form[alpha.melt$alpha_form=="alpha_human_fitted"] <- "profiled-parameter"
+# 
+# alpha.melt.orig <- subset(alpha.melt, alpha_form=="glm-fit")
+# alpha.melt.orig$method = ""
+# alpha.melt.orig$fitted_par <- NA
+# alpha.melt.orig$lit_fit <- round(alpha.melt.orig$lit_fit, 4)
+# alpha.melt.orig$lit_alpha_scale <- round(alpha.melt.orig$lit_alpha_scale, 4)
+# alpha.melt.orig$alpha <- round(alpha.melt.orig$alpha, 4)
+# 
+# alpha.melt.orig <- alpha.melt.orig[!duplicated(alpha.melt.orig),]
+# 
+# alpha.melt
+# alpha.melt$alpha_form <- factor(alpha.melt$alpha_form, levels=c("glm-fit", "profiled-parameter" ))
+# 
+# #make a constant and a complete plot
+# 
+# constant <- ggplot(data=subset(alpha.melt, tolerance=="constant")) + theme_bw() +
+#   geom_point(aes(x=lit_alpha_scale, y= alpha, color=order, shape=alpha_form), size=3) +
+#   facet_grid(method~fit_par_ID) + geom_abline() +ylab("predicted alpha") + xlab("observed alpha")
+# 
+# constant
+# # Prior work overestimated g0 for Eulipotyphla and overestimated Tv_human for bats
+# # Fitting suggests that natural populations, excepting bats and carnivores, 
+# # should be totally intolerant of the viruses they evolve
+# # 
+# 
+# # And try one other form of the plot...
+# 
+# 
+# profile.plot <- function(par.fit, dat, lower.par, upper.par, tolerance_type, error_rate, stat.par){
+#  
+#     dat = subset(dat, tolerance==tolerance_type)
+#     stat.par = subset(stat.par, tolerance==tolerance_type)
+#   
+#       
+#       
+#       par.guess.list = as.list(c(unlist(dat[par.fit])))
+#       
+#       dat.list <- dlply(dat, .(order))
+#       
+#       #apply fitting script over all
+#       fitted.list <- mapply(profile.single.par, par=par.guess.list, dat=dat.list, 
+#                             MoreArgs= list(lower.par=lower.par, upper.par=upper.par, 
+#                                            error_rate=error_rate,
+#                                            par.fit=par.fit, tolerance_type= tolerance_type), SIMPLIFY = FALSE)
+#       
+#       
+#       fit.df <- data.table::rbindlist(fitted.list)
+#       #ggplot(fit.df) + geom_point(aes(x=lit_alpha_scale,  y=alpha_human_fitted, color=order))
+#       
+#       #and subset to just those of interest
+#       
+#       #return()
+#       
+#       #and merge in the old stat.par
+#       stat.merge <- dplyr::select(stat.par, order, par.fit, alpha_star_human)
+#       names(stat.merge)[(length(names(stat.merge))-1)] <- "lit_fit" #paste0(par.fit,"_lit")
+#       names(stat.merge)[length(names(stat.merge))] <- "alpha_human_fitted_orig_stat"
+#       fit.df <- merge(fit.df, stat.merge)
+#       
+#       head(fit.df)
+#       names(fit.df)[names(fit.df)=="alpha_star_human"] <- "alpha_human_fitted"
+#       names(fit.df)[names(fit.df)==par.fit] <- "par.fit"
+#       fit.df <- dplyr::select(fit.df, order, tolerance, par.fit, lit_fit, lit_alpha_scale, alpha_human_fitted, alpha_human_fitted_orig_stat)
+#       names(fit.df) <- c("order", "tolerance", "fitted_par", "lit_fit", "lit_alpha_scale", "alpha_human_fitted", "alpha_human_fitted_orig_stat")
+#       
+#       fit.df$fit_par_ID <- par.fit
+#       
+#       
+#       
+#       
+#       return(fit.df)  
+#       
+#       
+#     
+#     
+#   
+#   
+# }
+# 
+# dat <- read.csv(file=paste0(homewd,"figure-3/fit-par-dat.csv"), header = T, stringsAsFactors = F)
+# head(dat)
+# stat.par <- dplyr::select(dat, order, tolerance, g0, Tw, Tv_human, alpha_star_human)
+# 
+# dat <- dplyr::select(dat, -(alpha_star_human))
+# 
+# 
+# #Tw 
+# out.fit.7 <- profile.plot(par.fit = "Tw",  dat=dat,   1.00001, 
+#                           upper.par = 1.99999, tolerance_type = "constant", 
+#                           error_rate = .5, stat.par = stat.par)
+# 
+# #and g0
+# out.fit.8 <- profile.plot(par.fit = "g0",  dat=dat,   lower.par = .00001, 
+#                       upper.par = 0.99999, tolerance_type = "constant", 
+#                       error_rate = .5, stat.par = stat.par)
+# 
+# 
+# #Tv_human 
+# out.fit.9 <- profile.plot(par.fit = "Tv_human",  dat=dat, lower.par =  1.00001, 
+#                           upper.par = 1.99999, tolerance_type = "constant", 
+#                           error_rate = .5, stat.par = stat.par)
+# #and complete
+# 
+# #Tw 
+# out.fit.10 <- profile.plot(par.fit = "Tw",  dat=dat,  lower.par = 0.00001, 
+#                           upper.par = 0.99999, tolerance_type = "complete", 
+#                           error_rate = .5, stat.par = stat.par)
+# 
+# #and g0
+# out.fit.11 <- profile.plot(par.fit = "g0",  dat=dat,   lower.par = .00001, 
+#                           upper.par = 0.99999, tolerance_type = "complete", 
+#                           error_rate = .5, stat.par = stat.par)
+# 
+# 
+# #Tv_human 
+# out.fit.12 <- profile.plot(par.fit = "Tv_human",  dat=dat,   0.00001, 
+#                           upper.par = 0.99999, tolerance_type = "complete", 
+#                           error_rate = .5, stat.par = stat.par)
+# 
+# 
+# 
+# out.fit <- rbind(out.fit.7, out.fit.8, out.fit.9, out.fit.10, out.fit.11, out.fit.12)
+# head(out.fit)
+# 
+# 
+# out.fit.sub = subset(out.fit, alpha_human_fitted<2)
+# out.fit.sub$tolerance <- factor(out.fit.sub$tolerance, levels=c("constant", "complete"))
+# p5 <- ggplot(out.fit.sub) + geom_point(aes(x=fitted_par, y=alpha_human_fitted, color=order)) +
+#   geom_point(aes(x=lit_fit, y=  alpha_human_fitted_orig_stat, fill=order), size=3, shape=24) +
+#   geom_point(aes(x=lit_fit, y=  lit_alpha_scale, fill=order), size=3, shape=22) +
+#   facet_wrap(tolerance~fit_par_ID, scales = "free") 
+# p5
+# 
+# 
+# #and 
