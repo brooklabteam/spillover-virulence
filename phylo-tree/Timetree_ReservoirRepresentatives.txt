@@ -3,7 +3,7 @@ Ailurus fulgens
 Acerodon celebensis
 Phascolarctos cinereus
 Equus asinus
-Homo sapiens
+Homo sapiens neanderthalensis
 Rattus rattus
 Suncus murinus
 Didelphis virginiana
@@ -20,7 +20,6 @@ Oryctolagus cuniculus
 Elephantulus myurus
 Dromiciops gliroides
 Notoryctes typhlops
-Caenolestes sangay
 Perameles nasuta
 Manis javanica
 Tupaia glis

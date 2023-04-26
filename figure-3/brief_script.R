@@ -80,6 +80,11 @@ pan.dat$BMR_W <- pan.dat$BMR_W_g*pan.dat$mass_g
 # Remove any data for which you lack mass:
 pan.dat = subset(pan.dat, !is.na(mass_g))
 
+
+
+#now
+
+
 # Remove any data for which you lack lifespan:
 pan.dat = subset(pan.dat, !is.na(max_lifespan_yrs))
 
@@ -228,51 +233,41 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig1w_line.png"),
 # express in timesteps of days to make comparable to the viral dynamics):
 
 
-# Remake glm with no involvement of mass
-m1b <- lmer(log10_max_lifespan_yrs~ (1|order), data = pan.dat) 
+# Remake lm with no involvement of mass - 
+#first express annual mortality rate in 
+pan.dat$mortality_rate_per_year <- 1/(pan.dat$max_lifespan_yrs)
+
+
+m1b <- lm(mortality_rate_per_year~ order, data = pan.dat) 
 summary(m1b)
 
-plot_model(m1b, type="re")
+plot_model(m1b, type="est") #this is using Afrosoricida as a reference, so almost everything looks long-lived by comparison
+plot_model(m1b, type="pred")
+
+
+
+# n.sum = ddply(pan.dat[!is.na(pan.dat$mortality_rate_per_year),], .(order), summarise, Nmort = length(mortality_rate_per_year))
+# 
+# pan.dat <- merge(pan.dat, n.sum, by="order")
 # 
 # 
 # m1b <- gam(log10_max_lifespan_yrs~ s(order, bs="re"), data = pan.dat) 
 # summary(m1b)
 
+pan.dat$order <- factor(pan.dat$order, levels = c(sort(unique(as.character(pan.dat$order)))))
 
 predict.dat <- cbind.data.frame(order = unique(pan.dat$order))#, log10mass_g=1)
 
-#predict.dat <- cbind.data.frame(order = order.dat[[1]]$order, log10mass_g=1)
-# You can insert any value you like for "log10mass_g" since we won't 
-# be using it anyhow
+#now express mortality rate in timestep of day
+predict.dat$mu <- predict(m1b, newdata = predict.dat, type="response")/365
+predict.dat$mu_se <- predict(m1b, newdata = predict.dat, type="response", se.fit = T)$se.fit
 
-predict.dat$mu <- 1/((10^predict(m1b, newdata = predict.dat, type="response"))*365)
-
-# There is no option for computing standard errors of predictions for lmer
-# because it is difficult to define an efficient method that incorporates uncertainty
-# in the variance parameters; R help recommends bootMer for this task.
-
-# We do that here:
-predFun <- function(fit) {
-  1/((10^predict(fit,predict.dat))*365)
-}
-bb <- bootMer(m1b,nsim=200,FUN=predFun,seed=101)
-
-#now get CIs from bb
-sim.out <- bb$t #gives a matrix of 200 sims of all the data
 
 #get standard error:
-predict.dat$mu_se <- apply(sim.out, 2, sd)/sqrt(200)   
-predict.dat$mu_lci <- predict.dat$mu - 1.96*predict.dat$mu_se
-predict.dat$mu_uci <- predict.dat$mu + 1.96*predict.dat$mu_se
-#predict.dat$mu_lci <- 1/((10^(predict(m1b, newdata = predict.dat, type="response") +1.96*predict(m1b, newdata = predict.dat,  type="response", se.fit = T)$se))*365)
-#predict.dat$mu_uci <- 1/((10^(predict.gam(m1b, newdata = predict.dat,  type="response") -1.96*predict.gam(m1b, newdata = predict.dat, type="response", se.fit = T)$se))*365)
-# 
-# predict.dat$mu <- 1/((10^predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response"))*365)
-# predict.dat$mu_lci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") +1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
-# predict.dat$mu_uci <- 1/((10^(predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response") -1.96*predict.gam(m1, newdata = predict.dat, exclude = "s(log10mass_g)", type="response", se.fit = T)$se))*365)
+predict.dat$mu_lci <- (predict(m1b, newdata = predict.dat, type="response") -1.96*predict.dat$mu_se)/365
+predict.dat$mu_uci <- (predict(m1b, newdata = predict.dat, type="response") +1.96*predict.dat$mu_se)/365
 
-# predict.dat_b$mu_lci[predict.dat_b$mu_lci<0] <- 0
-# predict.dat_b$mu_uci[predict.dat_b$mu_uci>1] <- 1
+
 # 
 
 predict.dat$mu_lci[predict.dat$mu_lci<0] <- 0
@@ -286,6 +281,11 @@ predict.dat <- merge(predict.dat, mu.sum, by="order", all.x = T)
 predict.dat <- dplyr::select(predict.dat, -(mu_se))
 
 
+#what is the middle one? ~diprotodontia
+arrange(predict.dat, mu)
+
+
+
 # and plot your predictions by order for mass
 
 # first, get your null
@@ -295,10 +295,18 @@ predict.dat <- dplyr::select(predict.dat, -(mu_se))
 
 #set this y-int at the median of all the orders
 
-predict.dat$mu[which(predict.dat$mu==median(predict.dat$mu))]
-y.int = predict.dat$mu[predict.dat$order=="Diprotodontia"]
+#y.int = (max(predict.dat$mu) - min(predict.dat$mu))/2 + min(predict.dat$mu)
+#y.int = predict.dat$mu[predict.dat$order=="Diprotodontia"]
 
+y.int=median(predict.dat$mu)
 
+pan.dat.test = pan.dat
+pan.dat.test$order <- factor(as.character(pan.dat.test$order), levels=c("Diprotodontia", unique(as.character(pan.dat.test$order[as.character(pan.dat.test$order)!="Diprotodontia"]))))
+m1c <- lm(mortality_rate_per_year~ order, data = pan.dat.test) 
+out.sum = as.data.frame(summary(m1c)$coefficients)
+names(out.sum) <- c("est", "se", "t_val", "p_val")
+
+subset(out.sum, p_val<.001)
 
 
 # Now plot predictions against null:
@@ -319,7 +327,7 @@ p3 <- ggplot(data=predict.dat) +
 p3
 
 
-
+ 
 ggsave(file = paste0(homewd, subwd, "/brief/Fig3.png"),
        plot = p3,
        units="mm",  
@@ -530,7 +538,7 @@ wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 wbc.dat$order <- as.factor(wbc.dat$order)
 
 
-m2a <- lmer(ln10neutro~ln10BMR_W_g + (1|order), data=wbc.dat)
+m2a <- lmer(ln10neutro~ln10BMR_W_g + (1|order), data=subset(wbc.dat, !is.na(ln10BMR_W_g)))
 plot_model(m2a, type="re")
 
 
@@ -564,13 +572,13 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig6_w_line.png"),
 
 
 # now look at mass and BMR independently 
-m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=wbc.dat)
+m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=subset(wbc.dat, !is.na(ln10BMR_W_g)))
 summary(m3)
 
 plot_model(m3, type="re")
 plot_model(m3, type="pred")$ln10mass
 plot_model(m3, type="pred")$BMR_W
-plot_model(m3, type="int")
+
 
 summary(m3) 
 AIC(m2a, m3)
@@ -867,27 +875,37 @@ ggsave(file = paste0(homewd, "/supp-figs/FigS5.png"),
 # all reservoir host orders.
 
 # First, calculate Vmax in the human host:
-predict.dat$Vs_max_constant <- predict.dat$rstar_constant/(vir.par$g*vir.par$c) - predict.dat$rstar_constant/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant*vir.par$g)
-predict.dat$Vs_max_constant_lci <- predict.dat$rstar_constant_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_lci*vir.par$g)
-predict.dat$Vs_max_constant_uci <- predict.dat$rstar_constant_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_uci*vir.par$g)
+# predict.dat$Vs_max_constant <- predict.dat$rstar_constant/(vir.par$g*vir.par$c) - predict.dat$rstar_constant/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant*vir.par$g)
+# predict.dat$Vs_max_constant_lci <- predict.dat$rstar_constant_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_lci*vir.par$g)
+# predict.dat$Vs_max_constant_uci <- predict.dat$rstar_constant_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_uci*vir.par$g)
+# 
+# predict.dat$Vs_max_complete <- predict.dat$rstar_complete/(vir.par$g*vir.par$c) - predict.dat$rstar_complete/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete*vir.par$g)
+# predict.dat$Vs_max_complete_lci <- predict.dat$rstar_complete_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_lci*vir.par$g)
+# predict.dat$Vs_max_complete_uci <- predict.dat$rstar_complete_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_uci*vir.par$g)
 
-predict.dat$Vs_max_complete <- predict.dat$rstar_complete/(vir.par$g*vir.par$c) - predict.dat$rstar_complete/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete*vir.par$g)
-predict.dat$Vs_max_complete_lci <- predict.dat$rstar_complete_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_lci*vir.par$g)
-predict.dat$Vs_max_complete_uci <- predict.dat$rstar_complete_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_uci*vir.par$g)
+#rep as VS_avg
+predict.dat$Vs_avg_constant <- (predict.dat$rstar_constant*(sqrt((vir.par$c^2)+2*predict.dat$rstar_constant*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_constant^2))) +(predict.dat$rstar_constant^2) + 4*(predict.dat$rstar_constant)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_constant))
+predict.dat$Vs_avg_constant_lci <- (predict.dat$rstar_constant_lci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_constant_lci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_constant_lci^2))) +(predict.dat$rstar_constant_lci^2) + 4*(predict.dat$rstar_constant_lci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_constant_lci))
+predict.dat$Vs_avg_constant_uci <- (predict.dat$rstar_constant_uci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_constant_uci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_constant_uci^2))) +(predict.dat$rstar_constant_uci^2) + 4*(predict.dat$rstar_constant_uci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_constant_uci))
+
+predict.dat$Vs_avg_complete <- (predict.dat$rstar_complete*(sqrt((vir.par$c^2)+2*predict.dat$rstar_complete*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_complete^2))) +(predict.dat$rstar_complete^2) + 4*(predict.dat$rstar_complete)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_complete))
+predict.dat$Vs_avg_complete_lci <- (predict.dat$rstar_complete_lci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_complete_lci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_complete_lci^2))) +(predict.dat$rstar_complete_lci^2) + 4*(predict.dat$rstar_complete_lci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_complete_lci))
+predict.dat$Vs_avg_complete_uci <- (predict.dat$rstar_complete_uci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_complete_uci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_complete_uci^2))) +(predict.dat$rstar_complete_uci^2) + 4*(predict.dat$rstar_complete_uci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_complete_uci))
+
 
 
 # Next, take that viral load and calculate spillover virulence, here for the constant tolerance assumption:
 vir.par$Tw = 1
-predict.dat$alpha_star_human_constant <- ((predict.dat$rstar_constant*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant)/vir.par$Tw)*predict.dat$Vs_max_constant
-predict.dat$alpha_star_human_constant_lci <- ((predict.dat$rstar_constant_lci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_lci)/vir.par$Tw)*predict.dat$Vs_max_constant_lci
-predict.dat$alpha_star_human_constant_uci <- ((predict.dat$rstar_constant_uci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_uci)/vir.par$Tw)*predict.dat$Vs_max_constant_uci
+predict.dat$alpha_star_human_constant <- ((predict.dat$rstar_constant*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant)/vir.par$Tw)*predict.dat$Vs_avg_constant
+predict.dat$alpha_star_human_constant_lci <- ((predict.dat$rstar_constant_lci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_lci)/vir.par$Tw)*predict.dat$Vs_avg_constant_lci
+predict.dat$alpha_star_human_constant_uci <- ((predict.dat$rstar_constant_uci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_uci)/vir.par$Tw)*predict.dat$Vs_avg_constant_uci
 
 
 # And here for complete tolerance:
 vir.par$Tw = 0
-predict.dat$alpha_star_human_complete <- (predict.dat$rstar_complete*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete
-predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_lci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_lci
-predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_uci
+predict.dat$alpha_star_human_complete <- (predict.dat$rstar_complete*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_avg_complete
+predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_lci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_avg_complete_lci
+predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_avg_complete_uci
 
 # Now, we rank by virulence, then confidence, and plot...
 predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
