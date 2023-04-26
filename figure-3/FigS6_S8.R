@@ -21,81 +21,11 @@ setwd(paste0(homewd, subwd))
 ######################################################
 ## Get your color bar to match
 
-pan.dat <- read.csv(file="PanTHERIA.csv", header = T, stringsAsFactors = F)
-head(pan.dat)
+# Now make the comparisons
+homewd =  "/Users/carabrook/Developer/spillover-virulence/"
+subwd = "figure-3"
 
-# And select only those columns of interest 
-pan.dat <- dplyr::select(pan.dat, 1:5, X5.1_AdultBodyMass_g, X17.1_MaxLongevity_m, X10.1_PopulationGrpSize, X21.1_PopulationDensity_n.km2, X22.1_HomeRange_km2, X18.1_BasalMetRate_mLO2hr)#, X5.2_BasalMetRateMass_g)
-head(pan.dat)
-
-
-# Rename
-names(pan.dat) <- c("order", "family", "genus", "species", "binomial", "mass_g", "max_lifespan_months", "pop_group_size", "pop_density_N_km2", "homerange_km2", "BMR_mLO2hr")#, "BMR_mg")
-pan.dat$max_lifespan_yrs <- pan.dat$max_lifespan_months/12
-
-# Add dash for binomial nomemclature
-pan.dat$binomial <- sub(" ", "_", pan.dat$binomial)
-
-
-# Correct errors
-pan.dat$max_lifespan_yrs[pan.dat$binomial=="Galeopterus_variegates"] <- 17.5 #from animaldiversity.org
-
-# Remove humans from dataset
-pan.dat = subset(pan.dat, binomial!="Homo_sapiens")
-
-# Rename some incorrect orders with contemporary taxonomy
-pan.dat$order[pan.dat$order=="Artiodactyla"] <- "Cetartiodactyla"
-pan.dat$order[pan.dat$order=="Cetacea"] <- "Cetartiodactyla"
-pan.dat$order[pan.dat$order=="Soricomorpha"] <- "Eulipotyphla"
-pan.dat$order[pan.dat$order=="Erinaceomorpha"] <- "Eulipotyphla"
-
-# Convert BMR to W/G
-pan.dat$BMR_mLO2hr <- (pan.dat$BMR_mLO2hr/60/60*20.1)/pan.dat$mass_g
-names(pan.dat)[names(pan.dat)=="BMR_mLO2hr"] <- "BMR_W_g"
-
-# Correct errors
-pan.dat$BMR_W_g[pan.dat$binomial=="Acrobates_pygmaeus"] <- 0.084/pan.dat$mass_g[pan.dat$binomial=="Acrobates_pygmaeus"]  # from AnAge database
-
-#add healy data
-healy.dat <- read.csv(file = "Healy.csv", header = T, stringsAsFactors = F)
-head(healy.dat)
-healy.dat = subset(healy.dat, class=="Mammalia")
-healy.dat <- dplyr::select(healy.dat, species, maximum_lifespan_yr, mass_g, BMR)
-
-names(healy.dat) <- c("binomial", "healy_max_lifespan_yrs", "healy_mass_g",  "healy_BMR_W_g")
-
-setdiff(healy.dat$binomial, pan.dat$binomial)
-#setdiff(pan.dat$binomial, healy.dat$binomial)
-
-#and merge the two
-all.dat <- merge(pan.dat, healy.dat, all = T, by = c("binomial"))
-head(all.dat)
-
-#and average among mass and lifespan
-pan.dat <- ddply(all.dat, .(order, family, genus, species, binomial), summarise, mass_g = mean(c(mass_g, healy_mass_g), na.rm=T), max_lifespan_yrs=mean(c(max_lifespan_yrs, healy_max_lifespan_yrs), na.rm=T), BMR_W_g=mean(c(BMR_W_g, healy_BMR_W_g), na.rm=T),pop_group_size = unique(pop_group_size),  pop_density_N_km2= unique(pop_density_N_km2), homerange_km2 = unique(homerange_km2))
-
-head(pan.dat)
-
-# And try the raw BMR
-pan.dat$BMR_W <- pan.dat$BMR_W_g*pan.dat$mass_g
-
-# Remove any data for which you lack mass:
-pan.dat = subset(pan.dat, !is.na(mass_g))
-
-# How many have lifespan too?
-length(pan.dat$max_lifespan_yrs[!is.na(pan.dat$max_lifespan_yrs)]) #1055
-
-# And how many have BMR?
-length(pan.dat$BMR_W_g[!is.na(pan.dat$BMR_W_g)]) #629
-
-# Eventually will have wbc data too, so load it here to
-# make your color bar
-
-colz = scales::hue_pal()(length(unique(pan.dat$order))-1)
-colz=c(colz, "red")
-
-names(colz) <- c(sort(unique(pan.dat$order)[unique(pan.dat$order)!="Chiroptera"]), "Chiroptera")
-
+load(paste0(homewd, subwd, "/color-bar.Rdata"))
 
 predict.dat <- read.csv(file=paste0(homewd, subwd, "/predict_pars.csv"), header = T, stringsAsFactors = F)
 head(predict.dat)
@@ -103,7 +33,7 @@ head(predict.dat)
 ######################################################
 ######################################################
 
-# Now make the comparisons
+
 
 load(paste0(homewd,"source/gam.dat.Guth.et.al.2021.Rdata"))
 
@@ -222,7 +152,9 @@ dat.compare$label_point_y[dat.compare$order=="Rodentia"] <- dat.compare$predicte
 
 trendline.dat <- cbind.data.frame(r_sq=c(summary(m1)$r.squared, summary(m2)$r.squared), tolerance=c("complete", "constant"))
 trendline.dat$label= paste0("R^'2'~'='~", round(trendline.dat$r_sq, 2))
-    
+
+trendline.dat$tolerance <- factor(trendline.dat$tolerance,levels = c("constant", "complete"))    
+dat.compare$tolerance <- factor(dat.compare$tolerance, levels=c("constant", "complete"))
 
 FigS6 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"),
@@ -284,93 +216,20 @@ write.csv(dat.merge, file = paste0(homewd, "figure-3/compare_predictions.csv"), 
 
 rm(list=ls())
 
-#rerun section 1 above
-
-
+# Now make the comparisons
 homewd =  "/Users/carabrook/Developer/spillover-virulence/"
 subwd = "figure-3"
 setwd(paste0(homewd, subwd))
 
 
+#rerun section 1 above
+load(paste0(homewd, subwd, "/color-bar.Rdata"))
+
+
+
 ######################################################
 ######################################################
 ## Get your color bar to match
-
-pan.dat <- read.csv(file="PanTHERIA.csv", header = T, stringsAsFactors = F)
-head(pan.dat)
-
-# And select only those columns of interest 
-pan.dat <- dplyr::select(pan.dat, 1:5, X5.1_AdultBodyMass_g, X17.1_MaxLongevity_m, X10.1_PopulationGrpSize, X21.1_PopulationDensity_n.km2, X22.1_HomeRange_km2, X18.1_BasalMetRate_mLO2hr)#, X5.2_BasalMetRateMass_g)
-head(pan.dat)
-
-
-# Rename
-names(pan.dat) <- c("order", "family", "genus", "species", "binomial", "mass_g", "max_lifespan_months", "pop_group_size", "pop_density_N_km2", "homerange_km2", "BMR_mLO2hr")#, "BMR_mg")
-pan.dat$max_lifespan_yrs <- pan.dat$max_lifespan_months/12
-
-# Add dash for binomial nomemclature
-pan.dat$binomial <- sub(" ", "_", pan.dat$binomial)
-
-
-# Correct errors
-pan.dat$max_lifespan_yrs[pan.dat$binomial=="Galeopterus_variegates"] <- 17.5 #from animaldiversity.org
-
-# Remove humans from dataset
-pan.dat = subset(pan.dat, binomial!="Homo_sapiens")
-
-# Rename some incorrect orders with contemporary taxonomy
-pan.dat$order[pan.dat$order=="Artiodactyla"] <- "Cetartiodactyla"
-pan.dat$order[pan.dat$order=="Cetacea"] <- "Cetartiodactyla"
-pan.dat$order[pan.dat$order=="Soricomorpha"] <- "Eulipotyphla"
-pan.dat$order[pan.dat$order=="Erinaceomorpha"] <- "Eulipotyphla"
-
-# Convert BMR to W/G
-pan.dat$BMR_mLO2hr <- (pan.dat$BMR_mLO2hr/60/60*20.1)/pan.dat$mass_g
-names(pan.dat)[names(pan.dat)=="BMR_mLO2hr"] <- "BMR_W_g"
-
-# Correct errors
-pan.dat$BMR_W_g[pan.dat$binomial=="Acrobates_pygmaeus"] <- 0.084/pan.dat$mass_g[pan.dat$binomial=="Acrobates_pygmaeus"]  # from AnAge database
-
-#add healy data
-healy.dat <- read.csv(file = "Healy.csv", header = T, stringsAsFactors = F)
-head(healy.dat)
-healy.dat = subset(healy.dat, class=="Mammalia")
-healy.dat <- dplyr::select(healy.dat, species, maximum_lifespan_yr, mass_g, BMR)
-
-names(healy.dat) <- c("binomial", "healy_max_lifespan_yrs", "healy_mass_g",  "healy_BMR_W_g")
-
-setdiff(healy.dat$binomial, pan.dat$binomial)
-#setdiff(pan.dat$binomial, healy.dat$binomial)
-
-#and merge the two
-all.dat <- merge(pan.dat, healy.dat, all = T, by = c("binomial"))
-head(all.dat)
-
-#and average among mass and lifespan
-pan.dat <- ddply(all.dat, .(order, family, genus, species, binomial), summarise, mass_g = mean(c(mass_g, healy_mass_g), na.rm=T), max_lifespan_yrs=mean(c(max_lifespan_yrs, healy_max_lifespan_yrs), na.rm=T), BMR_W_g=mean(c(BMR_W_g, healy_BMR_W_g), na.rm=T),pop_group_size = unique(pop_group_size),  pop_density_N_km2= unique(pop_density_N_km2), homerange_km2 = unique(homerange_km2))
-
-head(pan.dat)
-
-# And try the raw BMR
-pan.dat$BMR_W <- pan.dat$BMR_W_g*pan.dat$mass_g
-
-# Remove any data for which you lack mass:
-pan.dat = subset(pan.dat, !is.na(mass_g))
-
-# How many have lifespan too?
-length(pan.dat$max_lifespan_yrs[!is.na(pan.dat$max_lifespan_yrs)]) #1055
-
-# And how many have BMR?
-length(pan.dat$BMR_W_g[!is.na(pan.dat$BMR_W_g)]) #629
-
-# Eventually will have wbc data too, so load it here to
-# make your color bar
-
-colz = scales::hue_pal()(length(unique(pan.dat$order))-1)
-colz=c(colz, "red")
-
-names(colz) <- c(sort(unique(pan.dat$order)[unique(pan.dat$order)!="Chiroptera"]), "Chiroptera")
-
 
 predict.dat <- read.csv(file=paste0(homewd, subwd, "/predict_pars.csv"), header = T, stringsAsFactors = F)
 head(predict.dat)
@@ -456,10 +315,10 @@ p1 <- ggplot(data = dat.compare) + theme_bw() +
   geom_point(aes(x=lit_alpha, y=alpha, color=order), size=3) +
   facet_grid(~tolerance)
 
-m1 <- lm(alpha~lit_alpha, dat=subset(dat.compare, tolerance=="complete"))
+m1 <- lm(alpha~lit_alpha, dat=subset(dat.compare, tolerance=="complete" & !is.na(lit_N)))
 summary(m1) #Multiple R-squared:  0.5918,	Adjusted R-squared:  0.5238. p-value: 0.02563
 
-m2 <- lm(alpha~lit_alpha, dat=subset(dat.compare, tolerance=="constant"))
+m2 <- lm(alpha~lit_alpha, dat=subset(dat.compare, tolerance=="constant" & !is.na(lit_N)))
 summary(m2) #Multiple R-squared:  0.5564,	Adjusted R-squared:  0.4825 . p-value: 0.03359
 
 #and add to the plot
@@ -494,6 +353,10 @@ trendline.dat <- cbind.data.frame(r_sq=c(summary(m1)$r.squared, summary(m2)$r.sq
 trendline.dat$label= paste0("R^'2'~'='~", round(trendline.dat$r_sq, 2))
 
 
+trendline.dat$tolerance <- factor(trendline.dat$tolerance,levels = c("constant", "complete"))    
+dat.compare$tolerance <- factor(dat.compare$tolerance, levels=c("constant", "complete"))
+
+
 FigS8 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill="white"),
         legend.title = element_blank(), legend.position = c(.87,.15), 
@@ -523,8 +386,5 @@ ggsave(file =paste0(homewd,"supp-figs/FigS8.png"),
 
 
 
-
-#then, sensitivity to different parameters
-#can we fit our model to the data????
 
 

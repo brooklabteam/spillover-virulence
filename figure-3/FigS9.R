@@ -64,17 +64,20 @@ make.alpha.prediction <- function(par.dat,  tolerance_type){
     # Tolerance of immunopathology is now human, so we hold constant across 
     # all reservoir host orders.
     
-    # First, calculate Vmax in the human host: (this is the same whether constant or complete tolerance)
-    par.dat$Vs_max <- par.dat$rstar/(par.dat$g1*par.dat$c) - par.dat$rstar/(2*par.dat$g1*par.dat$c) + 1 - 1/(par.dat$g1) + par.dat$c/(2*par.dat$rstar*par.dat$g1)
+    # First, calculate Vavg in the human host: (this is the same whether constant or complete tolerance)
+    par.dat$Vs_avg <- (par.dat$rstar*(sqrt((par.dat$c^2)+2*par.dat$rstar*par.dat$c*(par.dat$g1-1)+(par.dat$rstar^2))) +(par.dat$rstar^2) + 4*(par.dat$rstar)*(par.dat$c)*(par.dat$g1-1) + 2*(par.dat$c^2))/(6*par.dat$c*par.dat$g1*(par.dat$rstar))
+    #par.dat$Vs_max <- par.dat$rstar/(par.dat$g1*par.dat$c) - par.dat$rstar/(2*par.dat$g1*par.dat$c) + 1 - 1/(par.dat$g1) + par.dat$c/(2*par.dat$rstar*par.dat$g1)
     
     # Next, take that viral load and calculate spillover virulence, here for the constant tolerance assumption:
     if(tolerance_type=="constant"){
       par.dat$Tw = 1 #humans have no tolerance
-      par.dat$alpha_star_human <- ((par.dat$rstar*par.dat$v)/par.dat$Tv_human  + (par.dat$g1*par.dat$w*par.dat$rstar)/par.dat$Tw)*par.dat$Vs_max
+      #par.dat$alpha_star_human <- ((par.dat$rstar*par.dat$v)/par.dat$Tv_human  + (par.dat$g1*par.dat$w*par.dat$rstar)/par.dat$Tw)*par.dat$Vs_max
+      par.dat$alpha_star_human <- ((par.dat$rstar*par.dat$v)/par.dat$Tv_human  + (par.dat$g1*par.dat$w*par.dat$rstar)/par.dat$Tw)*par.dat$Vs_avg
       
     } else if(tolerance_type=="complete"){
       par.dat$Tw = 0 #humans have no tolerance
-      par.dat$alpha_star_human <- (par.dat$rstar*(par.dat$v-par.dat$Tv_human) + par.dat$rstar*par.dat$g1*(par.dat$w-par.dat$Tw))*par.dat$Vs_max
+      #par.dat$alpha_star_human <- (par.dat$rstar*(par.dat$v-par.dat$Tv_human) + par.dat$rstar*par.dat$g1*(par.dat$w-par.dat$Tw))*par.dat$Vs_max
+      par.dat$alpha_star_human <- (par.dat$rstar*(par.dat$v-par.dat$Tv_human) + par.dat$rstar*par.dat$g1*(par.dat$w-par.dat$Tw))*par.dat$Vs_avg
       
     }
   
@@ -671,16 +674,137 @@ alpha.fit$tolerance <- factor(alpha.fit$tolerance, levels=c("'constant tolerance
 # and add labels for strip labels
 alpha.fit$label= NA
 
-alpha.fit$label[alpha.fit$fit_par_ID=="Tw"] <- "atop(T[w]~', reservoir tolerance', 'of immunopathology')"
-alpha.fit$label[alpha.fit$fit_par_ID=="Tv_human"] <- "atop(T[v]~', spillover host tolerance', 'of direct virus pathology')"
-alpha.fit$label[alpha.fit$fit_par_ID=="g0"] <- "atop(g[0]~', constitutive ', 'immunity in reservoir')"
+alpha.fit$label[alpha.fit$fit_par_ID=="Tw"] <- "atop(T[wR]~', reservoir host', 'tolerance of immunopathology')"
+alpha.fit$label[alpha.fit$fit_par_ID=="Tv_human"] <- "atop(T[vS]~', spillover host tolerance', 'of direct virus pathology')"
+alpha.fit$label[alpha.fit$fit_par_ID=="g0"] <- "atop(g[0~R]~', magnitude constitutive', 'immunity in reservoir host')"
 
 
 
 
-alpha.fit$label = factor(alpha.fit$label, levels = c("atop(T[w]~', reservoir tolerance', 'of immunopathology')",
-                                                     "atop(T[v]~', spillover host tolerance', 'of direct virus pathology')",
-                                                     "atop(g[0]~', constitutive ', 'immunity in reservoir')"))
+alpha.fit$label = factor(alpha.fit$label, levels = c("atop(T[wR]~', reservoir host', 'tolerance of immunopathology')",
+                                                     "atop(T[vS]~', spillover host tolerance', 'of direct virus pathology')",
+                                                     "atop(g[0~R]~', magnitude constitutive', 'immunity in reservoir host')"))
+
+
+#calculate linear model of the new vs. old fits
+m1a <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="glm fit for\nall parameters" & fit_par_ID=="Tw"))
+summary(m1a) 
+m1b <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="glm fit for\nall parameters" & fit_par_ID=="Tv_human"))
+summary(m1b)
+m1c <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="glm fit for\nall parameters" & fit_par_ID=="g0"))
+summary(m1c)
+
+
+m2a <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nheld constant"& fit_par_ID=="Tw"))
+summary(m2a) 
+m2b <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nheld constant"& fit_par_ID=="Tv_human"))
+summary(m2b) 
+m2c <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nheld constant"& fit_par_ID=="g0"))
+summary(m2c) 
+
+
+m3a <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & fit_par_ID=="Tw"))
+summary(m3a) 
+m3b <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & fit_par_ID=="Tv_human"))
+summary(m3b) 
+m3c <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'constant tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & fit_par_ID=="g0"))
+summary(m3c) 
+
+m4a <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="glm fit for\nall parameters" & fit_par_ID=="Tw"))
+summary(m4a) 
+m4b <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="glm fit for\nall parameters" & fit_par_ID=="Tv_human"))
+summary(m4b)
+m4c <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="glm fit for\nall parameters" & fit_par_ID=="g0"))
+summary(m4c)
+
+
+m5a <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nheld constant"& fit_par_ID=="Tw"))
+summary(m5a) 
+m5b <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nheld constant"& fit_par_ID=="Tv_human"))
+summary(m5b) 
+m5c <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nheld constant"& fit_par_ID=="g0"))
+summary(m5c) 
+
+
+m6a <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & fit_par_ID=="Tw"))
+summary(m6a) 
+m6b <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & fit_par_ID=="Tv_human"))
+summary(m6b) 
+m6c <- lm(alpha~lit_alpha_scale, data= subset(alpha.fit, tolerance=="'complete tolerance'" & alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & fit_par_ID=="g0"))
+summary(m6c) 
+
+
+
+
+#attach the fits!
+alpha.fit$predict <- NA
+
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tw"] <- predict(m1a, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tw",])
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tv_human"] <- predict(m1b, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tv_human",])
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="g0"] <- predict(m1c, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="g0",])
+
+
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tw"] <- predict(m2a, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tw",])
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tv_human"] <- predict(m2b, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tv_human",])
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="g0"] <- predict(m2c, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="g0",])
+
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tw"] <- predict(m3a, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tw",])
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tv_human"] <- predict(m3b, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tv_human",])
+alpha.fit$predict[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="g0"] <- predict(m3c, newdata = alpha.fit[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="g0",])
+
+
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tw"] <- predict(m4a, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tw",])
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tv_human"] <- predict(m4b, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tv_human",])
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="g0"] <- predict(m4c, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="g0",])
+
+
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tw"] <- predict(m5a, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tw",])
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tv_human"] <- predict(m5b, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="Tv_human",])
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="g0"] <- predict(m5c, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant" & alpha.fit$fit_par_ID=="g0",])
+
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tw"] <- predict(m6a, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tw",])
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tv_human"] <- predict(m6b, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tv_human",])
+alpha.fit$predict[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="g0"] <- predict(m6c, newdata = alpha.fit[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="g0",])
+
+
+#and add the R2
+alpha.fit$R2 <- NA
+alpha.fit$xlab <- .9
+alpha.fit$ylab <- NA
+
+
+alpha.fit$ylab[alpha.fit$alpha_type=="glm fit for\nall parameters"] <-  .5
+alpha.fit$ylab[alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"] <- .45
+alpha.fit$ylab[alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" ] <- .4
+
+
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tw"] <-  paste0("'R'^2==",round(summary(m1a)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"& alpha.fit$fit_par_ID=="Tw"] <-  paste0("'R'^2==",round(summary(m2a)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tw"] <-  paste0("'R'^2==",round(summary(m3a)$r.squared,2))
+
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tv_human"] <-  paste0("'R'^2==",round(summary(m1b)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"& alpha.fit$fit_par_ID=="Tv_human"] <-  paste0("'R'^2==",round(summary(m2b)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tv_human"] <-  paste0("'R'^2==",round(summary(m3b)$r.squared,2))
+
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="g0"] <-  paste0("'R'^2==",round(summary(m1c)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"& alpha.fit$fit_par_ID=="g0"] <-  paste0("'R'^2==",round(summary(m2c)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'constant tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="g0"] <-  paste0("'R'^2==",round(summary(m3c)$r.squared,2))
+
+
+
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tw"] <-  paste0("'R'^2==",round(summary(m4a)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"& alpha.fit$fit_par_ID=="Tw"] <-  paste0("'R'^2==",round(summary(m5a)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tw"] <-  paste0("'R'^2==",round(summary(m6a)$r.squared,2))
+
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="Tv_human"] <-  paste0("'R'^2==",round(summary(m4b)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"& alpha.fit$fit_par_ID=="Tv_human"] <-  paste0("'R'^2==",round(summary(m5b)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="Tv_human"] <-  paste0("'R'^2==",round(summary(m6b)$r.squared,2))
+
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="glm fit for\nall parameters"& alpha.fit$fit_par_ID=="g0"] <-  paste0("'R'^2==",round(summary(m4c)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nheld constant"& alpha.fit$fit_par_ID=="g0"] <-  paste0("'R'^2==",round(summary(m5c)$r.squared,2))
+alpha.fit$R2[alpha.fit$tolerance=="'complete tolerance'" & alpha.fit$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting" & alpha.fit$fit_par_ID=="g0"] <-  paste0("'R'^2==",round(summary(m6c)$r.squared,2))
+
+
 
 
 label_parseall <- function(variable, value) {
@@ -688,9 +812,19 @@ label_parseall <- function(variable, value) {
                                                     x, sep = "")))
 }
 
-pFigS10 <- ggplot(data=alpha.fit) + theme_bw() +
+colz2 = c('glm fit for\nall parameters' = "red4", 'one parameter profiled;\nother parameters\nfrom glm fitting' = "black", 'one parameter profiled;\nother parameters\nheld constant'="black")
+
+#           'glm fit for all parameters\n; R2: constant=0.57; complete=0.62' = "red4", 'one parameter profiled;\nother parameters held\n constant; R2: constant=0.28; complete=0.38' = "black", 'one parameter profiled;\nother parameters from\nglm fitting; R2: constant=0.54; complete=0.57
+
+alpha.fit$alpha_type <- factor(alpha.fit$alpha_type, levels = c("glm fit for\nall parameters", "one parameter profiled;\nother parameters\nheld constant", "one parameter profiled;\nother parameters\nfrom glm fitting"))
+pFigS9 <- ggplot(data=alpha.fit) + theme_bw() +
   geom_point(aes(x=lit_alpha_scale, y= alpha, fill=order, 
                  shape=alpha_type, color=alpha_type), size=3, stroke=1) +
+  geom_line(aes(x=lit_alpha_scale, y=predict, linetype=alpha_type, color=alpha_type)) +
+  geom_linerange(aes(xmin=.77, xmax=.8, y=.5), linetype=1, color="red") +
+  geom_linerange(aes(xmin=.77, xmax=.8, y=.45), linetype=3) +
+  geom_linerange(aes(xmin=.77, xmax=.8, y=.4), linetype=2) +
+  geom_label(aes(x=xlab,y=ylab, label=R2), parse = T, label.size = NA) +
   scale_shape_manual(values=shapez) +
   scale_color_manual(values=colz2) + 
   scale_fill_manual(values=colz) + 
@@ -699,23 +833,49 @@ pFigS10 <- ggplot(data=alpha.fit) + theme_bw() +
         strip.text= element_text(size=14), 
         panel.grid = element_blank(),
         axis.text = element_text(size=12)) +
-  facet_grid(tolerance~label,labeller = label_parseall) + geom_abline() +
+  facet_grid(tolerance~label,labeller = label_parseall) + #geom_abline(size=1, color="red") +
   ylab(bquote("predicted spillover virulence,"~alpha[S])) + 
   xlab(bquote("observed spillover virulence,"~alpha[S])) +
-  guides(fill = guide_legend(override.aes=list(shape=21)), 
-         color=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch"), 
-         shape=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch")) #+
+  guides(fill = guide_legend(override.aes=list(shape=21),order=1),
+         color=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch", order=2), 
+         shape=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch", order=2),
+         linetype=guide_legend(title = bquote("fit from"~alpha[S]~"estimation"), keywidth=0.1,keyheight=0.5,default.unit="inch", order=3)) #+
   
 
-pFigS10
+pFigS9
 
-ggsave(file = paste0(homewd,"/supp-figs/FigS10.png"),
-       plot = pFigS10,
+
+
+ggsave(file = paste0(homewd,"/supp-figs/FigS9.png"),
+       plot = pFigS9,
        units="mm",  
        width=120, 
        height=70, 
        scale=3, 
        dpi=300)
+
+# 
+# pFigS10 <- ggplot(data=subset(alpha.fit, alpha_type!="glm fit for\nall parameters")) + theme_bw() +
+#   geom_point(aes(x=lit_fit, y= fitted_par, fill=order, 
+#                  shape=alpha_type, color=alpha_type), size=3, stroke=1) +
+#   scale_shape_manual(values=shapez) +
+#   scale_color_manual(values=colz2) + 
+#   scale_fill_manual(values=colz) + 
+#   theme(strip.background = element_rect(fill="white"), 
+#         axis.title = element_text(size=14), 
+#         strip.text= element_text(size=14), 
+#         panel.grid = element_blank(),
+#         axis.text = element_text(size=12)) +
+#   facet_wrap(tolerance~label,labeller = label_parseall, scales = "free") + geom_abline(size=1, color="red") +
+#   ylab("predicted parameter value") + 
+#   xlab("observed parameter value") +
+#   guides(fill = guide_legend(override.aes=list(shape=21)), 
+#          color=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch"), 
+#          shape=guide_legend(title = bquote(alpha[S]~"estimation method"), keywidth=0.1,keyheight=0.5,default.unit="inch")) #+
+# 
+# 
+# pFigS10
+
 # 
 # 
 # merge(alpha.fit, alpha.melt.orig, by=c("order", "tolerance", "lit_alpha_scale", "alpha_type"))

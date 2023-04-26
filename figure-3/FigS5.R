@@ -162,6 +162,7 @@ plot.dat$source <- factor(plot.dat$source, levels=c("predicted from zoonoses", "
 # Reorder, ranked by the complete data
 share.dat.complete <- arrange(share.dat.complete, desc(alpha))
 plot.dat$order <- factor(plot.dat$order, levels=unique(share.dat.complete$order))
+plot.dat <- arrange(plot.dat, source, order)
 
 head(plot.dat)
 plot.dat
@@ -169,7 +170,8 @@ plot.dat
 
 # And take only the complete data
 # first edit
-plot.dat <- plot.dat[complete.cases(plot.dat),]
+plot.dat <- subset(plot.dat, !is.na(alpha))
+plot.dat$alpha_lci[is.na(plot.dat$alpha_lci)] <- 0
 
 #shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
 
@@ -178,20 +180,18 @@ plot.dat <- plot.dat[complete.cases(plot.dat),]
 order.dat <- read.csv(file=paste0(homewd,"/phylo-tree/Timetree_ReservoirMapping.csv"), header = T, stringsAsFactors = F)
 head(order.dat)
 
-order.dat$order
-
-# Rename
 order.dat$species
+
 order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
-order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
-order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Macaca_mulatta"
+#order.dat$species[order.dat$species=="Homo_sapiens_neanderthalensis"] <-  "Pan"
 order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
 order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
-order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
+#order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
 order.dat$species[order.dat$species=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
 order.dat$species[order.dat$species=="Tupaia_glis"] <- "Dermoptera"
+
 
 # Load images - will take a moment
 pic.df <- ggimage::phylopic_uid(order.dat$species) 
@@ -210,6 +210,7 @@ pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="C
 
 setdiff(pic.df$order, plot.dat$order)
 setdiff(plot.dat$order, pic.df$order)
+
 
 pBa <- ggplot(data=subset(plot.dat, tolerance=="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
   geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
@@ -243,9 +244,9 @@ pFigS5 <- cowplot::plot_grid(pA,pB, ncol = 2, nrow = 1, labels = c("A", "B"), la
 
 
 
-ggsave(file = paste0(homewd,"/supp-figs/FigS5.png"),
+ggsave(file = paste0(homewd,"/figure-3/FigS5draft.png"),
        plot = pFigS5,
-       bg="white",
+       bg=NULL,
        units="mm",  
        width=160, 
        height=50, 

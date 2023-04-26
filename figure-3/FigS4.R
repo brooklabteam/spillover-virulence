@@ -34,7 +34,7 @@ colz=c(colz, "red")
 
 names(colz) <- c(sort(unique(predict.dat$order)[unique(predict.dat$order)!="Chiroptera"]), "Chiroptera")
 
-y.int = predict.dat$mu[predict.dat$order=="Diprotodontia"]
+y.int = median(predict.dat$mu)
 
 ## First, mu
 p1 <- ggplot(data=predict.dat) + 
@@ -50,7 +50,7 @@ p1 <- ggplot(data=predict.dat) +
       scale_color_manual(values=colz) +
       geom_errorbar(aes(x=order, ymin=mu_lci, ymax=mu_uci, color=order), width=0, show.legend = F) +
       geom_hline(aes(yintercept=y.int), linetype=2) +
-      ylab(bquote("predicted annual mortality,"~mu~"("~yrs^-1~")")) 
+      ylab(bquote("predicted annual mortality,"~mu[R]~"("~yrs^-1~")")) 
 
 p1 #will combine and edit below for Fig S4
 
@@ -70,8 +70,8 @@ p2 <- ggplot(data=predict.dat) +
   scale_fill_manual(values=colz, guide="none") +
   scale_color_manual(values=colz) +
   geom_errorbar(aes(x=order, ymin=Tw_constant_lci, ymax=Tw_constant_uci, color=order), width=0, show.legend = F) +
-  geom_hline(aes(yintercept=1.5), linetype=2) + ylab(bquote("constant immunopathology tolerance,"~T[w])) +
-  scale_y_continuous(sec.axis = sec_axis(~ . -1, name = (bquote("complete immunopathology tolerance,,"~T[w]))))
+  geom_hline(aes(yintercept=1.5), linetype=2) + ylab(bquote("constant immunopathology tolerance,"~T[wS])) +
+  scale_y_continuous(sec.axis = sec_axis(~ . -1, name = (bquote("complete immunopathology tolerance,,"~T[wS]))))
 
 p2
 
@@ -92,7 +92,7 @@ p3 <- ggplot(data=predict.dat) +
   geom_errorbar(aes(x=order, ymin=g0_lci, ymax=g0_uci, color=order), width=0, show.legend = F) +
   scale_color_manual(values=colz) +
   scale_fill_manual(values=colz, guide="none") +
-  geom_hline(aes(yintercept=0.05), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0]))
+  geom_hline(aes(yintercept=0.05), linetype=2) + ylab(bquote("magnitude constitutive immunity, "~g[0~R]))
 
 
 #  Tvs
