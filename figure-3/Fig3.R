@@ -21,6 +21,9 @@ setwd(paste0(homewd, subwd))
 
 ######################################################
 ######################################################
+
+
+
 ## Panel A
 
 pan.dat <- read.csv(file="PanTHERIA.csv", header = T, stringsAsFactors = F)
@@ -84,6 +87,10 @@ pan.dat$BMR_W <- pan.dat$BMR_W_g*pan.dat$mass_g
 # Remove any data for which you lack mass:
 pan.dat = subset(pan.dat, !is.na(mass_g))
 
+
+# Remove any data for which you lack lifespan:
+pan.dat = subset(pan.dat, !is.na(max_lifespan_yrs))
+
 # How many have lifespan too?
 length(pan.dat$max_lifespan_yrs[!is.na(pan.dat$max_lifespan_yrs)]) #1055
 
@@ -99,19 +106,51 @@ colz=c(colz, "red")
 names(colz) <- c(sort(unique(pan.dat$order)[unique(pan.dat$order)!="Chiroptera"]), "Chiroptera")
 
 # First, run a glm to get a prediction of natural mortality rates
-pan.dat$mortality_rate <- 1/pan.dat$max_lifespan_yrs
-m1 <- lmer(mortality_rate~ (1|order), data = pan.dat) 
+
+
+pan.dat$mortality_rate_per_year <- 1/pan.dat$max_lifespan_yrs
+
+
+# #find the middle order to use as a reference:
+# mort.sum = ddply(pan.dat, .(order), summarise, median_mu = median(mortality_rate_per_year), mean_mu = mean(mortality_rate_per_year))
+# 
+# mort.sum$order[round(mort.sum$median_mu, 3)==0.074]# Pholidota - go with this
+# mort.sum$order[round(mort.sum$mean_mu, 3)==0.108]# Diprotodontia
+# 
+# arrange(mort.sum, median_mu)
+# arrange(mort.sum, mean_mu)
+
+#pan.dat$order <- factor(pan.dat$order, levels = c("Pholidota", unique(as.character(pan.dat$order[pan.dat$order!="Pholidota"]))))
+
+m1 <- lm(mortality_rate_per_year~ order, data = pan.dat) 
 summary(m1)
 
-plot_model(m1, type="re")
+plot_model(m1, type="est")
+plot_model(m1, type="pred")
 
 
-order.dat1 <- cbind.data.frame(order = plot_model(m1, type = "re")$data$term, estimate= plot_model(m1, type = "re")$data$estimate, lci= plot_model(m1, type = "re")$data$conf.low, uci= plot_model(m1, type = "re")$data$conf.high)
-order.dat1$sig <- "no"
-order.dat1$sig[order.dat1$lci>0 & order.dat1$uci>0] <- "pos"
-order.dat1$sig[order.dat1$lci<0 & order.dat1$uci<0] <- "neg"
+order.dat1 <- cbind.data.frame(order = unique(pan.dat$order))
+#order.dat1$order <- sub(pattern = "order", replacement = "", x=order.dat1$order, fixed = T)
+order.dat1$estimate <- predict(m1, newdata = order.dat1, type="response")/365
+order.dat1$mu_se <- predict(m1, newdata = order.dat1, type="response", se.fit = T)$se.fit
+order.dat1$lci <- (predict(m1, newdata = order.dat1, type="response") -1.96*order.dat1$mu_se)/365
+order.dat1$uci <- (predict(m1, newdata = order.dat1, type="response") +1.96*order.dat1$mu_se)/365
+
+order.dat1$sig <- NA #"no"
+
+order.dat1$lci[order.dat1$lci<0] <- 0
+order.dat1$uci[order.dat1$uci>1] <- 1
+
+order.dat1 <- dplyr::select(order.dat1, -(mu_se))
+
+#order.dat1$sig[order.dat1$lci>0 & order.dat1$uci>0] <- "pos"
+#order.dat1$sig[order.dat1$lci<0 & order.dat1$uci<0] <- "neg"
 
 order.dat1$variable <- "mu"
+
+
+
+order.dat1 <- arrange(order.dat1, sort(order.dat1$order))
 # colz2 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
 # 
 # pD <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
@@ -249,7 +288,7 @@ wbc.dat$ln10BMR_W_g <- log10(wbc.dat$BMR_W_g)
 wbc.dat$order <- as.factor(wbc.dat$order)
 
 
-m2a <- lmer(ln10neutro~ln10BMR_W_g + (1|order), data=wbc.dat)
+m2a <- lmer(ln10neutro~ln10BMR_W_g + (1|order), data=subset(wbc.dat, !is.na(ln10BMR_W_g)))
 plot_model(m2a, type="re")
 
 
@@ -281,7 +320,7 @@ wbc.dat$ln10mass <- log10(wbc.dat$mass_g)
 
 
 # now look at mass and BMR independently 
-m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=wbc.dat)
+m3 <- lmer(ln10neutro~ln10mass+BMR_W + (1|order), data=subset(wbc.dat, !is.na(BMR_W_g)))
 summary(m3)
 
 plot_model(m3, type="re")
@@ -324,18 +363,18 @@ tree <- ape::read.tree(file = paste0(homewd,"phylo-tree/Timetree_ReservoirRepres
 # Rename for the icons we want to use
 tree$tip.label
 tree$tip.label <- sub(pattern = " ", replacement = "_", x=tree$tip.label)
-tree$tip.label[tree$tip.label=="Homo_sapiens"] <-  "Pan"
+tree$tip.label[tree$tip.label=="Homo_sapiens_neanderthalensis"] <-  "Pan"
 tree$tip.label[tree$tip.label=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
 tree$tip.label[tree$tip.label=="Antilocapra_americana"] <-  "Sus_scrofa"
 tree$tip.label[tree$tip.label=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
-tree$tip.label[tree$tip.label=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
+#tree$tip.label[tree$tip.label=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 tree$tip.label[tree$tip.label=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
 tree$tip.label[tree$tip.label=="Oryctolagus_cuniculus"] <- "Ochotona_princeps"
 tree$tip.label[tree$tip.label=="Tupaia_glis"] <- "Dermoptera"
 
 
 # Call the phylopics
-tree$tip.label[tree$tip.label=="Rhyncholestes_raphanurus"] <- "Paucituberculata"
+#tree$tip.label[tree$tip.label=="Rhyncholestes_raphanurus"] <- "Paucituberculata"
 tree$tip.label[tree$tip.label=="Suncus_murinus"] <- "Atopogale_cubana"
 tree$tip.label[tree$tip.label=="Manis_javanica"] <- "Smutsia_gigantea"
 tree$tip.label[tree$tip.label=="Acerodon_celebensis"] <- "Pteropus_medius"
@@ -395,15 +434,15 @@ d$order <- as.character(d$order)
 d$order <- as.factor(d$order)
 #d$tip_label[is.na(d$tip_label)] <- "Paucituberculata"
 
-pC1 <- ggtree(tree, size=1)   %<+% d + 
+pE1 <- ggtree(tree, size=1)   %<+% d + 
   aes(color=phylo_dist) +
   scale_x_reverse() +
   scale_color_viridis_c(name="phylogenetic distance\nfrom primates (Myr)", direction=-1, 
                         guide = guide_legend(direction = "vertical",title.position = "top")) +
-  geom_tiplab(aes(label=label), color="black",offset = -65, size=4) + 
+  geom_tiplab(aes(label=label), color="black",offset = -67, size=4) + 
   # scale_color_gradient(low="black", high="red",  name=bquote(eta)) +
   ggnewscale::new_scale_color()+  theme_bw() +
-  geom_tiplab(aes(image=uid, color=order),  geom="phylopic",offset = -10, size=.04) +
+  geom_tiplab(aes(image=uid, color=order),  geom="phylopic",offset = -5, size=.04) +
   scale_color_manual(values=colz, guide="none") + 
   theme(legend.position = c(.82,.8), 
         legend.direction = "vertical", legend.title = element_text(size=12),
@@ -424,7 +463,7 @@ pC1 <- ggtree(tree, size=1)   %<+% d +
 node1 <- MRCA(tree, which(tree$tip.label=="Primates"), which(tree$tip.label=="Lagomorpha"))
 node2 <- MRCA(tree, which(tree$tip.label=="Carnivora"), which(tree$tip.label=="Eulipotyphla"))
 
-pC <- flip(pC1, node1, node2) 
+pE <- flip(pE1, node1, node2) 
 
 
 #and plot the actual values of TvS - here, as constants
@@ -433,22 +472,24 @@ predict.dat <- read.csv(file=paste0(homewd, subwd, "/predict_pars.csv"), header 
 head(predict.dat)
 
 #and sum to add with order.date
-
+order.dat1$sig <- order.dat1$order
 order.dat <- rbind(order.dat1, order.dat2, order.dat3)
 
 colz3 = c('no' = "grey", 'pos'="red3", 'neg'='blue4')
 
+colz4 <- c(colz, colz3)
+
 order.dat$variable = factor(order.dat$variable, levels=c("mu", "Tw", "g0"))
 
 order.dat$label <- NA
-order.dat$label[order.dat$variable=="mu"] <- "atop(mu~', reservoir', 'annual mortality')"
-order.dat$label[order.dat$variable=="Tw"] <- "atop(T[w]~', reservoir tolerance', 'of immunopathology')"
-order.dat$label[order.dat$variable=="g0"] <- "atop(g[0]~', reservoir', 'constitutive immunity')"
+order.dat$label[order.dat$variable=="mu"] <- "atop(mu[R]~', reservoir host', 'annual mortality rate')"
+order.dat$label[order.dat$variable=="Tw"] <- "atop(T[wR]~', reservoir host tolerance', 'of immunopathology')"
+order.dat$label[order.dat$variable=="g0"] <- "atop(g[0~R]~', reservoir host', 'constitutive immunity')"
 
 #order.dat$label = factor(order.dat$label, levels=c('mu','T[w]', 'g[0]' ))
-order.dat$label = factor(order.dat$label, levels=c("atop(mu~', reservoir', 'annual mortality')",
-                                                   "atop(T[w]~', reservoir tolerance', 'of immunopathology')",
-                                                   "atop(g[0]~', reservoir', 'constitutive immunity')"))
+order.dat$label = factor(order.dat$label, levels=c("atop(mu[R]~', reservoir host', 'annual mortality rate')",
+                                                   "atop(T[wR]~', reservoir host tolerance', 'of immunopathology')",
+                                                   "atop(g[0~R]~', reservoir host', 'constitutive immunity')"))
 # 
 # 
 # pDEF <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
@@ -467,19 +508,32 @@ order.dat$label = factor(order.dat$label, levels=c("atop(mu~', reservoir', 'annu
 #                      plot.margin = unit(c(.3,.3,0,.5), "lines"), 
 #                      axis.title.x = element_blank(),
 #                      axis.title.y = element_text(size=14))
+ 
+y.int.dat =cbind.data.frame(label = unique(order.dat$label))
+y.int.dat$y_int <- 0
+y.int.dat$y_int[y.int.dat$label=="atop(mu[R]~', reservoir host', 'annual mortality rate')"] <- order.dat1$estimate[order.dat1$order=="Diprotodontia"]
 
-pD <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
+
+dropLeadingZero <- function(l){
+  l2 <- signif(l,1)
+  l2 <- str_replace(l2, '0(?=.)', '')
+  return(l2)
+}
+options(scipen=10000)
+pC <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), size=3, show.legend = F) + 
   geom_linerange(aes(x=order, ymin=lci, ymax=uci, color=sig), show.legend = F) + 
-  scale_color_manual(values=colz3) + coord_flip() +
-  facet_grid(~label, labeller = label_parsed)  +
+  scale_color_manual(values=colz4) + coord_flip() +
+  facet_grid(~label, labeller = label_parsed, scales = "free_x")  +
+  scale_y_continuous(labels = dropLeadingZero) +
   #ylab("y-intercept of mass/BMR/neutrophil relationship, by order") +
-  geom_hline(aes(yintercept = 0), linetype=2) +
+  geom_hline(data= y.int.dat, aes(yintercept = y_int), linetype=2) +
   theme_bw() + theme(panel.grid = element_blank(),
                      strip.background = element_rect(fill='transparent'),
                      axis.text.x = element_text(size = 14),
                      #axis.text.x = element_blank(),
                      strip.text = element_text(size=18),
                      axis.text.y = element_text(size = 13),
+                     panel.spacing = unit(1.4, "lines"),
                      panel.background = element_rect(fill='transparent'),
                      plot.background = element_rect(fill='transparent', color=NA),
                      plot.margin = unit(c(1,.5,5,.5), "lines"), 
@@ -489,7 +543,7 @@ pD <- ggplot(data=order.dat) + geom_point(aes(x=order, y=estimate, color=sig), s
 
 predict.dat$label <- "atop(T[vS]~', spillover host tolerance', 'of direct virus pathology')"
 
-pE <- ggplot(data=predict.dat) + 
+pF <- ggplot(data=predict.dat) + 
   geom_point(aes(x=order, y=Tv_human_constant, color=order), size=3, show.legend = F) + 
   #geom_linerange(aes(x=order, ymin=lci, ymax=uci, color=sig), show.legend = F) + 
   scale_color_manual(values=colz) + facet_grid(~label, labeller = label_parsed) +
@@ -498,8 +552,8 @@ pE <- ggplot(data=predict.dat) +
   coord_flip() + scale_x_discrete(position="top") +
   theme_bw() + theme(panel.grid = element_blank(),strip.background = element_rect(fill='transparent'),
                                     strip.text = element_text(size=18),
-                                    axis.text.x = element_text(size = 13),
-                                    axis.text.y = element_text(size = 14),
+                                    axis.text.x = element_text(size = 14),
+                                    axis.text.y = element_text(size = 13),
                                     panel.background = element_rect(fill='transparent'),
                                     plot.background = element_rect(fill='transparent', color=NA),
                                     plot.margin = unit(c(1,.5,6.5,1.5), "lines"), 
@@ -554,7 +608,7 @@ setdiff(plot.df$order, pic.df$order)
 
 
 
-pF <- ggplot(data=plot.df) + 
+pD <- ggplot(data=plot.df) + 
   geom_errorbar(aes(x=order, ymin=rstar_constant_lci, ymax=rstar_constant_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(x=order, y=rstar_constant, fill=order, size=N_cumulative), pch=23) +
   scale_color_manual(values=colz, guide="none")+  coord_flip(ylim=c(-0.05,1.1)) +
@@ -570,7 +624,7 @@ pF <- ggplot(data=plot.df) +
         legend.position = c(.82,.05),
         legend.background = element_rect(fill='transparent'),
         plot.margin = unit(c(1.8,2,.5,.5), "lines")) +
-  ylab(bquote(atop("",r~"*, optimal virus growth rate in reservoir"))) +
+  ylab(bquote(atop("",r[R]~"*, optimal virus growth rate in reservoir host"))) +
   geom_phylopic(data=pic.df, aes(x=order, y = -.045, image=uid, color=order), size=.05)
   #ylab(bquote(atop("optimal virus growth rate", "in reservoir,"~r~"* (constant tolerance)")))
 
@@ -716,7 +770,7 @@ pGa <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(y
         plot.background = element_rect(fill='transparent', color=NA),
         legend.background = element_rect(fill='transparent'),
         plot.margin = unit(c(1,.5,.5,3), "cm")) + 
-  ylab(bquote(atop("","relative spillover virulence,"~alpha[S]))) + 
+  ylab(bquote(atop("",alpha[S]~", relative virulence in spillover host"))) + 
   scale_y_continuous(breaks=c(-1,-.5, 0, .5, 1), labels=c(1,.5, 0, .5, 1)) +
   coord_flip(ylim=c(-1.1,1.1), clip = "off") +
   geom_phylopic(data=pic.df, aes(x=order, y = 1.095, image=uid, color=order), size=.05)
@@ -729,15 +783,15 @@ pG <- pGa + geom_text(x=20.5, y=0, label="From nested model                    F
 
 
 
-Fig3top <- cowplot::plot_grid(pA, pB, pC, ncol = 3, nrow = 1, labels = c("A", "B", "C"), label_size = 22, rel_widths = c(1.05,1.1,.95), label_x = c(0,0,-.02))
+Fig3top <- cowplot::plot_grid(pA, pB, pE, ncol = 3, nrow = 1, labels = c("A", "B", "E"), label_size = 22, rel_widths = c(1.05,1.1,.95), label_x = c(0,0,-.02))
 
-Fig3mid <- cowplot::plot_grid(pD,pE, ncol = 2, nrow = 1, labels = c("D", "E"), label_size = 22, rel_widths = c(1,.44), label_x = c(0,-0.02))
+Fig3mid <- cowplot::plot_grid(pC,pF, ncol = 2, nrow = 1, labels = c("C", "F"), label_size = 22, rel_widths = c(1,.44), label_x = c(0,-0.02))
 
-Fig3bottom <- cowplot::plot_grid(pF,pG, ncol = 2, nrow = 1, labels = c("F", "G"), label_size = 22, rel_widths = c(.8,1), label_x = c(0,.07))
+Fig3bottom <- cowplot::plot_grid(pD,pG, ncol = 2, nrow = 1, labels = c("D", "G"), label_size = 22, rel_widths = c(.8,1), label_x = c(0,.07))
 
 Fig3 <- cowplot::plot_grid(Fig3top, Fig3mid, Fig3bottom, ncol =1, nrow=3, rel_heights = c(1.1,1.15,1))
 
-ggsave(file = paste0(homewd,"/main-figs/Fig3-draft.png"),
+ggsave(file = paste0(homewd,"/figure-3/Fig3-draft.png"),
        plot = Fig3,
        bg="transparent",
        units="mm",  
