@@ -168,7 +168,7 @@ make.four.PIP <- function(r_v, r_vm, zeta, v,   mu, g, m, g0, c, w, Tv.lo.com, T
                        axis.text = element_blank(), strip.text = element_text(size=12),
                        strip.background = element_rect(fill="white"),
                        axis.title = element_text(size=20)) + coord_cartesian(expand=FALSE) +
-    ylab(expression("r"["2"])) +xlab(expression("r"["1"]))
+    ylab(expression("r"["R2"])) +xlab(expression("r"["R1"]))
   
   
   ggsave(file = filename,
