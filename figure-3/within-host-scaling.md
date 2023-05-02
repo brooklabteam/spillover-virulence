@@ -832,28 +832,27 @@ We calculate and plot this spillover virulence here:
 
 
 ```
-# First, calculate Vmax in the human host:
-predict.dat$Vs_max_constant <- predict.dat$rstar_constant/(vir.par$g*vir.par$c) - predict.dat$rstar_constant/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant*vir.par$g)
-predict.dat$Vs_max_constant_lci <- predict.dat$rstar_constant_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_lci*vir.par$g)
-predict.dat$Vs_max_constant_uci <- predict.dat$rstar_constant_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_constant_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_constant_uci*vir.par$g)
+# First, calculate Vs_avg in the human host:
+predict.dat$Vs_avg_constant <- (predict.dat$rstar_constant*(sqrt((vir.par$c^2)+2*predict.dat$rstar_constant*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_constant^2))) +(predict.dat$rstar_constant^2) + 4*(predict.dat$rstar_constant)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_constant))
+predict.dat$Vs_avg_constant_lci <- (predict.dat$rstar_constant_lci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_constant_lci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_constant_lci^2))) +(predict.dat$rstar_constant_lci^2) + 4*(predict.dat$rstar_constant_lci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_constant_lci))
+predict.dat$Vs_avg_constant_uci <- (predict.dat$rstar_constant_uci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_constant_uci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_constant_uci^2))) +(predict.dat$rstar_constant_uci^2) + 4*(predict.dat$rstar_constant_uci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_constant_uci))
 
-predict.dat$Vs_max_complete <- predict.dat$rstar_complete/(vir.par$g*vir.par$c) - predict.dat$rstar_complete/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete*vir.par$g)
-predict.dat$Vs_max_complete_lci <- predict.dat$rstar_complete_lci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_lci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_lci*vir.par$g)
-predict.dat$Vs_max_complete_uci <- predict.dat$rstar_complete_uci/(vir.par$g*vir.par$c) - predict.dat$rstar_complete_uci/(2*vir.par$g*vir.par$c) + 1 - 1/(vir.par$g) + vir.par$c/(2*predict.dat$rstar_complete_uci*vir.par$g)
-
+predict.dat$Vs_avg_complete <- (predict.dat$rstar_complete*(sqrt((vir.par$c^2)+2*predict.dat$rstar_complete*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_complete^2))) +(predict.dat$rstar_complete^2) + 4*(predict.dat$rstar_complete)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_complete))
+predict.dat$Vs_avg_complete_lci <- (predict.dat$rstar_complete_lci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_complete_lci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_complete_lci^2))) +(predict.dat$rstar_complete_lci^2) + 4*(predict.dat$rstar_complete_lci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_complete_lci))
+predict.dat$Vs_avg_complete_uci <- (predict.dat$rstar_complete_uci*(sqrt((vir.par$c^2)+2*predict.dat$rstar_complete_uci*vir.par$c*(vir.par$g-1)+(predict.dat$rstar_complete_uci^2))) +(predict.dat$rstar_complete_uci^2) + 4*(predict.dat$rstar_complete_uci)*(vir.par$c)*(vir.par$g-1) + 2*(vir.par$c^2))/(6*vir.par$c*vir.par$g*(predict.dat$rstar_complete_uci))
 
 # Next, take that viral load and calculate spillover virulence, here for the constant tolerance assumption:
 vir.par$Tw = 1
-predict.dat$alpha_star_human_constant <- ((predict.dat$rstar_constant*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant)/vir.par$Tw)*predict.dat$Vs_max_constant
-predict.dat$alpha_star_human_constant_lci <- ((predict.dat$rstar_constant_lci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_lci)/vir.par$Tw)*predict.dat$Vs_max_constant_lci
-predict.dat$alpha_star_human_constant_uci <- ((predict.dat$rstar_constant_uci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_uci)/vir.par$Tw)*predict.dat$Vs_max_constant_uci
+predict.dat$alpha_star_human_constant <- ((predict.dat$rstar_constant*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant)/vir.par$Tw)*predict.dat$Vs_avg_constant
+predict.dat$alpha_star_human_constant_lci <- ((predict.dat$rstar_constant_lci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_lci)/vir.par$Tw)*predict.dat$Vs_avg_constant_lci
+predict.dat$alpha_star_human_constant_uci <- ((predict.dat$rstar_constant_uci*vir.par$v)/predict.dat$Tv_human_constant  + (vir.par$g*vir.par$w*predict.dat$rstar_constant_uci)/vir.par$Tw)*predict.dat$Vs_avg_constant_uci
 
 
 # And here for complete tolerance:
 vir.par$Tw = 0
-predict.dat$alpha_star_human_complete <- (predict.dat$rstar_complete*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete
-predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_lci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_lci
-predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_max_complete_uci
+predict.dat$alpha_star_human_complete <- (predict.dat$rstar_complete*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_avg_complete
+predict.dat$alpha_star_human_complete_lci <- (predict.dat$rstar_complete_lci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_lci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_avg_complete_lci
+predict.dat$alpha_star_human_complete_uci <- (predict.dat$rstar_complete_uci*(vir.par$v-predict.dat$Tv_human_complete) + predict.dat$rstar_complete_uci*vir.par$g*(vir.par$w-vir.par$Tw))*predict.dat$Vs_avg_complete_uci
 
 # Now, we rank by virulence, then confidence, and plot...
 predict.dat <- arrange(predict.dat, desc(alpha_star_human_constant), desc(N_cumulative))
