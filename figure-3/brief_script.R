@@ -241,6 +241,32 @@ pan.dat$mortality_rate_per_year <- 1/(pan.dat$max_lifespan_yrs)
 m1b <- lm(mortality_rate_per_year~ order, data = pan.dat) 
 summary(m1b)
 
+pan.test = pan.dat
+pan.test$order <- factor(pan.test$order, levels=c("Diprotodontia", unique(as.character(pan.test$order[as.character(pan.test$order)!="Diprotodontia"]))))
+
+m1b2 <- lm(mortality_rate_per_year~ order, data = pan.test) 
+summary(m1b2)
+
+tables2A <- as.data.frame(summary(m1b2)$coefficients)
+tables2A$order <- rownames(tables2A) 
+tables2A$order[tables2A$order=="(Intercept)"] <- "Intercept (Diprotodontia)"
+tables2A$order <- sub(pattern = "order", replacement = "", x=tables2A$order, fixed = T)
+names(tables2A)<- c("est", "se", "tval", "pval", "order")
+tables2A$lci <- tables2A$est-1.96*tables2A$se
+tables2A$uci <- tables2A$est+1.96*tables2A$se
+tables2A$est <- round(tables2A$est,2)
+tables2A$lci <- round(tables2A$lci,2)
+tables2A$uci <- round(tables2A$uci,2)
+tables2A$lci_uci <- paste0(tables2A$lci," - ",tables2A$uci)
+
+tables2A <- dplyr::select(tables2A, order, est, lci_uci, tval, pval)
+tables2A$tval <- round(tables2A$tval,2)
+tables2A$pval <- round(tables2A$pval,2)
+
+tables2A$pval[tables2A$pval==0.00] <- "<0.001***"
+
+write.csv(tables2A, file = paste0(homewd, "figure-3/tables2A.csv"), row.names = F)
+
 plot_model(m1b, type="est") #this is using Afrosoricida as a reference, so almost everything looks long-lived by comparison
 plot_model(m1b, type="pred")
 

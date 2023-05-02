@@ -575,7 +575,7 @@ dat$g0 <- .05
 
 
 out.fit.1 <- wrap.fit(par.fit = "Tw",  dat=dat, single.par=TRUE,  lower.par = 1.00001, 
-                      upper.par = 1000000, tolerance_type = "constant", 
+                      upper.par = 1.99999, tolerance_type = "constant", 
                       error_rate = .5, stat.par = stat.par)
 
 #and g0
@@ -854,6 +854,53 @@ ggsave(file = paste0(homewd,"/supp-figs/FigS9.png"),
        scale=3, 
        dpi=300)
 
+
+#now make supplementary table
+head(alpha.fit)
+
+#first for the fits themselves by each method
+
+alpha.par <- dplyr::select(alpha.fit, order, tolerance, alpha_type, fitted_par, lit_fit, fit_par_ID, lit_alpha_scale, alpha)
+alpha.par <- alpha.par[!duplicated(alpha.par),]
+head(alpha.par)
+
+alpha.par$alpha_type <- as.character(alpha.par$alpha_type )
+alpha.par$alpha_type[alpha.par$alpha_type=="glm fit for\nall parameters"] <- "glm fit all parameters"
+alpha.par$alpha_type[alpha.par$alpha_type=="one parameter profiled;\nother parameters\nfrom glm fitting"] <- "one profiled; glm fit rest of parameters"
+alpha.par$alpha_type[alpha.par$alpha_type=="one parameter profiled;\nother parameters\nheld constant"] <- "one profiled; rest of parameters constant"
+alpha.par$tolerance <- as.character(alpha.par$tolerance)
+alpha.par$tolerance[alpha.par$tolerance=="'constant tolerance'"] <- "constant"
+alpha.par$tolerance[alpha.par$tolerance=="'complete tolerance'"] <- "complete"
+
+
+alpha.par = subset(alpha.par, alpha_type!="glm fit all parameters")
+
+head(stat.par)
+
+names(stat.par)[length(names(stat.par))] <- "alpha_from_glm_main_text"
+stat.melt <- melt(stat.par, id.vars = c("order", "tolerance", "alpha_from_glm_main_text"))
+names(stat.melt)[names(stat.melt)=="variable"] <- "fit_par_ID"
+
+alpha.merge <- merge(alpha.par, stat.melt, by=c("order", "tolerance", "fit_par_ID"))
+
+head(alpha.merge)
+alpha.merge$tolerance <- factor(alpha.merge$tolerance, levels=c("constant", "complete"))
+alpha.merge$alpha_type <- factor(alpha.merge$alpha_type , levels=c("one profiled; rest of parameters constant", "one profiled; glm fit rest of parameters"))
+alpha.merge$fit_par_ID  <- factor(alpha.merge$fit_par_ID , levels=c("Tw", "Tv_human", "g0"))
+alpha.merge <- arrange(alpha.merge, tolerance, order, alpha_type, fit_par_ID)
+alpha.merge <- dplyr::select(alpha.merge, order, tolerance, fit_par_ID, alpha_type, fitted_par, lit_fit, alpha, alpha_from_glm_main_text, lit_alpha_scale)
+
+names(alpha.merge) <- c("order", "tolerance", "fitted_par", "fit_type", "par_value", "par_value_glm_fit", "predicted_alphaS", "alpha_from_glm_fit_main_text", "alpha_S_from_literature")
+head(alpha.merge)
+
+alpha.merge$par_value <- round(alpha.merge$par_value,2)
+alpha.merge$par_value_glm_fit <- round(alpha.merge$par_value_glm_fit,2)
+alpha.merge$predicted_alphaS <- round(alpha.merge$predicted_alphaS,2)
+alpha.merge$alpha_from_glm_fit_main_text <- round(alpha.merge$alpha_from_glm_fit_main_text,2)
+alpha.merge$alpha_S_from_literature <- round(alpha.merge$alpha_S_from_literature,2)
+
+#and write to table S3
+write.csv(alpha.merge, file=paste0(homewd, "/supp-figs/TableS3.csv"), row.names = F)
 # 
 # pFigS10 <- ggplot(data=subset(alpha.fit, alpha_type!="glm fit for\nall parameters")) + theme_bw() +
 #   geom_point(aes(x=lit_fit, y= fitted_par, fill=order, 
