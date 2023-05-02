@@ -1073,6 +1073,9 @@ plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constan
 head(plot.dat)
 
 # And take only the complete data
+plot.dat$alpha_lci[is.na(plot.dat$alpha_lci) & !is.na(plot.dat$alpha)] <- 0
+plot.dat$alpha_uci[is.na(plot.dat$alpha_uci) & !is.na(plot.dat$alpha)] <- 1
+
 plot.dat <- plot.dat[complete.cases(plot.dat),]
 
 shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
@@ -1152,8 +1155,13 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig13.png"),
 # Then, plot complete tolerance assumptions:
 
 # Reorder, ranked by the complete data
-plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.complete, desc(alpha))$order))
+share.dat.complete$alpha_lci[share.dat.complete$alpha_lci=="NaN"] <- 0
+share.dat.complete <- arrange(share.dat.complete, desc(alpha))
+plot.dat$order <- factor(plot.dat$order, levels=unique(as.character(share.dat.complete$order)))
 
+plot.comp = subset(plot.dat, tolerance!="constant")
+plot.comp <- arrange(plot.comp, order)
+pic.df <- arrange(pic.df, order= unique(as.character(plot.dat$order)))
 
 # Plot 
 p14a <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(yintercept=0), size=.2) +
@@ -1187,15 +1195,6 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig14.png"),
        scale=3, 
        dpi=300)
 
-#this is also Figure S6 of the SI
-
-ggsave(file = paste0(homewd, "/supp-figs/FigS6.png"),
-       plot = p14,
-       units="mm",  
-       width=50, 
-       height=60, 
-       scale=3, 
-       dpi=300)
 
 
 
@@ -1250,7 +1249,10 @@ plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constan
 head(plot.dat)
 
 # And take only the complete data
+plot.dat$alpha_lci[!is.na(plot.dat$alpha) & is.na(plot.dat$alpha_lci)] <- 0
 plot.dat <- plot.dat[complete.cases(plot.dat),]
+
+
 
 
 # And add images by order
@@ -1364,15 +1366,4 @@ ggsave(file = paste0(homewd, subwd, "/brief/Fig16.png"),
        scale=3, 
        dpi=300)
 
-# and pair them together to get Fig S7 of the SI
 
-FigS8 <- cowplot::plot_grid(p15, p16, ncol = 2, nrow = 1, labels = c("A", "B"), label_size = 22)#, label_x = .12, label_y = .99)
-
-
-ggsave(file = paste0(homewd, "/supp-figs/FigS8.png"),
-       plot = FigS8,
-       units="mm",  
-       width=100, 
-       height=60, 
-       scale=3, 
-       dpi=300)
