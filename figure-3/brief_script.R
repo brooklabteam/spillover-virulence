@@ -497,7 +497,6 @@ unique(wbc.dat$Order)
 
 #Rename
 names(wbc.dat)[names(wbc.dat)=="Segmented.neutrophils"] <- "neutro_conc"
-#names(wbc.dat)[names(wbc.dat)=="AdultBodyMass"] <- "mass_g"
 names(wbc.dat)[1:4] <- c("order", "family", "genus", "species")
 
 #and merge with features from pan.dat
@@ -1116,7 +1115,7 @@ pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="C
                 order=="Monotremata" | order == "Peramelemorphia" | order == "Perissodactyla" | order=="Pilosa" | order=="Primates"  |
                 order == "Proboscidea" | order=="Rodentia" | order == "Scandentia" | order == "Tubulidentata" )
                   
-
+library(ggimage)
 
 # This is a part of Fig. 3 in the main text
 p13a <- ggplot(data=subset(plot.dat, tolerance!="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
