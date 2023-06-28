@@ -785,6 +785,7 @@ pG <- pGa + geom_text(x=20.5, y=0, label="From nested model                    F
 
 Fig3top <- cowplot::plot_grid(pA, pB, pE, ncol = 3, nrow = 1, labels = c("A", "B", "E"), label_size = 22, rel_widths = c(1.05,1.1,.95), label_x = c(0,0,-.02))
 
+library(stringr)
 Fig3mid <- cowplot::plot_grid(pC,pF, ncol = 2, nrow = 1, labels = c("C", "F"), label_size = 22, rel_widths = c(1,.44), label_x = c(0,-0.02))
 
 Fig3bottom <- cowplot::plot_grid(pD,pG, ncol = 2, nrow = 1, labels = c("D", "G"), label_size = 22, rel_widths = c(.8,1), label_x = c(0,.07))

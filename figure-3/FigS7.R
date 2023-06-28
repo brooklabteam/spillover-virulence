@@ -96,7 +96,8 @@ plot.dat
 
 # And take only the complete data
 # first edit
-plot.dat <- plot.dat[complete.cases(plot.dat),]
+#plot.dat <- plot.dat[complete.cases(plot.dat),]
+plot.dat <- subset(plot.dat, !is.na(alpha))
 
 #shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
 
@@ -193,7 +194,8 @@ plot.dat
 
 # And take only the complete data
 # first edit
-plot.dat <- plot.dat[complete.cases(plot.dat),]
+#plot.dat <- plot.dat[complete.cases(plot.dat),]
+plot.dat <- subset(plot.dat, !is.na(alpha))
 
 #shapez <- c("predicted from zoonoses"=25, "predicted from\nnested model"=24)
 
@@ -235,7 +237,10 @@ pic.df = subset(pic.df, order=="Afrosoricida" | order == "Carnivora" | order=="C
 setdiff(pic.df$order, plot.dat$order)
 setdiff(plot.dat$order, pic.df$order)
 
-pBa <- ggplot(data=subset(plot.dat, tolerance=="complete"))  +  geom_hline(aes(yintercept=0), size=.2) +
+#pic.df = subset(pic.df, order != "Hyracoidea" & order != "Cingulata" & order !="Tubulidentata" & order!= "Afrosoricida")
+pic.df$order <- factor(pic.df$order, levels = unique(subset(plot.dat, tolerance!="constant")$order))
+
+pBa <- ggplot(data=subset(plot.dat, tolerance!="constant"))  +  geom_hline(aes(yintercept=0), size=.2) +
   geom_errorbar(aes(x=order, ymin=alpha_lci, ymax=alpha_uci, color=order),  width=0, linetype=3, show.legend = F) +
   geom_point(aes(order, alpha, fill=order, size=N), shape=24) + 
   theme_bw() +
