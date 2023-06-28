@@ -104,7 +104,7 @@ plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constan
 head(plot.dat)
 
 # And take only the complete data
-plot.dat <- plot.dat[complete.cases(plot.dat),]
+plot.dat <- subset(plot.dat, !is.na(alpha))#plot.dat[complete.cases(plot.dat),]
 
 #and now compare predictions
 unique(plot.dat$tolerance)
@@ -295,7 +295,7 @@ plot.dat$order <- factor(plot.dat$order, levels=unique(arrange(share.dat.constan
 head(plot.dat)
 
 # And take only the complete data
-plot.dat <- plot.dat[complete.cases(plot.dat),]
+plot.dat <- subset(plot.dat, !is.na(alpha))#plot.dat <- plot.dat[complete.cases(plot.dat),]
 
 #and now compare predictions
 unique(plot.dat$tolerance)
