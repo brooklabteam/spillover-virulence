@@ -190,7 +190,7 @@ plot.dat$order <- factor(plot.dat$order, levels=unique(share.dat.complete$order)
 
 head(plot.dat)
 plot.dat
-
+plot.dat$alpha_lci[is.na(plot.dat$alpha_lci)] <- 0
 
 # And take only the complete data
 # first edit
