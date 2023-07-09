@@ -202,3 +202,23 @@ make.four.PIP(r_v= r_v,
                 Tw.hi.com=.97,
                 filename = paste0(homewd,"/supp-figs/FigS1.png"))
 
+make.four.PIP(r_v= r_v,
+              r_vm= r_vm,
+              zeta=.2,
+              v=1,
+              m=1/(21),
+              g=.9,
+              g0=.3,
+              c=.5,
+              mu = 1/(20*365),
+              w=1,
+              Tv.lo.cons=10,
+              Tw.lo.cons=10,
+              Tv.lo.com=.5,
+              Tw.lo.com=.5,
+              Tv.hi.cons=100,
+              Tw.hi.cons=100,
+              Tv.hi.com=.97,
+              Tw.hi.com=.97,
+              filename = paste0(homewd,"/supp-figs/FigS1.eps"))
+

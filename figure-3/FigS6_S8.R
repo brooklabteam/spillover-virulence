@@ -180,6 +180,14 @@ ggsave(file =paste0(homewd,"supp-figs/FigS6.png"),
        scale=3, 
        dpi=300)
 
+ggsave(file =paste0(homewd,"supp-figs/FigS6.eps"),
+       plot = FigS6,
+       units="mm",  
+       width=65, 
+       height=80, 
+       scale=3, 
+       dpi=300)
+
 #and save this comparison data for fitting - but accompany with the parameters of interes
 names(predict.dat)
 predict.merge <- dplyr::select(predict.dat, order, mu, mu_lci, mu_uci, Tw_constant, Tw_constant_lci, Tw_constant_uci, Tw_complete, Tw_complete_lci, Tw_complete_uci, g0, g0_lci, g0_uci, Tv_human_constant, Tv_human_complete)
@@ -375,6 +383,14 @@ FigS8 <- ggplot(data = subset(dat.compare, !is.na(lit_alpha))) + theme_bw() +
 FigS8
 
 ggsave(file =paste0(homewd,"supp-figs/FigS8.png"),
+       plot = FigS8,
+       units="mm",  
+       width=65, 
+       height=80, 
+       scale=3, 
+       dpi=300)
+
+ggsave(file =paste0(homewd,"supp-figs/FigS8.eps"),
        plot = FigS8,
        units="mm",  
        width=65, 

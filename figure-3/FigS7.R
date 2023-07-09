@@ -114,7 +114,7 @@ order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
 order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
 order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Macaca_mulatta"
 order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
-order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
+order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa_domestica"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
@@ -212,7 +212,7 @@ order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
 order.dat$species <- sub(pattern = " ", replacement = "_", x=order.dat$species)
 order.dat$species[order.dat$species=="Homo_sapiens"] <-  "Macaca_mulatta"
 order.dat$species[order.dat$species=="Rattus_rattus"] <-  "Mus_musculus_domesticus"
-order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa"
+order.dat$species[order.dat$species=="Antilocapra_americana"] <-  "Sus_scrofa_domestica"
 order.dat$species[order.dat$species=="Phascolarctos_cinereus"] <-  "Macropus_rufus"
 order.dat$species[order.dat$species=="Caenolestes_sangay"]<- "Caenolestes_convelatus"
 order.dat$species[order.dat$species=="Sarcophilus_harrisii"] <- "Dasyurus_viverrinus"
@@ -273,6 +273,17 @@ pFigS7 <- cowplot::plot_grid(pA,pB, ncol = 1, nrow = 2, labels = c("A", "B"), la
 
 
 ggsave(file = paste0(homewd,"/supp-figs/FigS7.png"),
+       plot = pFigS7,
+       bg="white",
+       units="mm",  
+       width=90, 
+       height=95, 
+       scale=3, 
+       dpi=300)
+
+
+
+ggsave(file = paste0(homewd,"/supp-figs/FigS7.eps"),
        plot = pFigS7,
        bg="white",
        units="mm",  

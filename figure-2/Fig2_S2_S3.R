@@ -321,12 +321,12 @@ plot.join(dat.var = subset(out.curves, variable !="Tv_spill" & variable!="Tw_spi
           sub=TRUE,
           filename=paste0(homewd,"main-figs/Fig2.pdf"))
 
-#and tiff for submission
+#and eps for submission
 plot.join(dat.var = subset(out.curves, variable !="Tv_spill" & variable!="Tw_spill"),
           tol.shape= "constant-tolerance",
           dat.tol=tol.heatmap,
           sub=TRUE,
-          filename=paste0(homewd,"main-figs/Fig2.tiff"))
+          filename=paste0(homewd,"main-figs/Fig2.eps"))
 
 
 # and the complete tolerance version for the supplement
@@ -556,6 +556,13 @@ plot.join.complete(dat.var = subset(out.curves, variable !="Tv_spill" & variable
           filename=paste0(homewd,"supp-figs/FigS2.png"))
 
 
+plot.join.complete(dat.var = subset(out.curves, variable !="Tv_spill" & variable!="Tw_spill"),
+                   tol.shape= "complete-tolerance",
+                   dat.tol=tol.heatmap,
+                   sub=TRUE,
+                   filename=paste0(homewd,"supp-figs/FigS2.eps"))
+
+
 
 Fig.S3 <- function(dat.var,  filename){
   
@@ -651,5 +658,9 @@ out.spill$tolerance_shape <- factor(out.spill$tolerance_shape, levels = c("const
 
 Fig.S3(dat.var = out.spill,
        filename= paste0(homewd,"supp-figs/FigS3.png"))
+
+
+Fig.S3(dat.var = out.spill,
+       filename= paste0(homewd,"supp-figs/FigS3.eps"))
 
        

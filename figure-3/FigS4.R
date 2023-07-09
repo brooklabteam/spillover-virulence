@@ -121,4 +121,12 @@ ggsave(file = paste0(homewd, "supp-figs/FigS4.png"),
        scale=3, 
        dpi=300)
 
+ggsave(file = paste0(homewd, "supp-figs/FigS4.eps"),
+       plot = FigS4,
+       units="mm",  
+       width=60, 
+       height=140, 
+       scale=3, 
+       dpi=300)
+
 
