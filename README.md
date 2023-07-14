@@ -1,6 +1,6 @@
 # spillover-virulence
 
-This repository compiles code for [Brook et al. 2022](https://doi.org/10.1101/2021.10.06.463372), "Reservoir host immunology and life history shape virulence evolution in zoonotic viruses", currently in revision. You should be able to reproduce all analyses by cloning this repo to your computer and editing the "homewd" address to your own working directory at the top of each R-script. 
+This repository compiles code for [Brook et al. 2023](https://doi.org/10.1101/2021.10.06.463372), "Reservoir host immunology and life history shape virulence evolution in zoonotic viruses", currently in revision at *PLoS Biology*. You should be able to reproduce all analyses by cloning this repo to your computer and editing the "homewd" address to your own working directory at the top of each R-script. 
 
 There are ten main folders:
 
