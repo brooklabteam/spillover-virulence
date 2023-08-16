@@ -301,7 +301,7 @@ plot.join <- function(dat.var, dat.tol, filename, tol.shape, sub){
          width=170, 
          height=110, 
          scale=3, 
-         dpi=300)
+         dpi=500)
           
 }
 
@@ -327,6 +327,14 @@ plot.join(dat.var = subset(out.curves, variable !="Tv_spill" & variable!="Tw_spi
           dat.tol=tol.heatmap,
           sub=TRUE,
           filename=paste0(homewd,"main-figs/Fig2.eps"))
+
+
+#and tiff for submission
+plot.join(dat.var = subset(out.curves, variable !="Tv_spill" & variable!="Tw_spill"),
+          tol.shape= "constant-tolerance",
+          dat.tol=tol.heatmap,
+          sub=TRUE,
+          filename=paste0(homewd,"main-figs/Fig2.tiff"))
 
 
 # and the complete tolerance version for the supplement
